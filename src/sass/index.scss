@@ -1,33 +1,6 @@
 @import './base';
 @import './btn';
-
-:root {
-  --header-height: 60px;
-  --header-bgcolor: #212121;
-  --border-radius: 10px;
-  --search-form-width: 400px;
-
-  --search-input-outline-width: 2px;
-  --search-input-outline: 0px 0px 0px var(--search-input-outline-width)
-    rgb(3, 196, 255);
-
-  --search-input-height: 70%;
-  --search-input-padding: 8px;
-  --search-input-padding-right: calc(
-    var(--search-btn-width) + var(--search-btn-celar-width) +
-      var(--search-btn-celar-width) / 2
-  );
-
-  --search-btn-width: 40px;
-  --search-btn-scale: 1;
-
-  --search-btn-clear-width: 28px;
-  --search-btn-clear-offset: 5px;
-  --search-btn-clear-right: calc(
-    var(--search-btn-width) + var(--search-btn-clear-offset)
-  );
-  --transition-params: ease-out 250ms;
-}
+@import './variables';
 
 .header {
   position: fixed;
@@ -36,7 +9,7 @@
 
   width: 100%;
   height: var(--header-height);
-  background-color: var(--header-bgcolor);
+  background-color: var(--color-header-bg);
 }
 
 .search-form {
