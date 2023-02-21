@@ -1,10 +1,10 @@
 $btnColor: #212121;
-$btnBgcolor: #cfcfcf;
+$btnColorBg: #cfcfcf;
 
 %btn {
   padding: 0;
   color: $btnColor;
-  background-color: $btnBgcolor;
+  background-color: $btnColorBg;
   border-radius: var(--border-radius);
   border-style: unset;
   cursor: pointer;
