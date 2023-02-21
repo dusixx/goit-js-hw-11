@@ -81,6 +81,7 @@ body {
   height: calc(var(--search-input-height) - 10%);
 
   font-size: 30px;
+  line-height: 0;
   color: #212121;
   background-color: #cfcfcf;
 
@@ -102,7 +103,7 @@ body {
 
 .search-form__btn-clear {
   position: absolute;
-  right: 40px;
+  right: 45px;
 
   padding: 0;
   height: var(--search-input-height);
