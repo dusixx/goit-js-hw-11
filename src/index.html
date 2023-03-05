@@ -8,22 +8,39 @@
   </head>
   <body>
     <header class="header">
-      <form class="search-form" id="search-form">
-        <div class="search-form__field">
-          <input
-            class="search-form__input"
-            type="text"
-            name="searchQuery"
-            autocomplete="off"
-            placeholder="Search images..."
-          />
-          <button class="search-form__btn-clear" type="button">&times;</button>
-          <button class="search-form__btn-search" type="submit">
-            &#x2315;
-          </button>
-        </div>
-      </form>
+      <div class="container">
+        <form class="search-form" id="search-form">
+          <div class="search-form__field">
+            <input
+              class="search-form__input"
+              type="text"
+              name="searchQuery"
+              autocomplete="off"
+              placeholder="Search images..."
+            />
+            <button
+              class="search-form__btn-clear"
+              type="button"
+              name="clearBtn"
+            >
+              &times;
+            </button>
+            <button class="search-form__btn-search" type="submit">
+              &#x2315;
+            </button>
+          </div>
+        </form>
+      </div>
     </header>
+
+    <main>
+      <section class="content">
+        <div class="container">
+          <ul class="gallery"></ul>
+        </div>
+      </section>
+    </main>
+
     <script src="index.js" type="module"></script>
   </body>
 </html>

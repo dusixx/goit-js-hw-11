@@ -9,3 +9,10 @@ $btnColorBg: #cfcfcf;
   border-style: unset;
   cursor: pointer;
 }
+
+%btn-primary {
+  @extend %btn;
+
+  color: white;
+  background-color: var(--color-accent);
+}
