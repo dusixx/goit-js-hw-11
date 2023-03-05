@@ -71,11 +71,19 @@ export class PixabayService {
     );
   }
 
+  #increasePage(v) {
+    const inc = this.options?.pageIncrementValue;
+    const defInc = defOpts.pageIncrementValue;
+
+    v = utils.isInt(v) ? v : utils.isInt(inc) ? inc : defInc;
+    return (this.page += v);
+  }
+
   async fetch(params) {
     const { data, config } = await axios.get(this.#buildQueryString(params));
 
-    // если успешно получили данные
-    this.page += 1; //this.options?.pageIncrementValue;
+    // успешно получили данные - меняем страницу
+    this.#increasePage();
 
     return {
       total: data.total,
