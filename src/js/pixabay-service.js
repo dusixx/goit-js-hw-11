@@ -30,7 +30,7 @@ export default class PixabayService {
    * Формирует строку запроса к серверу, добавляя к baseUrl
    * параметры из #queryParams с именами в snake_case
    */
-  #buildQueryStr(params) {
+  #buildQuery(params) {
     // обновляем параметры в кеше
     this.queryParams = params;
     const qp = this.queryParams;
@@ -51,7 +51,7 @@ export default class PixabayService {
    */
   async fetch(params) {
     // обновляем параметры и делаем запрос на сервер
-    const { data, config } = await axios.get(this.#buildQueryStr(params));
+    const { data, config } = await axios.get(this.#buildQuery(params));
 
     // обновляем параметры актуальными данными
     this.queryParams = config.url;
