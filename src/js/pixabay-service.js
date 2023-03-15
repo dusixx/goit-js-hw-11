@@ -52,8 +52,10 @@ export default class PixabayService {
   async fetch(params) {
     // обновляем параметры и делаем запрос на сервер
     const { data, config } = await axios.get(this.#buildQueryStr(params));
+
     // обновляем параметры актуальными данными
     this.queryParams = config.url;
+
     // если задана page, инкрементируем ее
     this.#increasePage();
 
