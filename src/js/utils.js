@@ -42,10 +42,6 @@ export default {
     Notify.info(msg, { timeout: defNotifyTimeout, ...opts });
   },
 
-  warn(msg, opts) {
-    Notify.warning(msg, { timeout: defNotifyTimeout, ...opts });
-  },
-
   succ(msg, opts) {
     Notify.success(msg, { timeout: defNotifyTimeout, ...opts });
   },
@@ -55,21 +51,6 @@ export default {
       res[this.camelToSnake(name)] = value;
       return res;
     }, {});
-  },
-
-  /**
-   * @param {number} top
-   * @param {number} delay
-   */
-  scrollTop(top, { behavior = 'smooth', delay } = {}) {
-    if (isInt(delay)) {
-      return setTimeout(scrollTop, delay, top, { behavior });
-    }
-
-    window.scrollBy({
-      top,
-      behavior: behavior,
-    });
   },
 
   getViewportClientRect() {
