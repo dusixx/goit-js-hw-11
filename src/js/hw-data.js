@@ -1,10 +1,13 @@
 export default {
   message: {
     NO_SEARCH_QUERY: 'Please, enter a search query',
+
     SEARCH_RESULTS_FOUND(totalHits) {
       return `Hooray! We found ${totalHits} images.`;
     },
+
     END_OF_SEARCH: "We're sorry, but you've reached the end of search results.",
+
     NO_SEARCH_RESULTS:
       'Sorry, there are no images matching your search query. Please try again.',
   },
