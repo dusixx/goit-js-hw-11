@@ -1,4 +1,5 @@
 import { Notify } from 'notiflix';
+import throttle from 'lodash.throttle';
 import simpleLightbox from 'simplelightbox';
 
 const defNotifyTimeout = 1500;
@@ -19,6 +20,7 @@ export default {
   isObj,
   isNum,
   normId,
+  throttle,
 
   snakeToCamel(v) {
     return normId(v.replace(/^_+|_+$/g, ''))

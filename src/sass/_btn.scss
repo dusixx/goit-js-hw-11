@@ -1,6 +1,14 @@
 $btnColor: #212121;
 $btnColorBg: #cfcfcf;
 
+%link {
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+
+  transition: color var(--transition-params);
+}
+
 %btn {
   padding: 0;
   color: $btnColor;

@@ -10,9 +10,8 @@ import hwData from './js/hw-data';
 //
 
 const { defSearchOpts, message } = hwData;
-const { clearBtn, searchForm, searchInput, loader } = refs;
-const { isInt, error, info, succ, warn, scrollTop, getViewportClientRect } =
-  utils;
+const { clearBtn, searchForm, searchInput, loader, backtop } = refs;
+const { error, info, succ, scrollTop, getViewportClientRect, throttle } = utils;
 
 const gallery = new ImageGallery('.gallery');
 const pbs = new PixabayService(defSearchOpts);
@@ -23,6 +22,8 @@ const pbs = new PixabayService(defSearchOpts);
 
 clearBtn.addEventListener('click', handleClearInputClick);
 searchForm.addEventListener('submit', handleSearchFormSubmit);
+document.addEventListener('scroll', throttle(handleDocumentScroll, 500));
+backtop.addEventListener('click', handleBacktopClick);
 
 function handleClearInputClick(e) {
   searchInput.value = '';
@@ -38,10 +39,24 @@ function handleSearchFormSubmit(e) {
   const query = e.currentTarget.searchQuery.value.trim();
   if (!query) return info(message.NO_SEARCH_QUERY);
 
-  pbs.queryParams = { page: 1, q: query };
+  pbs.queryParams = { page: 1, perPage: 60, q: query };
   gallery.clear();
   // запускаем поиск
   showLoader();
+}
+
+function handleDocumentScroll() {
+  const action = window.pageYOffset > 1000 ? 'remove' : 'add';
+  backtop.classList[action]('backtop--hidden');
+}
+
+function handleBacktopClick(e) {
+  e.preventDefault();
+
+  scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
 }
 
 //
@@ -49,7 +64,7 @@ function handleSearchFormSubmit(e) {
 //
 
 function showLoader(show = true) {
-  loader.style.display = show ? 'block' : 'none';
+  loader.style.display = show ? 'flex' : 'none';
 }
 
 //
@@ -59,7 +74,7 @@ function showLoader(show = true) {
 const observer = new IntersectionObserver(handleGalleryScroll, {
   root: null,
   rootMargin: '0px',
-  threshold: 1,
+  threshold: 0.1,
 });
 
 observer.observe(loader);
@@ -77,7 +92,14 @@ async function handleGalleryScroll([entry], observer) {
 
     // рендерим галлерею
     await gallery.append(resp.hits);
-    scrollTop(getViewportClientRect().height / 2);
+
+    // скролим при последующих загрузках изображений
+    if (pbs.page > 2) {
+      scrollBy({
+        top: getViewportClientRect().height / 2,
+        behavior: 'smooth',
+      });
+    }
 
     // больше нет результатов
     if (pbs.isEOSReached) {

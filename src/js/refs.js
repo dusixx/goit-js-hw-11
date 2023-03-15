@@ -5,4 +5,5 @@ export default {
   searchInput: searchFormRef.searchQuery,
   clearBtn: searchFormRef.clearBtn,
   loader: document.querySelector('.loader'),
+  backtop: document.querySelector('.backtop'),
 };

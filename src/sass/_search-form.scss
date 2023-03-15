@@ -4,7 +4,7 @@
   // margin: 0 auto;
 
   width: var(--search-form-width);
-  height: 100%;
+  height: calc(var(--header-height) * 0.8);
 }
 
 .search-form__field {
@@ -53,7 +53,7 @@
 
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  // transform: scale(var(--search-btn-scale));
+  transform: scale(var(--search-btn-scale));
 
   opacity: 0.8;
   transition: opacity var(--transition-params);

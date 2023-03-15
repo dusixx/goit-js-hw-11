@@ -29,9 +29,9 @@ export default class ImageGallery {
 
   append(data) {
     this.ref.insertAdjacentHTML('beforeend', this.#makeMarkup(data));
-    const lastImage = this.ref.lastElementChild.children[0].children[0];
+    const lastImage = this.ref.lastElementChild?.children[0].children[0];
 
-    return waitForImage(lastImage);
+    if (lastImage) return waitForImage(lastImage);
   }
 
   get ref() {
@@ -39,7 +39,7 @@ export default class ImageGallery {
   }
 
   get length() {
-    return this.ref.children.length;
+    return this.ref.children?.length;
   }
 
   clear() {

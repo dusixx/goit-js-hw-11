@@ -3,21 +3,21 @@
   --color-header-bg: #24292f;
 
   --header-height: 60px;
-  --border-radius: 10px;
+  --border-radius: 15px;
   --search-form-width: 400px;
 
   --search-input-outline-width: 1px;
   --search-input-outline: 0px 0px 0px var(--search-input-outline-width)
     var(--color-accent);
 
-  --search-input-height: 70%;
+  --search-input-height: 80%;
   --search-input-padding: 8px;
   --search-input-padding-right: calc(
     var(--search-btn-width) + var(--search-btn-celar-width) +
       var(--search-btn-celar-width) / 2
   );
 
-  --search-btn-width: 40px;
+  --search-btn-width: 50px;
   --search-btn-scale: 1;
 
   --search-btn-clear-width: 28px;
@@ -25,5 +25,7 @@
   --search-btn-clear-right: calc(
     var(--search-btn-width) + var(--search-btn-clear-offset)
   );
+
   --transition-params: ease-out 250ms;
+  --loader-padding-top: 50px;
 }
