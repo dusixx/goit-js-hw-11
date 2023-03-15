@@ -81,7 +81,7 @@ async function handleGalleryScroll([entry], observer) {
     if (pbs.isEOSReached) {
       showLoader(false);
 
-      return resp.totalHits
+      return resp.totalHits > 0
         ? info(message.END_OF_SEARCH)
         : info(message.NO_SEARCH_RESULTS);
     }
