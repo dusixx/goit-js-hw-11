@@ -11,7 +11,8 @@ import hwData from './js/hw-data';
 
 const { defSearchOpts, message } = hwData;
 const { clearBtn, searchForm, searchInput, loader } = refs;
-const { isInt, error, info, succ, warn, scrollTop } = utils;
+const { isInt, error, info, succ, warn, scrollTop, getViewportClientRect } =
+  utils;
 
 const gallery = new ImageGallery('.gallery');
 const pbs = new PixabayService(defSearchOpts);
@@ -75,7 +76,8 @@ async function handleGalleryScroll([entry], observer) {
     }
 
     // рендерим галлерею
-    gallery.append(resp.hits);
+    await gallery.append(resp.hits);
+    scrollTop(getViewportClientRect().height / 2);
 
     // больше нет результатов
     if (pbs.isEOSReached) {
@@ -87,7 +89,6 @@ async function handleGalleryScroll([entry], observer) {
     }
   } catch (err) {
     showLoader(false);
-    // todo: лучше выводить только ошибки axios
     error(err.message);
     console.error(err);
   }

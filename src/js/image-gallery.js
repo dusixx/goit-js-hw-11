@@ -1,7 +1,3 @@
-// const waitElemHeight = el => {
-//   while (!el.getBoundingClientRect().height);
-// };
-
 export default class ImageGallery {
   #ref;
 
@@ -33,17 +29,10 @@ export default class ImageGallery {
 
   append(data) {
     this.ref.insertAdjacentHTML('beforeend', this.#makeMarkup(data));
-  }
+    const lastImage = this.ref.lastElementChild.children[0].children[0];
 
-  prepend(data) {
-    this.ref.insertAdjacentHTML('afterbegin', this.#makeMarkup(data));
+    return waitForImage(lastImage);
   }
-
-  // async appendAsync(data) {
-  //   this.append(data);
-  //   // ждем пока загрузится последний элемент
-  //   await waitElemHeight(this.ref.lastElementChild);
-  // }
 
   get ref() {
     return this.#ref;
@@ -56,4 +45,16 @@ export default class ImageGallery {
   clear() {
     this.ref.innerHTML = '';
   }
+}
+
+function waitForImage(img) {
+  return new Promise(resolve => {
+    img.addEventListener(
+      'load',
+      ({ target }) => {
+        resolve(target);
+      },
+      { once: true }
+    );
+  });
 }

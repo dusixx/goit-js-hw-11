@@ -59,15 +59,26 @@ export default {
    * @param {number} top
    * @param {number} delay
    */
-  scrollTop(top, delay) {
+  scrollTop(top, { behavior = 'smooth', delay } = {}) {
     if (isInt(delay)) {
-      return setTimeout(scrollTop, delay, v);
+      return setTimeout(scrollTop, delay, top, { behavior });
     }
 
     window.scrollBy({
       top,
-      behavior: 'smooth',
+      behavior: behavior,
     });
+  },
+
+  getViewportClientRect() {
+    const doc = document.documentElement;
+
+    return {
+      height: doc.clientHeight,
+      width: doc.clientWidth,
+      top: doc.clientTop,
+      left: doc.clientLeft,
+    };
   },
 
   /**
