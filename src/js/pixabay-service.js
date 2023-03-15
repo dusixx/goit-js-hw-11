@@ -2,7 +2,7 @@ import { image, searchParams } from './rest-data';
 import axios from 'axios';
 import utils from './utils';
 
-const { isFunc, isInt, isObj, isStr } = utils;
+const { isInt, isStr } = utils;
 
 const defOpts = {
   pageIncrement: 1,
