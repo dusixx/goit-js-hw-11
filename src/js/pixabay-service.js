@@ -25,7 +25,6 @@ export default class PixabayService {
   }
 
   /**
-   *
    * Формирует строку запроса к серверу, добавляя к baseUrl
    * параметры из #queryParams с именами в snake_case
    */
@@ -44,7 +43,6 @@ export default class PixabayService {
   }
 
   /**
-   *
    * Делает запрос на сервер с заданными параметрами
    * @param {*} params
    */
@@ -74,7 +72,6 @@ export default class PixabayService {
   }
 
   /**
-   *
    * Вернет объект {param_name: value,...}
    * c именами параметров запроса в snake_case без ключа
    */
@@ -86,7 +83,6 @@ export default class PixabayService {
   }
 
   /**
-   *
    * Обновляет параметры в кеше, при (params === null) - очищает кеш
    * @param {*} params - строка|объект параметров или null
    */
