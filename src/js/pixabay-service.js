@@ -31,9 +31,11 @@ export default class PixabayService {
       ([name, value]) => `${name}=${value}`
     );
 
-    return `${this.#baseUrl}?key=${this.#key}${
-      pstr.length ? `&${pstr.join('&')}` : ''
-    }`;
+    return encodeURI(
+      `${this.#baseUrl}?key=${this.#key}${
+        pstr.length ? `&${pstr.join('&')}` : ''
+      }`
+    );
   }
 
   /**
@@ -46,7 +48,10 @@ export default class PixabayService {
       const { data, config } = await axios.get(this.#buildQuery(params));
 
       // обновляем параметры актуальными данными
-      this.queryParams = config.url;
+      // Декодируем, иначе, если запрос закодирован -
+      // при следующем вызове buildQuery он будет кодироваться снова.
+      // И так пока длинна запроса не превысит лимит
+      this.queryParams = decodeURI(config.url);
 
       // если задана page, инкрементируем ее, сохраняя текущую
       this.currentPage = this.page;

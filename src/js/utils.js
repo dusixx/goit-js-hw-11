@@ -5,7 +5,7 @@ import simpleLightbox from 'simplelightbox';
 // чтобы не перекрывало кнопки
 Notify.init({ position: 'right-bottom' });
 
-const defNotifyTimeout = 2000;
+const defNotifyTimeout = 3000;
 
 const isDef = v => typeof v !== 'undefined';
 const isStr = v => typeof v === 'string';

@@ -1,12 +1,12 @@
 export default {
   message: {
     SEARCH_RESULTS_FOUND(totalHits) {
-      return `Hooray! We found ${totalHits} images.`;
+      return `Hooray! We found (${totalHits}) images`;
     },
 
-    NO_SEARCH_QUERY: 'Please, input your search query',
-    END_OF_SEARCH: "We're sorry, but you've reached the end of search results.",
-    NO_SEARCH_RESULTS: 'Sorry, there are no images matching your query.',
+    EMPTY_SEARCH_QUERY: 'Please, input your search query',
+    END_OF_SEARCH_REACHED: "Sorry, you've reached the end of search results",
+    NO_SEARCH_RESULTS: 'Sorry, there are no images matching your query',
   },
 
   defSearchOpts: {

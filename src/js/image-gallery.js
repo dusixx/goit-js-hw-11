@@ -1,3 +1,10 @@
+const previewWidth = {
+  tiny: 180,
+  small: 340,
+  middle: 640,
+  large: 1280,
+};
+
 export default class ImageGallery {
   #ref;
 
@@ -16,18 +23,23 @@ export default class ImageGallery {
   #makeMarkup(data = []) {
     return data
       .map(itm => {
-        const { webformatURL, webformatHeight, webformatWidth, tags } = itm;
+        const d = getImageData(itm);
+
+        console.log(d);
+
+        // todo: лучше сделать srcset, для 1х 2х как на сайте pixabay
         return `
             <li class=${this.ref.className}__item>
-                <img src="${webformatURL}" alt="${tags}"
-                width="320" loading="lazy">
+              <img src="${d.preview.small.url}" 
+              alt="${d.tags}"
+                width = "${d.preview.small.width}" loading="lazy">
             </li>`;
       })
       .join('');
   }
 
   /**
-   * @param {array} data - данные изображений с сервера
+   * @param {array} data - данные изображений с сервера (hits)
    * @returns промис, ожидающий загрузки последнего изображения
    */
   append(data) {
@@ -64,4 +76,56 @@ function waitForImage(img) {
       { once: true }
     );
   });
+}
+
+function replaceWidth(url, width) {
+  return url.replace(/(_\d+)(?=\.\w+$)/, `_${width}`);
+}
+
+/**
+ * @param {*} img - данные изображения (hits[0..N])
+ * @returns объект с необходимыми(доступными для free) данными
+ */
+function getImageData(img) {
+  const {
+    webformatURL,
+    webformatWidth,
+    pageURL: homePage,
+    // для free версии акка не приходит(?)
+    imageURL: url,
+    imageWidth: width,
+    imageHeight: height,
+    imageSize: size,
+    largeImageURL,
+    tags,
+    views,
+    downloads,
+    likes,
+    comments,
+  } = img;
+
+  return {
+    preview: {
+      normal: { url: webformatURL, width: webformatWidth },
+      small: {
+        url: replaceWidth(webformatURL, previewWidth.small),
+        width: previewWidth.small,
+      },
+      middle: {
+        url: replaceWidth(webformatURL, previewWidth.middle),
+        width: previewWidth.middle,
+      },
+      large: { url: largeImageURL, width: previewWidth.large },
+    },
+    width,
+    height,
+    size,
+    url,
+    homePage,
+    tags,
+    views,
+    downloads,
+    likes,
+    comments,
+  };
 }

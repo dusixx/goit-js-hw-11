@@ -47,7 +47,7 @@ function handleSearchFormSubmit(e) {
   e.preventDefault();
 
   const query = e.currentTarget.searchQuery.value.trim();
-  if (!query) return info(message.NO_SEARCH_QUERY);
+  if (!query) return info(message.EMPTY_SEARCH_QUERY);
 
   pbs.queryParams = { page: 1, q: query };
   gallery.clear();
@@ -118,16 +118,16 @@ async function handleGalleryScroll([entry], observer) {
     await gallery.append(resp.hits);
 
     // скролим начиная со следующей страницы
-    // note: Начальная страница может быть любой, не всегда 1-ой
+    // Начальная страница может быть любой, не всегда 1-ой
     if (!isInitialPage) scrollTopBy(getViewportClientRect().height / 2);
 
-    // больше нет результатов
+    // нет результатов
     if (pbs.isEOSReached) {
       showLoader(false);
 
       return resp.totalHits === 0
-        ? error(message.NO_SEARCH_RESULTS)
-        : info(message.END_OF_SEARCH);
+        ? info(message.NO_SEARCH_RESULTS)
+        : info(message.END_OF_SEARCH_REACHED);
     }
   } catch (err) {
     showLoader(false);
