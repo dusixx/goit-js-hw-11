@@ -19,11 +19,6 @@ export default class PixabayService {
     this.options = opts;
   }
 
-  #increasePage() {
-    const inc = this.#options.pageIncrement;
-    this.page += isInt(inc) ? inc : defOpts.pageIncrement;
-  }
-
   /**
    * Формирует строку запроса к серверу, добавляя к baseUrl
    * параметры из #queryParams с именами в snake_case
@@ -54,7 +49,7 @@ export default class PixabayService {
     this.queryParams = config.url;
 
     // если задана page, инкрементируем ее
-    this.#increasePage();
+    this.page += this.options.pageIncrement;
 
     // кешируем ответ
     this.#response = {
