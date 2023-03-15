@@ -83,10 +83,10 @@ function replaceWidth(url, width) {
 }
 
 /**
- * @param {*} img - данные изображения (hits[0..N])
+ * @param {*} hit - данные изображения из массива hits[]
  * @returns объект с необходимыми(доступными для free) данными
  */
-function getImageData(img) {
+function getImageData(hit) {
   const {
     webformatURL,
     webformatWidth,
@@ -102,19 +102,16 @@ function getImageData(img) {
     downloads,
     likes,
     comments,
-  } = img;
+  } = hit;
+
+  const smallURL = replaceWidth(webformatURL, previewWidth.small);
+  const middleURL = replaceWidth(webformatURL, previewWidth.middle);
 
   return {
     preview: {
       normal: { url: webformatURL, width: webformatWidth },
-      small: {
-        url: replaceWidth(webformatURL, previewWidth.small),
-        width: previewWidth.small,
-      },
-      middle: {
-        url: replaceWidth(webformatURL, previewWidth.middle),
-        width: previewWidth.middle,
-      },
+      small: { url: smallURL, width: previewWidth.small },
+      middle: { url: middleURL, width: previewWidth.middle },
       large: { url: largeImageURL, width: previewWidth.large },
     },
     width,
