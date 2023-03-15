@@ -2,7 +2,7 @@ import { image, searchParams } from './rest-data';
 import axios from 'axios';
 import utils from './utils';
 
-const { isInt, isStr } = utils;
+const { isInt, isStr, camelToSnake, namesToSnake, parseUrlParams } = utils;
 const defOpts = {
   pageIncrement: 1,
 };
@@ -26,10 +26,9 @@ export default class PixabayService {
   #buildQuery(params) {
     // обновляем параметры в кеше
     this.queryParams = params;
-    const qp = this.queryParams;
 
-    const pstr = Object.keys(qp).map(
-      name => `${utils.camelToSnake(name)}=${qp[name]}`
+    const pstr = Object.entries(this.queryParams).map(
+      ([name, value]) => `${name}=${value}`
     );
 
     return `${this.#baseUrl}?key=${this.#key}${
@@ -42,24 +41,34 @@ export default class PixabayService {
    * @param {*} params
    */
   async fetch(params) {
-    // обновляем параметры и делаем запрос на сервер
-    const { data, config } = await axios.get(this.#buildQuery(params));
+    try {
+      // обновляем параметры и делаем запрос на сервер
+      const { data, config } = await axios.get(this.#buildQuery(params));
 
-    // обновляем параметры актуальными данными
-    this.queryParams = config.url;
+      // обновляем параметры актуальными данными
+      this.queryParams = config.url;
 
-    // если задана page, инкрементируем ее
-    this.page += this.options.pageIncrement;
+      // если задана page, инкрементируем ее, сохраняя текущую
+      this.currentPage = this.page;
+      this.page += this.options.pageIncrement;
 
-    // кешируем ответ
-    this.#response = {
-      total: data.total,
-      totalHits: data.totalHits,
-      hits: data.hits,
-      url: config.url,
-    };
+      // кешируем ответ
+      this.#response = {
+        total: data.total,
+        totalHits: data.totalHits,
+        hits: data.hits,
+        url: config.url,
+      };
 
-    return { ...this.#response };
+      return { ...this.#response };
+      //
+      // error
+    } catch (err) {
+      // копируем в message более осмысленное сообщение
+      // и прокидываем ошибку в пользовательский код
+      [err.message, err.message_] = [err.response.data, err.message];
+      throw err;
+    }
   }
 
   get baseUrl() {
@@ -79,6 +88,7 @@ export default class PixabayService {
 
   /**
    * Обновляет параметры в кеше, при (params === null) - очищает кеш
+   * note: Валидации значений не происходит, можно, например, задать {page: 0}
    * @param {*} params - строка|объект параметров или null
    */
   set queryParams(params) {
@@ -88,8 +98,8 @@ export default class PixabayService {
       params === null
         ? {}
         : isStr(params)
-        ? { ...qp, ...utils.parseUrlParams(params) }
-        : { ...qp, ...utils.namesToSnake(params) };
+        ? { ...qp, ...parseUrlParams(params) }
+        : { ...qp, ...namesToSnake(params) };
   }
 
   set options(opts) {
@@ -100,6 +110,8 @@ export default class PixabayService {
     return { ...this.#options };
   }
 
+  // если указан инкремент, возвращает не текущую страницу,
+  // а значение после автоинкрементации
   get page() {
     return this.#queryParams.page;
   }
@@ -108,10 +120,16 @@ export default class PixabayService {
     if (isInt(v)) this.#queryParams.page = v;
   }
 
+  get perPage() {
+    return this.#queryParams['per_page'];
+  }
+
+  set perPage(v) {
+    if (isInt(v)) this.#queryParams['per_page'] = v;
+  }
+
   get isEOSReached() {
-    return (
-      this.page >
-      Math.ceil(this.#response.totalHits / this.#queryParams['per_page'])
-    );
+    const { totalHits, hits } = this.#response;
+    return this.page > Math.ceil(totalHits / this.perPage) || !hits.length;
   }
 }

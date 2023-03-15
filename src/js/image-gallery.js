@@ -19,9 +19,8 @@ export default class ImageGallery {
         const { webformatURL, webformatHeight, webformatWidth, tags } = itm;
         return `
             <li class=${this.ref.className}__item>
-                <a><img src="${webformatURL}" alt="${tags}"
+                <img src="${webformatURL}" alt="${tags}"
                 width="320" loading="lazy">
-                </a>
             </li>`;
       })
       .join('');
@@ -34,12 +33,16 @@ export default class ImageGallery {
   append(data) {
     this.ref.insertAdjacentHTML('beforeend', this.#makeMarkup(data));
 
-    const lastImage = this.ref.lastElementChild?.children[0].children[0];
+    const lastImage = this.ref.lastElementChild?.firstElementChild;
     if (lastImage) return waitForImage(lastImage);
   }
 
   get ref() {
     return this.#ref;
+  }
+
+  get isEmpty() {
+    return this.length === 0;
   }
 
   get length() {

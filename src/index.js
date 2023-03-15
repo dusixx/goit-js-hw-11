@@ -9,9 +9,16 @@ import hwData from './js/hw-data';
 // Init
 //
 
+const opts = {
+  scrollThrottleDelay: 500,
+  backtopScrollOffset: 1000,
+  backtopHiddenClass: 'backtop--hidden',
+  scrollBehavior: 'smooth',
+};
+
 const { defSearchOpts, message } = hwData;
 const { clearBtn, searchForm, searchInput, loader, backtop } = refs;
-const { error, info, succ, scrollTop, getViewportClientRect, throttle } = utils;
+const { error, info, succ, getViewportClientRect, throttle } = utils;
 
 const gallery = new ImageGallery('.gallery');
 const pbs = new PixabayService(defSearchOpts);
@@ -22,8 +29,11 @@ const pbs = new PixabayService(defSearchOpts);
 
 clearBtn.addEventListener('click', handleClearInputClick);
 searchForm.addEventListener('submit', handleSearchFormSubmit);
-document.addEventListener('scroll', throttle(handleDocumentScroll, 500));
 backtop.addEventListener('click', handleBacktopClick);
+document.addEventListener(
+  'scroll',
+  throttle(handleDocumentScroll, opts.scrollThrottleDelay)
+);
 
 function handleClearInputClick(e) {
   searchInput.value = '';
@@ -39,15 +49,16 @@ function handleSearchFormSubmit(e) {
   const query = e.currentTarget.searchQuery.value.trim();
   if (!query) return info(message.NO_SEARCH_QUERY);
 
-  pbs.queryParams = { page: 1, perPage: 60, q: query };
+  pbs.queryParams = { page: 0, q: query };
   gallery.clear();
   // запускаем поиск
   showLoader();
 }
 
 function handleDocumentScroll() {
-  const action = window.pageYOffset > 1000 ? 'remove' : 'add';
-  backtop.classList[action]('backtop--hidden');
+  const action =
+    window.pageYOffset > opts.backtopScrollOffset ? 'remove' : 'add';
+  backtop.classList[action](opts.backtopHiddenClass);
 }
 
 function handleBacktopClick(e) {
@@ -55,7 +66,7 @@ function handleBacktopClick(e) {
 
   scrollTo({
     top: 0,
-    behavior: 'smooth',
+    behavior: opts.scrollBehavior,
   });
 }
 
@@ -86,18 +97,19 @@ async function handleGalleryScroll([entry], observer) {
     const resp = await pbs.fetch();
 
     // это первый запрос - показываем кол-во результатов
-    if (!gallery.length && resp.totalHits) {
+    if (gallery.isEmpty && resp.totalHits) {
       succ(message.SEARCH_RESULTS_FOUND(resp.totalHits));
     }
 
     // рендерим галлерею
     await gallery.append(resp.hits);
 
-    // скролим при последующих загрузках изображений
-    if (pbs.page > 2) {
+    // скролим начиная со следующей страницы
+    // note: Начальная страница может быть любой, не всегда 1-ой
+    if (gallery.length !== pbs.perPage) {
       scrollBy({
         top: getViewportClientRect().height / 2,
-        behavior: 'smooth',
+        behavior: opts.scrollBehavior,
       });
     }
 
@@ -106,7 +118,7 @@ async function handleGalleryScroll([entry], observer) {
       showLoader(false);
 
       return resp.totalHits === 0
-        ? info(message.NO_SEARCH_RESULTS)
+        ? error(message.NO_SEARCH_RESULTS)
         : info(message.END_OF_SEARCH);
     }
   } catch (err) {
