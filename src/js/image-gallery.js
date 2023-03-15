@@ -27,10 +27,14 @@ export default class ImageGallery {
       .join('');
   }
 
+  /**
+   * @param {array} data - данные изображений с сервера
+   * @returns промис, ожидающий загрузки последнего изображения
+   */
   append(data) {
     this.ref.insertAdjacentHTML('beforeend', this.#makeMarkup(data));
-    const lastImage = this.ref.lastElementChild?.children[0].children[0];
 
+    const lastImage = this.ref.lastElementChild?.children[0].children[0];
     if (lastImage) return waitForImage(lastImage);
   }
 
