@@ -1,8 +1,6 @@
 const image = {
   type: ['all', 'photo', 'illustration', 'vector'],
-
   order: ['most relevant', "editor's choice", 'trending', 'latest'],
-
   orientation: ['all', 'horizontal', 'vertical'],
 
   colors: [

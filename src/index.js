@@ -1,78 +1,93 @@
 import './sass/index.scss';
-import { PixabayService } from './js/rest';
+import PixabayService from './js/pixabay-service';
+import ImageGallery from './js/image-gallery';
 import utils from './js/utils';
+import refs from './js/refs';
+import hwData from './js/hw-data';
 
-const searchFormRef = document.querySelector('.search-form');
-const searchInputRef = searchFormRef.searchQuery;
-const clearInputRef = searchFormRef.clearBtn;
+//
+// Init
+//
 
-const serv = new PixabayService({
-  orientation: 'horizontal',
-  page: 1,
-  perPage: 40,
-  imageType: 'photo',
-  // safesearch: true,
-});
+const { defSearchOpts, message } = hwData;
+const { clearBtn, searchForm, searchInput, loader } = refs;
+const { error, info, succ, warn } = utils;
 
-clearInputRef.addEventListener('click', e => {
-  searchInputRef.value = '';
+const gallery = new ImageGallery('.gallery');
+const pbs = new PixabayService(defSearchOpts);
+
+//
+// Event handlers
+//
+
+clearBtn.addEventListener('click', handleClearInputClick);
+searchForm.addEventListener('submit', handleSearchFormSubmit);
+
+function handleClearInputClick(e) {
+  searchInput.value = '';
   // чтобы не слетал outline
-  searchInputRef.focus();
-  renderGallery('.gallery', null);
-});
-
-searchFormRef.addEventListener('submit', handleSearchFormSubmit);
+  searchInput.focus();
+  gallery.clear();
+  showLoader(false);
+}
 
 function handleSearchFormSubmit(e) {
   e.preventDefault();
 
   const query = e.currentTarget.searchQuery.value.trim();
-  if (!query) return;
+  if (!query) return info(message.NO_SEARCH_QUERY);
 
-  renderGallery('.gallery', null);
-  serv.page = 1;
-
-  serv
-    .fetch({
-      q: query,
-    })
-    .then(resp => {
-      if (resp.totalHits > 0) {
-        utils.info(
-          `Hooray! We found ${resp.totalHits} images of '${query}'.`,
-          2000
-        );
-      }
-
-      renderGallery('.gallery', resp.hits);
-      console.log(resp);
-      console.log('page', serv.page);
-    })
-    .catch(err => {
-      utils.error(err.message);
-      console.error(err);
-    });
+  pbs.queryParams = { page: 1, q: query };
+  gallery.clear();
+  // показываем loader, чтобы запустить поиск
+  showLoader();
 }
 
-function renderGallery(classSelector, data = []) {
-  const galleryRef = document.querySelector(classSelector);
-  if (!galleryRef) return null;
+//
+// Helpers
+//
 
-  // очищаем галлерею
-  if (data === null) {
-    galleryRef.innerHTML = '';
-    return galleryRef;
+function showLoader(show = true) {
+  loader.style.display = show ? 'block' : 'none';
+}
+
+//
+// Infinity scroll
+//
+
+const observer = new IntersectionObserver(handleGalleryScroll, {
+  root: null,
+  rootMargin: '0px',
+  threshold: 1,
+});
+
+observer.observe(loader);
+
+async function handleGalleryScroll([entry], observer) {
+  if (!entry.isIntersecting) return;
+
+  try {
+    const resp = await pbs.fetch();
+
+    // это первый запрос - показываем кол-во результатов
+    if (!gallery.length && resp.totalHits) {
+      succ(message.SEARCH_RESULTS_FOUND(resp.totalHits));
+    }
+
+    // рендерим галлерею
+    gallery.append(resp.hits);
+
+    // больше нет результатов
+    if (pbs.isEOSReached) {
+      showLoader(false);
+
+      return resp.totalHits
+        ? info(message.END_OF_SEARCH)
+        : info(message.NO_SEARCH_RESULTS);
+    }
+  } catch (err) {
+    showLoader(false);
+    error(err.message);
+    console.error(err);
   }
-
-  const markup = data
-    .map(itm => {
-      const { webformatURL, webformatHeight, webformatWidth, tags } = itm;
-      return `
-      <li class=${classSelector.slice(1)}__item>
-        <a><img src="${webformatURL}" alt="${tags}" width="320"></a>
-      </li>`;
-    })
-    .join('');
-
-  galleryRef.insertAdjacentHTML('beforeend', markup);
 }

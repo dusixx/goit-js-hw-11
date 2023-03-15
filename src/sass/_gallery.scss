@@ -1,12 +1,16 @@
 .gallery {
-  // display: flex;
-  // flex-direction: column;
-  // flex-wrap: wrap;
-  // align-items: flex-start;
-  // flex: 1;
-  // overflow: hidden;
+  display: flex;
+  //flex-direction: column;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  flex: 1;
+  overflow: hidden;
 
-  &__item {
-    columns: 4;
-  }
+  // &__item {
+  //   columns: 4;
+  // }
+}
+
+.more-btn {
+  @extend %visually-hidden;
 }
