@@ -56,6 +56,21 @@ export default {
   },
 
   /**
+   * @param {number} top
+   * @param {number} delay
+   */
+  scrollTop(top, delay) {
+    if (isInt(delay)) {
+      return setTimeout(scrollTop, delay, v);
+    }
+
+    window.scrollBy({
+      top,
+      behavior: 'smooth',
+    });
+  },
+
+  /**
    *
    * @param {string} url -> ...name1=value1&name2=value2...
    * @return {object} { name1: value1,...}

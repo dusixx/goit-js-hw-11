@@ -1,7 +1,11 @@
+// const waitElemHeight = el => {
+//   while (!el.getBoundingClientRect().height);
+// };
+
 export default class ImageGallery {
   #ref;
+
   /**
-   *
    * @param {string} classSelector
    * @param {*} opts
    */
@@ -34,6 +38,12 @@ export default class ImageGallery {
   prepend(data) {
     this.ref.insertAdjacentHTML('afterbegin', this.#makeMarkup(data));
   }
+
+  // async appendAsync(data) {
+  //   this.append(data);
+  //   // ждем пока загрузится последний элемент
+  //   await waitElemHeight(this.ref.lastElementChild);
+  // }
 
   get ref() {
     return this.#ref;

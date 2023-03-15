@@ -11,7 +11,7 @@ import hwData from './js/hw-data';
 
 const { defSearchOpts, message } = hwData;
 const { clearBtn, searchForm, searchInput, loader } = refs;
-const { isInt, error, info, succ, warn } = utils;
+const { isInt, error, info, succ, warn, scrollTop } = utils;
 
 const gallery = new ImageGallery('.gallery');
 const pbs = new PixabayService(defSearchOpts);
@@ -51,17 +51,6 @@ function showLoader(show = true) {
   loader.style.display = show ? 'block' : 'none';
 }
 
-function scrollTop(v, delay) {
-  if (isInt(delay)) {
-    return setTimeout(scrollTop, delay, v);
-  }
-
-  window.scrollBy({
-    top: v,
-    behavior: 'smooth',
-  });
-}
-
 //
 // Infinity scroll
 //
@@ -87,7 +76,6 @@ async function handleGalleryScroll([entry], observer) {
 
     // рендерим галлерею
     gallery.append(resp.hits);
-    // scrollTop(500);
 
     // больше нет результатов
     if (pbs.isEOSReached) {
