@@ -88,8 +88,8 @@ export default class PixabayService {
 
   /**
    * Обновляет параметры в кеше, при (params === null) - очищает кеш
-   * note: Валидации значений не происходит, можно, например, задать {page: 0}
-   * Для валидации можно задать объект { paramName: valueValidator = () =>{...} }
+   * Валидации значений не происходит, допускается задать { page: 0, ... }
+   * Можно задать объект валидации { paramName: valueValidator = () => {...} }
    * @param {*} params - строка|объект параметров или null
    */
   set queryParams(params) {
