@@ -50,7 +50,7 @@ function parseUrlParams(str) {
 
   return res.reduce((obj, itm) => {
     const [name, value = ''] = itm.split('=');
-    obj[name] = isNum(value) ? +value : value;
+    obj[name] = isNum(value) ? Number(value) : value;
 
     return obj;
   }, {});
