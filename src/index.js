@@ -81,9 +81,9 @@ async function handleGalleryScroll([entry], observer) {
     if (pbs.isEOSReached) {
       showLoader(false);
 
-      return resp.totalHits > 0
-        ? info(message.END_OF_SEARCH)
-        : info(message.NO_SEARCH_RESULTS);
+      return resp.totalHits === 0
+        ? info(message.NO_SEARCH_RESULTS)
+        : info(message.END_OF_SEARCH);
     }
   } catch (err) {
     showLoader(false);
