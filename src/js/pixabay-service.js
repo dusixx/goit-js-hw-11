@@ -52,6 +52,8 @@ export default class PixabayService {
       this.currentPage = this.page;
       this.page += this.options.pageIncrement;
 
+      console.log(data.hits);
+
       // кешируем ответ
       this.#response = {
         total: data.total,

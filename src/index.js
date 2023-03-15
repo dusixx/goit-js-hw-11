@@ -49,7 +49,7 @@ function handleSearchFormSubmit(e) {
   const query = e.currentTarget.searchQuery.value.trim();
   if (!query) return info(message.NO_SEARCH_QUERY);
 
-  pbs.queryParams = { page: 0, q: query };
+  pbs.queryParams = { page: 1, q: query };
   gallery.clear();
   // запускаем поиск
   showLoader();
@@ -63,11 +63,7 @@ function handleDocumentScroll() {
 
 function handleBacktopClick(e) {
   e.preventDefault();
-
-  scrollTo({
-    top: 0,
-    behavior: opts.scrollBehavior,
-  });
+  scrollTopTo(0);
 }
 
 //
@@ -76,6 +72,20 @@ function handleBacktopClick(e) {
 
 function showLoader(show = true) {
   loader.style.display = show ? 'flex' : 'none';
+}
+
+function scrollTopBy(top) {
+  scrollBy({
+    top,
+    behavior: opts.scrollBehavior,
+  });
+}
+
+function scrollTopTo(top) {
+  scrollTo({
+    top,
+    behavior: opts.scrollBehavior,
+  });
 }
 
 //
@@ -93,11 +103,14 @@ observer.observe(loader);
 async function handleGalleryScroll([entry], observer) {
   if (!entry.isIntersecting) return;
 
+  // первая порция изображений
+  const isInitialPage = gallery.isEmpty;
+
   try {
     const resp = await pbs.fetch();
 
-    // это первый запрос - показываем кол-во результатов
-    if (gallery.isEmpty && resp.totalHits) {
+    // первый запрос - показываем кол-во результатов
+    if (isInitialPage && resp.totalHits) {
       succ(message.SEARCH_RESULTS_FOUND(resp.totalHits));
     }
 
@@ -106,12 +119,7 @@ async function handleGalleryScroll([entry], observer) {
 
     // скролим начиная со следующей страницы
     // note: Начальная страница может быть любой, не всегда 1-ой
-    if (gallery.length !== pbs.perPage) {
-      scrollBy({
-        top: getViewportClientRect().height / 2,
-        behavior: opts.scrollBehavior,
-      });
-    }
+    if (!isInitialPage) scrollTopBy(getViewportClientRect().height / 2);
 
     // больше нет результатов
     if (pbs.isEOSReached) {
