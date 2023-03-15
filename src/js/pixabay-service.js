@@ -3,7 +3,6 @@ import axios from 'axios';
 import utils from './utils';
 
 const { isInt, isStr } = utils;
-
 const defOpts = {
   pageIncrement: 1,
 };
