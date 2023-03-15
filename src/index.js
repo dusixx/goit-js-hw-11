@@ -11,7 +11,7 @@ import hwData from './js/hw-data';
 
 const { defSearchOpts, message } = hwData;
 const { clearBtn, searchForm, searchInput, loader } = refs;
-const { error, info, succ, warn } = utils;
+const { isInt, error, info, succ, warn } = utils;
 
 const gallery = new ImageGallery('.gallery');
 const pbs = new PixabayService(defSearchOpts);
@@ -39,7 +39,7 @@ function handleSearchFormSubmit(e) {
 
   pbs.queryParams = { page: 1, q: query };
   gallery.clear();
-  // показываем loader, чтобы запустить поиск
+  // запускаем поиск
   showLoader();
 }
 
@@ -49,6 +49,17 @@ function handleSearchFormSubmit(e) {
 
 function showLoader(show = true) {
   loader.style.display = show ? 'block' : 'none';
+}
+
+function scrollTop(v, delay) {
+  if (isInt(delay)) {
+    return setTimeout(scrollTop, delay, v);
+  }
+
+  window.scrollBy({
+    top: v,
+    behavior: 'smooth',
+  });
 }
 
 //
@@ -76,6 +87,7 @@ async function handleGalleryScroll([entry], observer) {
 
     // рендерим галлерею
     gallery.append(resp.hits);
+    // scrollTop(500);
 
     // больше нет результатов
     if (pbs.isEOSReached) {
@@ -87,6 +99,7 @@ async function handleGalleryScroll([entry], observer) {
     }
   } catch (err) {
     showLoader(false);
+    // todo: лучше выводить только ошибки axios
     error(err.message);
     console.error(err);
   }
