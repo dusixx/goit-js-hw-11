@@ -16,7 +16,7 @@ export default class ImageGallery {
     this.#ref = document.querySelector(classSelector);
 
     if (this.ref?.nodeName !== 'UL') {
-      throw new Error('<ul>...</ul> expected');
+      throw new Error('Unordered list expected');
     }
   }
 
@@ -25,7 +25,7 @@ export default class ImageGallery {
       .map(itm => {
         const d = getImageData(itm);
 
-        console.log(d);
+        // console.log(d);
 
         // todo: лучше сделать srcset, для 1х 2х как на сайте pixabay
         return `
@@ -81,6 +81,11 @@ function waitForImage(img) {
 function replaceWidth(url, width) {
   return url.replace(/(_\d+)(?=\.\w+$)/, `_${width}`);
 }
+
+// todo: галлерея ничего не должна занть о hits и тп
+// Нужно передавать понятные данные: ссылки на 1x 2x
+// ссылку на большое изображение, данные для оверлея как-то
+// alt-текст и тп
 
 /**
  * @param {*} hit - данные изображения из массива hits[]

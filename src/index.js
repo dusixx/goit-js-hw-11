@@ -4,21 +4,15 @@ import ImageGallery from './js/image-gallery';
 import utils from './js/utils';
 import refs from './js/refs';
 import hwData from './js/hw-data';
+import _ from './js/backtop';
 
 //
 // Init
 //
 
-const opts = {
-  scrollThrottleDelay: 500,
-  backtopScrollOffset: 1000,
-  backtopHiddenClass: 'backtop--hidden',
-  scrollBehavior: 'smooth',
-};
-
 const { defSearchOpts, message } = hwData;
 const { clearBtn, searchForm, searchInput, loader, backtop } = refs;
-const { error, info, succ, getViewportClientRect, throttle } = utils;
+const { error, info, succ, getViewportClientRect, scrollByTop } = utils;
 
 const gallery = new ImageGallery('.gallery');
 const pbs = new PixabayService(defSearchOpts);
@@ -29,11 +23,6 @@ const pbs = new PixabayService(defSearchOpts);
 
 clearBtn.addEventListener('click', handleClearInputClick);
 searchForm.addEventListener('submit', handleSearchFormSubmit);
-backtop.addEventListener('click', handleBacktopClick);
-document.addEventListener(
-  'scroll',
-  throttle(handleDocumentScroll, opts.scrollThrottleDelay)
-);
 
 function handleClearInputClick(e) {
   searchInput.value = '';
@@ -55,37 +44,12 @@ function handleSearchFormSubmit(e) {
   showLoader();
 }
 
-function handleDocumentScroll() {
-  const action =
-    window.pageYOffset > opts.backtopScrollOffset ? 'remove' : 'add';
-  backtop.classList[action](opts.backtopHiddenClass);
-}
-
-function handleBacktopClick(e) {
-  e.preventDefault();
-  scrollTopTo(0);
-}
-
 //
 // Helpers
 //
 
 function showLoader(show = true) {
   loader.style.display = show ? 'flex' : 'none';
-}
-
-function scrollTopBy(top) {
-  scrollBy({
-    top,
-    behavior: opts.scrollBehavior,
-  });
-}
-
-function scrollTopTo(top) {
-  scrollTo({
-    top,
-    behavior: opts.scrollBehavior,
-  });
 }
 
 //
@@ -119,9 +83,9 @@ async function handleGalleryScroll([entry], observer) {
 
     // скролим начиная со следующей страницы
     // Начальная страница может быть любой, не всегда 1-ой
-    if (!isInitialPage) scrollTopBy(getViewportClientRect().height / 2);
+    if (!isInitialPage) scrollByTop(getViewportClientRect().height / 2);
 
-    // нет результатов
+    // вообще/уже нет результатов
     if (pbs.isEOSReached) {
       showLoader(false);
 

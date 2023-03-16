@@ -49,8 +49,8 @@ function parseUrlParams(str) {
   res = (res[1] || res[0]).split('&');
 
   return res.reduce((obj, itm) => {
-    const [name, value = ''] = itm.split('=');
-    obj[name] = isNum(value) ? Number(value) : value;
+    const [name, val = ''] = itm.split('=');
+    obj[name] = isNum(val) ? Number(val) : val;
 
     return obj;
   }, {});
@@ -68,6 +68,24 @@ function getViewportClientRect() {
     top: doc.clientTop,
     left: doc.clientLeft,
   };
+}
+
+//
+// Scroll
+//
+
+function scrollByTop(top, behavior = 'smooth') {
+  scrollBy({
+    top,
+    behavior,
+  });
+}
+
+function scrollToTop(top, behavior = 'smooth') {
+  scrollTo({
+    top,
+    behavior,
+  });
 }
 
 //
@@ -101,6 +119,8 @@ export default {
   camelToSnake,
   namesToSnake,
   parseUrlParams,
+  scrollByTop,
+  scrollToTop,
   throttle,
   getViewportClientRect,
 };

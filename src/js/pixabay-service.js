@@ -3,13 +3,14 @@ import axios from 'axios';
 import utils from './utils';
 
 const { isInt, isStr, camelToSnake, namesToSnake, parseUrlParams } = utils;
+
 const defOpts = {
   pageIncrement: 1,
 };
 
 export default class PixabayService {
   #baseUrl = 'https://pixabay.com/api/';
-  #key = '34055483-ceef684195bde25252735e6a5';
+  #apiKey = '34055483-ceef684195bde25252735e6a5';
   #queryParams;
   #options;
   #response;
@@ -32,8 +33,8 @@ export default class PixabayService {
     );
 
     return encodeURI(
-      `${this.#baseUrl}?key=${this.#key}${
-        pstr.length ? `&${pstr.join('&')}` : ''
+      `${this.#baseUrl}?key=${this.#apiKey}${
+        pstr.length ? `&${pstr.join('&')}` : ``
       }`
     );
   }
@@ -50,7 +51,7 @@ export default class PixabayService {
       // обновляем параметры актуальными данными
       // Декодируем, иначе, если запрос закодирован -
       // при следующем вызове buildQuery он будет кодироваться снова.
-      // И так пока длинна запроса не превысит лимит
+      // И так, пока длинна запроса не превысит лимит (строка меняется)
       this.queryParams = decodeURI(config.url);
 
       // если задана page, инкрементируем ее, сохраняя текущую
@@ -78,10 +79,6 @@ export default class PixabayService {
     }
   }
 
-  get baseUrl() {
-    return this.#baseUrl;
-  }
-
   /**
    * Вернет объект {param_name: value,...}
    * c именами параметров запроса в snake_case без ключа
@@ -95,8 +92,8 @@ export default class PixabayService {
 
   /**
    * Обновляет параметры в кеше, при (params === null) - очищает кеш
-   * Валидации значений не происходит, допускается задать { page: 0, ... }
-   * Можно задать объект валидации { paramName: valueValidator = () => {...} }
+   * Валидации значений не происходит, допускается { page: 0, ... }
+   * Можно задать объект валидации { paramName: validator = () => {...} }
    * @param {*} params - строка|объект параметров или null
    */
   set queryParams(params) {
@@ -108,6 +105,10 @@ export default class PixabayService {
         : isStr(params)
         ? { ...qp, ...parseUrlParams(params) }
         : { ...qp, ...namesToSnake(params) };
+  }
+
+  get baseUrl() {
+    return this.#baseUrl;
   }
 
   set options(opts) {
