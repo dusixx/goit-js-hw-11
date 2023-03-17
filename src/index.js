@@ -17,6 +17,8 @@ const { error, info, succ, getViewportClientRect, scrollByTop } = utils;
 const gallery = new ImageGallery('.gallery');
 const pbs = new PixabayService(defSearchOpts);
 
+console.dir(pbs);
+
 //
 // Event handlers
 //
@@ -38,7 +40,7 @@ function handleSearchFormSubmit(e) {
   const query = e.currentTarget.searchQuery.value.trim();
   if (!query) return info(message.EMPTY_SEARCH_QUERY);
 
-  pbs.queryParams = { page: 0, q: query };
+  pbs.queryParams = { page: 1, q: query };
   gallery.clear();
   // запускаем поиск
   showLoader();

@@ -6,6 +6,7 @@ const { isInt, isStr, camelToSnake, namesToSnake, parseUrlParams } = utils;
 
 const defOpts = {
   pageIncrement: 1,
+  throwFetchErrors: true,
 };
 
 export default class PixabayService {
@@ -47,13 +48,12 @@ export default class PixabayService {
     try {
       // обновляем параметры и делаем запрос на сервер
       const resp = await axios.get(this.#buildQuery(params));
-      const { data, config } = resp;
 
       // обновляем параметры актуальными данными
       // Декодируем, иначе, если запрос закодирован -
       // при следующем вызове buildQuery() он будет кодироваться снова.
       // Будет происходить "обфускация" и увеличение длинны строки вплоть до лимита
-      this.queryParams = decodeURI(config.url);
+      this.queryParams = decodeURI(resp.config.url);
 
       // если задана page, инкрементируем ее, сохраняя текущую
       this.currentPage = this.page;
@@ -62,18 +62,17 @@ export default class PixabayService {
       // можно будет проверить if(inst.response.ok){...}
       resp.ok = true;
 
-      console.log(resp);
-
       return { ...(this.#response = resp) };
-      //
+
       // error
     } catch (err) {
       this.#response = err;
+
       // копируем в message более осмысленное сообщение
-      // и прокидываем ошибку в пользовательский код
       [err.message, err.message_] = [err.response.data, err.message];
 
-      throw err;
+      // если не прокидывать ошибку, надо анализировать response.ok
+      if (this.options.throwFetchErrors) throw err;
     }
   }
 
@@ -147,7 +146,8 @@ export default class PixabayService {
 
   get isEOSReached() {
     // в случае ошибки data === undefined
+    // и вернется true (this.page > NaN || !undefined)
     const { totalHits, hits } = this.#response.data || '';
-    return this.page > Math.ceil(totalHits / this.perPage) || !hits.length;
+    return this.page > Math.ceil(totalHits / this.perPage) || !hits?.length;
   }
 }
