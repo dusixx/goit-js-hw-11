@@ -38,7 +38,7 @@ function handleSearchFormSubmit(e) {
   const query = e.currentTarget.searchQuery.value.trim();
   if (!query) return info(message.EMPTY_SEARCH_QUERY);
 
-  pbs.queryParams = { page: 1, q: query };
+  pbs.queryParams = { page: 0, q: query };
   gallery.clear();
   // запускаем поиск
   showLoader();
@@ -71,25 +71,25 @@ async function handleGalleryScroll([entry], observer) {
   const isInitialPage = gallery.isEmpty;
 
   try {
-    const resp = await pbs.fetch();
+    const { data } = await pbs.fetch();
 
     // первый запрос - показываем кол-во результатов
-    if (isInitialPage && resp.totalHits) {
-      succ(message.SEARCH_RESULTS_FOUND(resp.totalHits));
+    if (isInitialPage && data.totalHits) {
+      succ(message.SEARCH_RESULTS_FOUND(data.totalHits));
     }
 
     // рендерим галлерею
-    await gallery.append(resp.hits);
+    await gallery.append(data.hits);
 
     // скролим начиная со следующей страницы
     // Начальная страница может быть любой, не всегда 1-ой
     if (!isInitialPage) scrollByTop(getViewportClientRect().height / 2);
 
-    // вообще/уже нет результатов
+    // нет результатов
     if (pbs.isEOSReached) {
       showLoader(false);
 
-      return resp.totalHits === 0
+      return data.totalHits === 0
         ? info(message.NO_SEARCH_RESULTS)
         : info(message.END_OF_SEARCH_REACHED);
     }

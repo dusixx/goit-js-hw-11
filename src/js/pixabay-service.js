@@ -46,35 +46,33 @@ export default class PixabayService {
   async fetch(params) {
     try {
       // обновляем параметры и делаем запрос на сервер
-      const { data, config } = await axios.get(this.#buildQuery(params));
+      const resp = await axios.get(this.#buildQuery(params));
+      const { data, config } = resp;
 
       // обновляем параметры актуальными данными
       // Декодируем, иначе, если запрос закодирован -
-      // при следующем вызове buildQuery он будет кодироваться снова.
-      // И так, пока длинна запроса не превысит лимит (строка меняется)
+      // при следующем вызове buildQuery() он будет кодироваться снова.
+      // Будет происходить "обфускация" и увеличение длинны строки вплоть до лимита
       this.queryParams = decodeURI(config.url);
 
       // если задана page, инкрементируем ее, сохраняя текущую
       this.currentPage = this.page;
       this.page += this.options.pageIncrement;
 
-      console.log(data.hits);
+      // можно будет проверить if(inst.response.ok){...}
+      resp.ok = true;
 
-      // кешируем ответ
-      this.#response = {
-        total: data.total,
-        totalHits: data.totalHits,
-        hits: data.hits,
-        url: config.url,
-      };
+      console.log(resp);
 
-      return { ...this.#response };
+      return { ...(this.#response = resp) };
       //
       // error
     } catch (err) {
+      this.#response = err;
       // копируем в message более осмысленное сообщение
       // и прокидываем ошибку в пользовательский код
       [err.message, err.message_] = [err.response.data, err.message];
+
       throw err;
     }
   }
@@ -111,6 +109,14 @@ export default class PixabayService {
     return this.#baseUrl;
   }
 
+  /**
+   * Последний ответ от сервера,
+   * в случае ошибки - вернет ее объект
+   */
+  get response() {
+    return { ...this.#response };
+  }
+
   set options(opts) {
     this.#options = { ...defOpts, ...this.#options, ...opts };
   }
@@ -119,8 +125,10 @@ export default class PixabayService {
     return { ...this.#options };
   }
 
-  // если указан инкремент, возвращает не текущую страницу,
-  // а значение после автоинкрементации
+  /**
+   * Если был задан инкремент (!== 0),
+   * возвращает страницу после инкрементации
+   */
   get page() {
     return this.#queryParams.page;
   }
@@ -138,7 +146,8 @@ export default class PixabayService {
   }
 
   get isEOSReached() {
-    const { totalHits, hits } = this.#response;
+    // в случае ошибки data === undefined
+    const { totalHits, hits } = this.#response.data || '';
     return this.page > Math.ceil(totalHits / this.perPage) || !hits.length;
   }
 }

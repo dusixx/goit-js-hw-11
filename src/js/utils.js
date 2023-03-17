@@ -43,7 +43,7 @@ function namesToSnake(obj = {}) {
  * @return {object} { name1: value1,...}
  */
 function parseUrlParams(str) {
-  if (!str || !isStr(str)) return [];
+  if (!str || !isStr(str)) return {};
 
   let res = str.split('?');
   res = (res[1] || res[0]).split('&');

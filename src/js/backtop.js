@@ -2,12 +2,13 @@ import utils from './utils';
 import refs from './refs';
 
 const { scrollToTop, throttle } = utils;
+const { backtop } = refs;
 
 const SCROLL_THROTTLE_DELAY = 500;
 const BACKTOP_SCROLL_OFFSET = 1000;
 const BACKTOP_HIDDEN_CLASS = 'backtop--hidden';
 
-refs.backtop.addEventListener('click', handleBacktopClick);
+backtop.addEventListener('click', handleBacktopClick);
 
 document.addEventListener(
   'scroll',
@@ -25,5 +26,5 @@ function handleBacktopClick(e) {
 
 function showBacktop(show = true) {
   const action = show ? 'remove' : 'add';
-  refs.backtop.classList[action](BACKTOP_HIDDEN_CLASS);
+  backtop.classList[action](BACKTOP_HIDDEN_CLASS);
 }
