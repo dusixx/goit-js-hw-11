@@ -25,7 +25,7 @@ export default class PixabayService {
    * Формирует строку запроса к серверу, добавляя к baseUrl
    * параметры из #queryParams с именами в snake_case
    */
-  #buildQuery(params) {
+  buildQuery(params) {
     // обновляем параметры в кеше
     this.queryParams = params;
 
@@ -47,7 +47,7 @@ export default class PixabayService {
   async fetch(params) {
     try {
       // обновляем параметры и делаем запрос на сервер
-      const resp = await axios.get(this.#buildQuery(params));
+      const resp = await axios.get(this.buildQuery(params));
 
       // обновляем параметры актуальными данными
       // Декодируем, иначе, если запрос закодирован -
@@ -145,8 +145,8 @@ export default class PixabayService {
   }
 
   get isEOSReached() {
-    // в случае ошибки data === undefined
-    // и вернется true (this.page > NaN || !undefined)
+    // в случае неудачного fetch response.data === undefined
+    // И вернет true(this.page > NaN || !undefined)
     const { totalHits, hits } = this.#response.data || '';
     return this.page > Math.ceil(totalHits / this.perPage) || !hits?.length;
   }

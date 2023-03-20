@@ -1,11 +1,5 @@
 import { Notify } from 'notiflix';
 import throttle from 'lodash.throttle';
-import simpleLightbox from 'simplelightbox';
-
-// чтобы не перекрывало кнопки
-Notify.init({ position: 'right-bottom' });
-
-const defNotifyTimeout = 3000;
 
 const isDef = v => typeof v !== 'undefined';
 const isStr = v => typeof v === 'string';
@@ -92,16 +86,23 @@ function scrollToTop(top, behavior = 'smooth') {
 // Notify
 //
 
+// чтобы не перекрывало кнопки
+Notify.init({ position: 'right-bottom' });
+
+const defNotifyOpts = {
+  timeout: 1000,
+};
+
 function error(msg, opts) {
-  Notify.failure(msg, { timeout: defNotifyTimeout, ...opts });
+  Notify.failure(msg, { ...defNotifyOpts, ...opts });
 }
 
 function info(msg, opts) {
-  Notify.info(msg, { timeout: defNotifyTimeout, ...opts });
+  Notify.info(msg, { ...defNotifyOpts, ...opts });
 }
 
 function succ(msg, opts) {
-  Notify.success(msg, { timeout: defNotifyTimeout, ...opts });
+  Notify.success(msg, { ...defNotifyOpts, ...opts });
 }
 
 export default {

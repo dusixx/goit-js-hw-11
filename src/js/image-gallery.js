@@ -1,3 +1,6 @@
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
 const previewWidth = {
   tiny: 180,
   small: 340,
@@ -7,6 +10,7 @@ const previewWidth = {
 
 export default class ImageGallery {
   #ref;
+  #simpleLightBox;
 
   /**
    * @param {string} classSelector
@@ -15,27 +19,46 @@ export default class ImageGallery {
   constructor(classSelector, opts = {}) {
     this.#ref = document.querySelector(classSelector);
 
-    if (this.ref?.nodeName !== 'UL') {
-      throw new Error('Unordered list expected');
+    const { nodeName } = this.#ref || '';
+
+    if (nodeName !== 'UL' && nodeName !== 'DIV') {
+      throw new Error('Invalid gallery element');
     }
+
+    // инициализируем simpleLightbox
+    this.#simpleLightBox = new SimpleLightbox(`${classSelector} a`, {
+      captionsData: 'alt',
+    });
   }
 
+  /**
+   * @param {array} data - массив hit-обьектов
+   * @returns - разметку карточек для группы изображений
+   */
   #makeMarkup(data = []) {
-    return data
-      .map(itm => {
-        const d = getImageData(itm);
+    return data.map(itm => this.#makeImageCard(itm)).join('');
+  }
 
-        // console.log(d);
+  /**
+   *
+   * @param {object} hit - объект с параметрами изображения
+   * @returns - разметку для одной карточки изображения
+   */
+  #makeImageCard(hit) {
+    const { className } = this.ref;
+    const { tags, preview } = getImageData(hit);
+    const { small, middle, large } = preview;
 
-        // todo: лучше сделать srcset, для 1х 2х как на сайте pixabay
-        return `
-            <li class=${this.ref.className}__item>
-              <img src="${d.preview.small.url}" 
-              alt="${d.tags}"
-                width = "${d.preview.small.width}" loading="lazy">
-            </li>`;
-      })
-      .join('');
+    return `
+      <li class="${className}__item">
+        <a href="${large.url}">
+          <img class="${className}__img"
+            srcset = "${small.url} 1x, ${middle.url} 2x"
+            src="${small.url}"
+            alt="${tags}"
+            loading="lazy">
+        </a>
+      </li>`;
   }
 
   /**
@@ -44,6 +67,9 @@ export default class ImageGallery {
    */
   append(data) {
     this.ref.insertAdjacentHTML('beforeend', this.#makeMarkup(data));
+
+    // реинициализируем simpleLightbox
+    this.#simpleLightBox.refresh();
 
     const lastImage = this.ref.lastElementChild?.firstElementChild;
     if (lastImage) return waitForImage(lastImage);
@@ -66,6 +92,14 @@ export default class ImageGallery {
   }
 }
 
+//
+// Helpers
+//
+
+/**
+ * @param {HTMLImageElement} img
+ * @returns Promise
+ */
 function waitForImage(img) {
   return new Promise(resolve => {
     img.addEventListener(
@@ -82,11 +116,6 @@ function replaceWidth(url, width) {
   return url.replace(/(_\d+)(?=\.\w+$)/, `_${width}`);
 }
 
-// todo: галлерея ничего не должна занть о hits и тп
-// Нужно передавать понятные данные: ссылки на 1x 2x
-// ссылку на большое изображение, данные для оверлея как-то
-// alt-текст и тп
-
 /**
  * @param {*} hit - данные изображения из массива hits[]
  * @returns объект с необходимыми(доступными для free) данными
@@ -96,7 +125,7 @@ function getImageData(hit) {
     webformatURL,
     webformatWidth,
     pageURL: homePage,
-    // для free версии акка не приходит(?)
+    // для free версии акка imageURL не приходит(?)
     imageURL: url,
     imageWidth: width,
     imageHeight: height,

@@ -17,8 +17,6 @@ const { error, info, succ, getViewportClientRect, scrollByTop } = utils;
 const gallery = new ImageGallery('.gallery');
 const pbs = new PixabayService(defSearchOpts);
 
-console.dir(pbs);
-
 //
 // Event handlers
 //
@@ -40,18 +38,16 @@ function handleSearchFormSubmit(e) {
   const query = e.currentTarget.searchQuery.value.trim();
   if (!query) return info(message.EMPTY_SEARCH_QUERY);
 
-  pbs.queryParams = { page: 1, q: query };
+  pbs.queryParams = {
+    q: query,
+    page: 1,
+    image_orientation: 'all',
+    perPage: 60,
+  };
+
   gallery.clear();
   // запускаем поиск
   showLoader();
-}
-
-//
-// Helpers
-//
-
-function showLoader(show = true) {
-  loader.style.display = show ? 'flex' : 'none';
 }
 
 //
@@ -77,11 +73,11 @@ async function handleGalleryScroll([entry], observer) {
 
     // первый запрос - показываем кол-во результатов
     if (isInitialPage && data.totalHits) {
-      succ(message.SEARCH_RESULTS_FOUND(data.totalHits));
+      succ(message.SEARCH_RESULTS_FOUND(data.totalHits), { timeout: 2000 });
     }
 
     // рендерим галлерею
-    await gallery.append(data.hits);
+    gallery.append(data.hits);
 
     // скролим начиная со следующей страницы
     // Начальная страница может быть любой, не всегда 1-ой
@@ -92,7 +88,7 @@ async function handleGalleryScroll([entry], observer) {
       showLoader(false);
 
       return data.totalHits === 0
-        ? info(message.NO_SEARCH_RESULTS)
+        ? error(message.NO_SEARCH_RESULTS)
         : info(message.END_OF_SEARCH_REACHED);
     }
   } catch (err) {
@@ -100,4 +96,12 @@ async function handleGalleryScroll([entry], observer) {
     error(err.message);
     console.error(err);
   }
+}
+
+//
+// Helpers
+//
+
+function showLoader(show = true) {
+  loader.style.display = show ? 'flex' : 'none';
 }

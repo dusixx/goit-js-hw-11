@@ -1,6 +1,9 @@
+.container {
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+  margin: 0 auto;
+}
+
 .content {
-  max-width: 100vw;
   margin-top: var(--header-height);
-  //margin-left: auto;
-  //margin-right: auto;
 }

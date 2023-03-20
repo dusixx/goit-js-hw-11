@@ -3,4 +3,9 @@
   align-items: center;
   justify-content: center;
   padding-top: var(--loader-padding-top);
+
+  &__spinner {
+    width: 64px;
+    height: 64px;
+  }
 }

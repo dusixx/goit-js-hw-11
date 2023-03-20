@@ -6,4 +6,5 @@ export default {
   clearBtn: searchFormRef.clearBtn,
   loader: document.querySelector('.loader'),
   backtop: document.querySelector('.backtop'),
+  gallery: document.querySelector('.gallery'),
 };
