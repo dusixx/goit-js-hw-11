@@ -90,7 +90,7 @@ function scrollToTop(top, behavior = 'smooth') {
 Notify.init({ position: 'right-bottom' });
 
 const defNotifyOpts = {
-  timeout: 1000,
+  timeout: 3000,
 };
 
 function error(msg, opts) {

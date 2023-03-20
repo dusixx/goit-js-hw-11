@@ -7,4 +7,5 @@ export default {
   loader: document.querySelector('.loader'),
   backtop: document.querySelector('.backtop'),
   gallery: document.querySelector('.gallery'),
+  header: document.querySelector('.header'),
 };

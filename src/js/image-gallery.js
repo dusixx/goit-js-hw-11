@@ -4,15 +4,20 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 const TRANSP_BG_CLASS = 'transparent-bg';
 const TRANSP_BG_IMG_CLASS = 'transparent-img';
 
+defOpts = {
+  addTransparentBg: true,
+};
+
 export default class ImageGallery {
   #ref;
+  #options;
   #simpleLightBox;
 
   /**
    * @param {string} classSelector
-   * @param {object} opts
+   * @param {object} opts - объект опций
    */
-  constructor(classSelector, opts = {}) {
+  constructor(classSelector, opts) {
     this.#ref = document.querySelector(classSelector);
 
     const { nodeName } = this.#ref || '';
@@ -20,6 +25,8 @@ export default class ImageGallery {
     if (nodeName !== 'UL' && nodeName !== 'DIV') {
       throw new Error('Invalid gallery element');
     }
+
+    this.options = opts;
 
     // инициализируем simpleLightbox
     this.#simpleLightBox = new SimpleLightbox(`${classSelector} a`, {
@@ -41,20 +48,27 @@ export default class ImageGallery {
    */
   #makeImageCard(hit) {
     const { className } = this.ref;
-    const { tags, preview } = getImageData(hit);
+    const { tags, preview, width, height } = getImageData(hit);
     const { small, middle, large } = preview;
+    const { addTransparentBg } = this.options;
 
     // NOTE: png не гарантирует что фон прозрачный
-    // TODO: лучше сделать пропорциональные размеры для всех
+    // TODO: лучше сделать пропорциональные размеры
 
     // классы для изображений с прозрачным фоном
-    const transpBg = getImageType(hit) === 'png' ? TRANSP_BG_CLASS : '';
-    const transpBgImg = ''; //transpBg ? TRANSP_BG_IMG_CLASS : '';
+    const transpBgClass =
+      addTransparentBg && getImageType(hit) === 'png' ? TRANSP_BG_CLASS : '';
+
+    const transpBgImgClass = ''; //transpBg ? TRANSP_BG_IMG_CLASS : '';
+
+    // const itemHeight = 200;
+    // const itemWidth = (200 * (width / height)).toFixed();
+    // style="height: ${itemHeight}px width: ${itemWidth}px">
 
     return `
-      <li class="${className}__item ${transpBg}">
+      <li class="${className}__item ${transpBgClass}">
         <a href="${large.url}">
-          <img class="${className}__img ${transpBgImg}"
+          <img class="${className}__img ${transpBgImgClass}"
             srcset = "${small.url} 1x, ${middle.url} 2x"
             src="${small.url}"
             alt="${tags}"
@@ -73,20 +87,29 @@ export default class ImageGallery {
     // реинициализируем SimpleLightbox
     this.#simpleLightBox.refresh();
 
-    const lastImage = this.ref.lastElementChild?.firstElementChild;
-    if (lastImage) return waitForImage(lastImage);
+    // учитывая lazy, подгрузится при скролле
+    // const lastImage = this.ref.lastElementChild?.firstElementChild;
+    // if (lastImage) return waitForImage(lastImage);
+  }
+
+  set options(opts) {
+    this.#options = { ...defOpts, ...this.#options, ...opts };
+  }
+
+  get options() {
+    return { ...this.#options };
   }
 
   get ref() {
     return this.#ref;
   }
 
-  get isEmpty() {
-    return this.length === 0;
-  }
-
   get length() {
     return this.ref.children?.length;
+  }
+
+  get isEmpty() {
+    return this.length === 0;
   }
 
   clear() {
@@ -103,20 +126,20 @@ function getImageType(hit) {
 }
 
 /**
- * @param {HTMLImageElement} img
+ * @param {object} img
  * @returns Promise
  */
-function waitForImage(img) {
-  return new Promise(resolve => {
-    img.addEventListener(
-      'load',
-      ({ target }) => {
-        resolve(target);
-      },
-      { once: true }
-    );
-  });
-}
+// function waitForImage(img) {
+//   return new Promise(resolve => {
+//     img.addEventListener(
+//       'load',
+//       ({ target }) => {
+//         resolve(target);
+//       },
+//       { once: true }
+//     );
+//   });
+// }
 
 const replaceURLWidth = (url, width) =>
   url.replace(/(_\d+)(?=\.\w+$)/, `_${width}`);

@@ -13,7 +13,7 @@ $btnColorBg: #cfcfcf;
   padding: 0;
   color: $btnColor;
   background-color: $btnColorBg;
-  border-radius: var(--border-radius);
+  border-radius: var(--search-form-border-radius);
   border-style: unset;
   cursor: pointer;
 }

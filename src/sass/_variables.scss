@@ -1,16 +1,26 @@
+//
+// sass vars
+//
+$mobile: 320px;
+$tablet: 768px;
+$desktop: 1200px;
+
+//
+// css vars
+//
 :root {
   --color-accent: rgb(3, 163, 255); // rgb(38, 192, 211)
   --color-header-bg: #24292f;
 
   --header-height: 60px;
-  --border-radius: 15px;
+  --search-form-border-radius: 10px;
   --search-form-width: 400px;
 
-  --search-input-outline-width: 1px;
+  --search-input-outline-width: 1.5px;
   --search-input-outline: 0px 0px 0px var(--search-input-outline-width)
     var(--color-accent);
 
-  --search-input-height: 80%;
+  --search-input-height: 75%;
   --search-input-padding: 15px;
   --search-input-padding-right: calc(
     var(--search-btn-width) + var(--search-btn-celar-width) +
@@ -29,8 +39,8 @@
   --transition-params: ease-out 250ms;
   --loader-padding-top: 50px;
 
-  --gallery-images-gap: 10px;
-  --gallery-images-per-row: 1;
+  --gallery-items-gap: 10px;
+  --gallery-items-per-row: 1;
 
-  --container-padding: 50px;
+  --container-padding: 40px;
 }

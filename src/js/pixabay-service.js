@@ -48,6 +48,7 @@ export default class PixabayService {
     try {
       // обновляем параметры и делаем запрос на сервер
       const resp = await axios.get(this.buildQuery(params));
+      resp.ok = true;
 
       // обновляем параметры актуальными данными
       // Декодируем, иначе, если запрос закодирован -
@@ -58,11 +59,6 @@ export default class PixabayService {
       // если задана page, инкрементируем ее, сохраняя текущую
       this.currentPage = this.page;
       this.page += this.options.pageIncrement;
-
-      // можно будет проверять response.ok
-      resp.ok = true;
-
-      // console.log(resp);
 
       return { ...(this.#response = resp) };
 

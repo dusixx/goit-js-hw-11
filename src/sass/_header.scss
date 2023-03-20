@@ -6,15 +6,18 @@
 
   display: flex;
   align-items: center;
-  // align-content: center;
 
   width: 100%;
   height: var(--header-height);
+
   background-color: var(--color-header-bg);
-  // opacity: 0.9;
+  transition: opacity var(--transition-params);
+
+  &--translucent {
+    opacity: 0.8;
+  }
 }
 
-// .container {
-//   position: relative;
-//   margin: 0 auto;
-// }
+.header:focus-within {
+  opacity: 1;
+}

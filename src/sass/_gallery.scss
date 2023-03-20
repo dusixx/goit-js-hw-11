@@ -2,25 +2,32 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--gallery-images-gap);
+  gap: var(--gallery-items-gap);
 }
 
 .gallery__item {
-  height: 200px;
+  height: 100px;
   border-radius: 8px;
   overflow: hidden;
 
   flex-basis: calc(
-    (100% - var(--gallery-images-gap) * (var(--gallery-images-per-row) - 1)) /
-      (var(--gallery-images-per-row))
+    (100% - var(--gallery-items-gap) * (var(--gallery-items-per-row) - 1)) /
+      (var(--gallery-items-per-row))
   );
 
-  @media screen and (min-width: 768px) {
-    --gallery-images-per-row: 3;
+  @media screen and (min-width: #{$mobile}) {
+    height: 150px;
+    // --gallery-items-per-row: 1;
   }
 
-  @media screen and (min-width: 1200px) {
-    --gallery-images-per-row: 4;
+  @media screen and (min-width: #{$tablet}) {
+    height: 180px;
+    --gallery-items-per-row: 3;
+  }
+
+  @media screen and (min-width: #{$desktop}) {
+    height: 200px;
+    --gallery-items-per-row: 4;
   }
 }
 

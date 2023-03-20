@@ -5,6 +5,7 @@ import utils from './js/utils';
 import refs from './js/refs';
 import hwData from './js/hw-data';
 import _ from './js/backtop';
+import _ from './js/header';
 
 //
 // Init
@@ -71,7 +72,7 @@ async function handleGalleryScroll([entry], observer) {
 
     // первый запрос - показываем кол-во результатов
     if (isInitialPage && data.totalHits) {
-      succ(message.SEARCH_RESULTS_FOUND(data.totalHits), { timeout: 2000 });
+      succ(message.SEARCH_RESULTS_FOUND(data.totalHits));
     }
 
     // рендерим галлерею
@@ -87,7 +88,7 @@ async function handleGalleryScroll([entry], observer) {
 
       return data.totalHits === 0
         ? error(message.NO_SEARCH_RESULTS)
-        : info(message.END_OF_SEARCH_REACHED);
+        : info(message.END_OF_SEARCH_REACHED, { timeout: 1500 });
     }
   } catch (err) {
     showLoader(false);
