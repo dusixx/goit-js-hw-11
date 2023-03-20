@@ -59,8 +59,10 @@ export default class PixabayService {
       this.currentPage = this.page;
       this.page += this.options.pageIncrement;
 
-      // можно будет проверить if(inst.response.ok){...}
+      // можно будет проверять response.ok
       resp.ok = true;
+
+      // console.log(resp);
 
       return { ...(this.#response = resp) };
 

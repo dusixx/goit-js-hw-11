@@ -1,12 +1,8 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-const previewWidth = {
-  tiny: 180,
-  small: 340,
-  middle: 640,
-  large: 1280,
-};
+const TRANSP_BG_CLASS = 'transparent-bg';
+const TRANSP_BG_IMG_CLASS = 'transparent-img';
 
 export default class ImageGallery {
   #ref;
@@ -14,7 +10,7 @@ export default class ImageGallery {
 
   /**
    * @param {string} classSelector
-   * @param {*} opts
+   * @param {object} opts
    */
   constructor(classSelector, opts = {}) {
     this.#ref = document.querySelector(classSelector);
@@ -40,7 +36,6 @@ export default class ImageGallery {
   }
 
   /**
-   *
    * @param {object} hit - объект с параметрами изображения
    * @returns - разметку для одной карточки изображения
    */
@@ -49,10 +44,17 @@ export default class ImageGallery {
     const { tags, preview } = getImageData(hit);
     const { small, middle, large } = preview;
 
+    // NOTE: png не гарантирует что фон прозрачный
+    // TODO: лучше сделать пропорциональные размеры для всех
+
+    // классы для изображений с прозрачным фоном
+    const transpBg = getImageType(hit) === 'png' ? TRANSP_BG_CLASS : '';
+    const transpBgImg = ''; //transpBg ? TRANSP_BG_IMG_CLASS : '';
+
     return `
-      <li class="${className}__item">
+      <li class="${className}__item ${transpBg}">
         <a href="${large.url}">
-          <img class="${className}__img"
+          <img class="${className}__img ${transpBgImg}"
             srcset = "${small.url} 1x, ${middle.url} 2x"
             src="${small.url}"
             alt="${tags}"
@@ -68,7 +70,7 @@ export default class ImageGallery {
   append(data) {
     this.ref.insertAdjacentHTML('beforeend', this.#makeMarkup(data));
 
-    // реинициализируем simpleLightbox
+    // реинициализируем SimpleLightbox
     this.#simpleLightBox.refresh();
 
     const lastImage = this.ref.lastElementChild?.firstElementChild;
@@ -96,6 +98,10 @@ export default class ImageGallery {
 // Helpers
 //
 
+function getImageType(hit) {
+  return hit.largeImageURL.match(/[^\.]+$/)[0].toLowerCase();
+}
+
 /**
  * @param {HTMLImageElement} img
  * @returns Promise
@@ -112,15 +118,21 @@ function waitForImage(img) {
   });
 }
 
-function replaceWidth(url, width) {
-  return url.replace(/(_\d+)(?=\.\w+$)/, `_${width}`);
-}
+const replaceURLWidth = (url, width) =>
+  url.replace(/(_\d+)(?=\.\w+$)/, `_${width}`);
 
 /**
  * @param {*} hit - данные изображения из массива hits[]
  * @returns объект с необходимыми(доступными для free) данными
  */
 function getImageData(hit) {
+  const previewWidth = {
+    tiny: 180,
+    small: 340,
+    middle: 640,
+    large: 1280,
+  };
+
   const {
     webformatURL,
     webformatWidth,
@@ -138,8 +150,8 @@ function getImageData(hit) {
     comments,
   } = hit;
 
-  const smallURL = replaceWidth(webformatURL, previewWidth.small);
-  const middleURL = replaceWidth(webformatURL, previewWidth.middle);
+  const smallURL = replaceURLWidth(webformatURL, previewWidth.small);
+  const middleURL = replaceURLWidth(webformatURL, previewWidth.middle);
 
   return {
     preview: {

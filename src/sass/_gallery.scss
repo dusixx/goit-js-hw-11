@@ -2,36 +2,66 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--grid-items-gap);
+  gap: var(--gallery-images-gap);
 }
 
 .gallery__item {
   height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
 
   flex-basis: calc(
-    (100% - var(--grid-items-gap) * (var(--grid-items-per-row) - 1)) /
-      (var(--grid-items-per-row))
+    (100% - var(--gallery-images-gap) * (var(--gallery-images-per-row) - 1)) /
+      (var(--gallery-images-per-row))
   );
 
   @media screen and (min-width: 768px) {
-    --grid-items-per-row: 3;
+    --gallery-images-per-row: 3;
   }
 
   @media screen and (min-width: 1200px) {
-    --grid-items-per-row: 4;
+    --gallery-images-per-row: 4;
   }
 }
 
 .gallery__img {
   height: 100%;
   width: 100%;
-  object-fit: cover;
 
-  border-radius: 8px;
+  object-fit: cover;
+  object-position: center;
+
   transition: filter var(--transition-params);
 
   &:hover,
   &:focus-visible {
     filter: brightness(1.1);
   }
+}
+
+.transparent-bg {
+  background-image: linear-gradient(
+      45deg,
+      #efefef 25%,
+      transparent 0,
+      transparent 75%,
+      #efefef 0,
+      #efefef
+    ),
+    linear-gradient(
+      45deg,
+      #efefef 25%,
+      transparent 0,
+      transparent 75%,
+      #efefef 0,
+      #efefef
+    );
+
+  background-position: 0 0, 10px 10px;
+  background-color: #fff;
+  background-size: 21px 21px;
+}
+
+.transparent-img {
+  object-fit: contain;
 }

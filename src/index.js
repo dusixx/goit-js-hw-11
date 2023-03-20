@@ -41,8 +41,6 @@ function handleSearchFormSubmit(e) {
   pbs.queryParams = {
     q: query,
     page: 1,
-    image_orientation: 'all',
-    perPage: 60,
   };
 
   gallery.clear();

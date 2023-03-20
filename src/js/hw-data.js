@@ -5,7 +5,7 @@ export default {
     },
     EMPTY_SEARCH_QUERY: 'Please, input your search query',
     END_OF_SEARCH_REACHED: "Sorry, you've reached the end of search results",
-    NO_SEARCH_RESULTS: 'Sorry, there are no images matching your query',
+    NO_SEARCH_RESULTS: 'No search results matching your query',
   },
 
   defSearchOpts: {
