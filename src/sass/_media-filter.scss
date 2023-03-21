@@ -21,6 +21,7 @@
   background-color: white;
   border-bottom: 1px solid rgb(231, 231, 231);
 
+  // opacity: 0.9;
   transition: transform var(--transition-params);
 
   &--hidden {
@@ -76,5 +77,13 @@ $colorBtnBorder: gray;
   & input {
     margin-right: 5px;
     cursor: inherit;
+  }
+}
+
+.media-filter__menu {
+  &--colors {
+  }
+
+  &--o {
   }
 }
