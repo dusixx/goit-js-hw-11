@@ -1,4 +1,7 @@
-.media-filter {
+$colorFilterBtnBg: gray;
+$colorFilterBtnBorder: gray;
+
+.filter-panel {
   position: fixed;
   left: 0;
   top: var(--header-height);
@@ -21,7 +24,6 @@
   background-color: white;
   border-bottom: 1px solid rgb(231, 231, 231);
 
-  // opacity: 0.9;
   transition: transform var(--transition-params);
 
   &--hidden {
@@ -29,10 +31,12 @@
   }
 }
 
-$colorBtnBg: gray;
-$colorBtnBorder: gray;
+.filter-panel__item {
+  display: flex;
+  user-select: none;
+}
 
-.media-filter__btn {
+.filter-panel__item button {
   @extend %btn;
 
   display: flex;
@@ -48,15 +52,14 @@ $colorBtnBorder: gray;
   font-size: inherit;
 
   border-radius: 20px;
-  background-color: rgb($colorBtnBg, 0);
-  border: 1px solid rgb($colorBtnBorder, 0.3);
+  background-color: rgb($colorFilterBtnBg, 0);
+  border: 1px solid rgb($colorFilterBtnBorder, 0.3);
 
-  user-select: none;
   transition: background-color var(--transition-params);
 
   &:hover,
   &:focus-visible {
-    background-color: rgb($colorBtnBg, 0.1);
+    background-color: rgb($colorFilterBtnBg, 0.1);
   }
 
   &::after {
@@ -66,12 +69,11 @@ $colorBtnBorder: gray;
   }
 }
 
-.media-filter label {
+.filter-panel__item label {
   display: flex;
   align-items: center;
   line-height: 0;
 
-  user-select: none;
   cursor: pointer;
 
   & input {
@@ -80,7 +82,7 @@ $colorBtnBorder: gray;
   }
 }
 
-.media-filter__menu {
+.filter-panel__menu {
   &--colors {
   }
 

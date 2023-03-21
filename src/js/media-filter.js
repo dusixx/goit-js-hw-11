@@ -2,42 +2,50 @@ import refs from './refs';
 import utils from './utils';
 import queryParams from './rest-data';
 
-const { mediaFilter, toggleMediaFilter } = refs;
+const { filterPanel, filterMenu, toggleFilterPanel } = refs;
 
-const MEDIA_FILTER_CLASS = mediaFilter.className;
-const MEDIA_FILTER_HIDDEN_CLASS = `${MEDIA_FILTER_CLASS}--hidden`;
-const BUTTON_CLASS = `${MEDIA_FILTER_CLASS}__btn`;
+const className = {
+  filterPanel: filterPanel.className,
+  filterPanelHidden: `${filterPanel.className}--hidden`,
+  filterPanelItem: `${filterPanel.className}__item`,
+};
 
-toggleMediaFilter.addEventListener('click', () =>
-  mediaFilter.classList.toggle(MEDIA_FILTER_HIDDEN_CLASS)
+// создаем панель фильтров
+makeFilterPanel(filterPanel, queryParams);
+
+toggleFilterPanel.addEventListener('click', () =>
+  filterPanel.classList.toggle(className.filterPanelHidden)
 );
 
-//
-// Funcs
-//
+filterPanel.addEventListener('click', handleFilterPanelClick);
 
-makeMediaFilterPanel(mediaFilter, queryParams);
+function handleFilterPanelClick({ target }) {
+  if (target.nodeName !== 'BUTTON') return;
+}
 
-function makeMediaFilterPanel(mediaFilter, queryParams) {
+function makeFilterMenu({ name }, queryParams) {}
+
+function makeFilterPanel(filterPanel, queryParams) {
   const markup = Object.entries(queryParams)
     .map(([name, { caption, value, alias }]) => {
       // bool -> checkbox
-      return value.includes('false')
+      const control = value.includes('false')
         ? `
         <label>
-            <input type="checkbox" name=${name}>
-            <span>${name}</span>
+          <input type="checkbox" name=${name}>
+          <span>${name}</span>
         </label>`
         : `
-        <button
-            class="${BUTTON_CLASS}" 
-            type="button"
-            name = "${name}"
-        >
-            ${caption || name}
+        <button type="button" name = "${name}">
+          ${caption || name}
         </button>`;
+
+      return `
+        <li class ="${className.filterPanelItem}">
+          ${control}
+        </li>`;
     })
     .join('');
 
-  mediaFilter?.insertAdjacentHTML('afterbegin', markup);
+  filterPanel?.insertAdjacentHTML('afterbegin', markup);
 }

@@ -1,6 +1,5 @@
 //
 // default value index == 1
-// button[:button]
 //
 
 export default queryParams = {
