@@ -1,20 +1,23 @@
+.content {
+  margin-top: calc(var(--header-height) + var(--gallery-items-gap));
+}
+
 .gallery {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: var(--gallery-items-gap);
 }
 
 .gallery__item {
-  flex-grow: 1;
   height: 100px;
-  border-radius: 8px;
-  overflow: hidden;
 
   flex-basis: calc(
     (100% - var(--gallery-items-gap) * (var(--gallery-items-per-row) - 1)) /
       (var(--gallery-items-per-row))
   );
+
+  border-radius: 7px;
+  overflow: hidden;
 
   @media screen and (min-width: #{$mobile}) {
     height: 150px;
@@ -67,8 +70,4 @@
   background-position: 0 0, 10px 10px;
   background-color: #fff;
   background-size: 21px 21px;
-}
-
-.transparent-img {
-  object-fit: contain;
 }

@@ -1,21 +1,15 @@
-$btnColor: #212121;
-$btnColorBg: #cfcfcf;
-
 %link {
-  font-family: inherit;
   text-decoration: none;
   cursor: pointer;
-
   transition: color var(--transition-params);
 }
 
 %btn {
+  @extend %link;
+
   padding: 0;
-  color: $btnColor;
-  background-color: $btnColorBg;
-  border-radius: var(--search-form-border-radius);
+  line-height: 0;
   border-style: unset;
-  cursor: pointer;
 }
 
 %btn-primary {

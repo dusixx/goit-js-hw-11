@@ -8,7 +8,7 @@
   </head>
   <body>
     <header class="header">
-      <div class="container">
+      <div class="container header__container">
         <form class="search-form" id="search-form">
           <div class="search-form__field">
             <input
@@ -30,7 +30,15 @@
             </button>
           </div>
         </form>
+
+        <!-- settings button -->
+        <button class="toggle-media-filter" type="button">
+          <svg><use href="./images/icons.svg#icon-equalizer-2"></use></svg>
+        </button>
       </div>
+
+      <!-- settings panel-->
+      <div class="media-filter"></div>
     </header>
 
     <main>

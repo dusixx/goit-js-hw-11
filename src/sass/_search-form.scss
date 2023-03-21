@@ -55,13 +55,14 @@
   height: 100%;
 
   font-size: 30px;
-  line-height: 0;
+  //line-height: 0;
 
+  border-radius: var(--search-form-border-radius);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  transform: scale(var(--search-btn-scale));
 
   opacity: 1;
+  transform: scale(var(--search-btn-scale));
   transition: opacity var(--transition-params);
 
   &:hover {
@@ -79,7 +80,7 @@
   width: var(--search-btn-clear-width);
 
   font-size: 22px;
-  line-height: 0;
+  //line-height: 0;
   background-color: unset;
 
   opacity: 0.4;

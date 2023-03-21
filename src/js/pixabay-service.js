@@ -1,4 +1,3 @@
-import { image, searchParams } from './rest-data';
 import axios from 'axios';
 import utils from './utils';
 
@@ -50,15 +49,17 @@ export default class PixabayService {
       const resp = await axios.get(this.buildQuery(params));
       resp.ok = true;
 
-      // обновляем параметры актуальными данными
-      // Декодируем, иначе, если запрос закодирован -
+      // Обновляем параметры актуальными данными на всякий случай
+      // Декодируем, иначе, если запрос уже был закодирован -
       // при следующем вызове buildQuery() он будет кодироваться снова.
-      // Строка "обфусцируется" и вырастет в длинне вплоть до лимита
+      // Строка "обфусцируется" и растет в длинне вплоть до лимита
       this.queryParams = decodeURI(resp.config.url);
 
       // если задана page, инкрементируем ее, сохраняя текущую
       this.currentPage = this.page;
       this.page += this.options.pageIncrement;
+
+      console.log(resp);
 
       return { ...(this.#response = resp) };
 

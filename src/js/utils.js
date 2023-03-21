@@ -13,18 +13,22 @@ const normId = id => `${id}`.replace(/[^$\w]/gi, '').replace(/^\d+/, '');
 // ID name
 //
 
-function snakeToCamel(v) {
-  return normId(v.replace(/^_+|_+$/g, ''))
+function snakeToCamel(str) {
+  return normId(str.replace(/^_+|_+$/g, ''))
     .replace(/_+(\w)/g, (_, ch) => ch.toUpperCase())
     .replace(/^./, m => m.toLowerCase());
 }
 
-function camelToSnake(v) {
-  return normId(v)
+function camelToSnake(str) {
+  return normId(str)
     .replace(/(?<=[^A-Z])([A-Z])/g, (_, ch) => `_${ch.toLowerCase()}`)
     .replace(/_+/g, '_');
 }
 
+/**
+ * @param {object} obj
+ * @returns - копию obj с именами свойств в snake_case
+ */
 function namesToSnake(obj = {}) {
   return Object.entries(obj).reduce((res, [name, value]) => {
     res[camelToSnake(name)] = value;

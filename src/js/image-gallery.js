@@ -1,11 +1,9 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-const TRANSP_BG_CLASS = 'transparent-bg';
-const TRANSP_BG_IMG_CLASS = 'transparent-img';
-
 defOpts = {
   addTransparentBg: true,
+  transparentBgClass: 'transparent-bg',
 };
 
 export default class ImageGallery {
@@ -36,7 +34,7 @@ export default class ImageGallery {
 
   /**
    * @param {array} data - массив hit-обьектов
-   * @returns - разметку карточек для группы изображений
+   * @returns разметку карточек для группы изображений
    */
   #makeMarkup(data = []) {
     return data.map(itm => this.#makeImageCard(itm)).join('');
@@ -44,30 +42,22 @@ export default class ImageGallery {
 
   /**
    * @param {object} hit - объект с параметрами изображения
-   * @returns - разметку для одной карточки изображения
+   * @returns разметку для одной карточки изображения
    */
   #makeImageCard(hit) {
     const { className } = this.ref;
     const { tags, preview, width, height } = getImageData(hit);
     const { small, middle, large } = preview;
-    const { addTransparentBg } = this.options;
+    const { addTransparentBg, transparentBgClass } = this.options;
 
-    // NOTE: png не гарантирует что фон прозрачный
-    // TODO: лучше сделать пропорциональные размеры
-
-    // классы для изображений с прозрачным фоном
+    // NOTE: png не гарантирует прозрачность
     const transpBgClass =
-      addTransparentBg && getImageType(hit) === 'png' ? TRANSP_BG_CLASS : '';
-    const transpBgImgClass = ''; //transpBg ? TRANSP_BG_IMG_CLASS : '';
-
-    // const itemHeight = 200;
-    // const itemWidth = (200 * (width / height)).toFixed();
-    // style="height: ${itemHeight}px width: ${itemWidth}px">
+      addTransparentBg && getImageType(hit) === 'png' ? transparentBgClass : '';
 
     return `
       <li class="${className}__item ${transpBgClass}">
         <a href="${large.url}">
-          <img class="${className}__img ${transpBgImgClass}"
+          <img class="${className}__img"
             srcset = "${small.url} 1x, ${middle.url} 2x"
             src="${small.url}"
             alt="${tags}"
@@ -86,8 +76,8 @@ export default class ImageGallery {
     // реинициализируем SimpleLightbox
     this.#simpleLightBox.refresh();
 
-    const lastImage = this.ref.lastElementChild?.children[0].children[0];
-    // учитывая lazy, подгрузится при скролле
+    const lastImage = this.ref.lastElementChild?.querySelector('img');
+    // учитывая lazy, подгрузится при скроле
     if (lastImage) return waitForImageLoading(lastImage);
   }
 
@@ -120,13 +110,17 @@ export default class ImageGallery {
 // Helpers
 //
 
+/**
+ * @param {object} hit
+ * @returns расширение файла изображения
+ */
 function getImageType(hit) {
   return hit.largeImageURL.match(/[^\.]+$/)[0].toLowerCase();
 }
 
 /**
  * @param {object} img
- * @returns Promise
+ * @returns промис, который выполнится в момент загрузки img
  */
 function waitForImageLoading(img) {
   return new Promise(resolve => {
@@ -145,7 +139,7 @@ function replaceURLWidth(url, width) {
 }
 
 /**
- * @param {*} hit - данные изображения из массива hits[]
+ * @param {object} hit - данные изображения из hits[]
  * @returns объект с необходимыми(доступными для free) данными
  */
 function getImageData(hit) {
