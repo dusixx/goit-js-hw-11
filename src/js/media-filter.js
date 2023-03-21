@@ -36,5 +36,5 @@ function makeMediaFilterPanel(mediaFilter) {
     })
     .join('');
 
-  mediaFilter?.insertAdjacentHTML('beforeend', markup);
+  mediaFilter?.insertAdjacentHTML('afterbegin', markup);
 }

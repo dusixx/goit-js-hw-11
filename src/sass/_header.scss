@@ -4,9 +4,6 @@
   top: 0;
   z-index: 10;
 
-  display: flex;
-  align-items: center;
-
   width: 100%;
   height: var(--header-height);
 
@@ -17,10 +14,20 @@
     transform: translate(0, -100%);
   }
 
+  // пож этот будет заезжать media-filter
   &__container {
+    position: relative;
+    left: 0;
+    top: 0;
+    z-index: inherit;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
+    width: inherit;
+    height: inherit;
+    background-color: inherit;
   }
 }
 

@@ -5,20 +5,23 @@
   z-index: 9;
 
   width: 100%;
-  padding: 10px;
+  padding: 9px;
 
   display: flex;
   flex-wrap: wrap;
   align-content: center;
-  justify-content: center;
   gap: 10px;
+
+  @media screen and (min-width: #{$tablet}) {
+    justify-content: center;
+  }
 
   font-size: 13px;
   text-transform: capitalize;
   background-color: white;
-  border-bottom: 1px solid rgb(236, 236, 236);
+  border-bottom: 1px solid rgb(231, 231, 231);
 
-  transition: opacity var(--transition-params);
+  transition: transform var(--transition-params);
 
   &--hidden {
     transform: translate(0, -100%);
@@ -45,7 +48,7 @@ $colorBtnBorder: gray;
 
   border-radius: 20px;
   background-color: rgb($colorBtnBg, 0);
-  border: 1px solid rgb($colorBtnBorder, 0.2);
+  border: 1px solid rgb($colorBtnBorder, 0.3);
 
   user-select: none;
   transition: background-color var(--transition-params);
@@ -53,7 +56,6 @@ $colorBtnBorder: gray;
   &:hover,
   &:focus-visible {
     background-color: rgb($colorBtnBg, 0.1);
-    border-color: rgb($colorBtnBorder, 0.3);
   }
 
   &::after {
@@ -69,8 +71,10 @@ $colorBtnBorder: gray;
   line-height: 0;
 
   user-select: none;
+  cursor: pointer;
 
   & input {
     margin-right: 5px;
+    cursor: inherit;
   }
 }
