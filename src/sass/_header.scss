@@ -11,13 +11,9 @@
   height: var(--header-height);
 
   background-color: var(--color-header-bg);
-  transition: opacity var(--transition-params);
+  transition: transform var(--transition-params);
 
-  &--translucent {
-    opacity: 0.8;
+  &--hidden {
+    transform: translate(0, -100%);
   }
-}
-
-.header:focus-within {
-  opacity: 1;
 }

@@ -53,7 +53,7 @@ export default class PixabayService {
       // обновляем параметры актуальными данными
       // Декодируем, иначе, если запрос закодирован -
       // при следующем вызове buildQuery() он будет кодироваться снова.
-      // Будет происходить "обфускация" и увеличение длинны строки вплоть до лимита
+      // Строка "обфусцируется" и вырастет в длинне вплоть до лимита
       this.queryParams = decodeURI(resp.config.url);
 
       // если задана page, инкрементируем ее, сохраняя текущую
@@ -107,8 +107,7 @@ export default class PixabayService {
   }
 
   /**
-   * Последний ответ от сервера,
-   * в случае ошибки - вернет ее объект
+   * Последний ответ от сервера или объект ошибки
    */
   get response() {
     return { ...this.#response };
@@ -123,7 +122,7 @@ export default class PixabayService {
   }
 
   /**
-   * Если был задан инкремент (!== 0),
+   * Если был задан инкремент(!=0) в опциях -
    * возвращает страницу после инкрементации
    */
   get page() {
@@ -144,7 +143,7 @@ export default class PixabayService {
 
   get isEOSReached() {
     // в случае неудачного fetch response.data === undefined
-    // И вернет true(this.page > NaN || !undefined)
+    // И вернет true -> (this.page > NaN || !undefined)
     const { totalHits, hits } = this.#response.data || '';
     return this.page > Math.ceil(totalHits / this.perPage) || !hits?.length;
   }

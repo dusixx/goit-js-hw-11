@@ -18,8 +18,6 @@
   height: var(--search-input-height);
   width: 100%;
 
-  //overflow: hidden;
-
   &:focus-within .search-form__input {
     box-shadow: var(--search-input-outline);
   }
@@ -63,11 +61,11 @@
   border-bottom-left-radius: 0;
   transform: scale(var(--search-btn-scale));
 
-  opacity: 0.8;
+  opacity: 1;
   transition: opacity var(--transition-params);
 
   &:hover {
-    opacity: 1;
+    opacity: 0.8;
   }
 }
 

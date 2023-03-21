@@ -64,14 +64,14 @@ observer.observe(loader);
 async function handleGalleryScroll([entry], observer) {
   if (!entry.isIntersecting) return;
 
-  // первая порция изображений
-  const isInitialPage = gallery.isEmpty;
+  // первый запрос
+  const isInitialQuery = gallery.isEmpty;
 
   try {
     const { data } = await pbs.fetch();
 
     // первый запрос - показываем кол-во результатов
-    if (isInitialPage && data.totalHits) {
+    if (isInitialQuery && data.totalHits) {
       succ(message.SEARCH_RESULTS_FOUND(data.totalHits));
     }
 
@@ -80,7 +80,7 @@ async function handleGalleryScroll([entry], observer) {
 
     // скролим начиная со следующей страницы
     // Начальная страница может быть любой, не всегда 1-ой
-    if (!isInitialPage) scrollByTop(getViewportClientRect().height / 2);
+    if (!isInitialQuery) scrollByTop(getViewportClientRect().height / 2);
 
     // нет результатов
     if (pbs.isEOSReached) {

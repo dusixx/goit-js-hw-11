@@ -58,7 +58,6 @@ export default class ImageGallery {
     // классы для изображений с прозрачным фоном
     const transpBgClass =
       addTransparentBg && getImageType(hit) === 'png' ? TRANSP_BG_CLASS : '';
-
     const transpBgImgClass = ''; //transpBg ? TRANSP_BG_IMG_CLASS : '';
 
     // const itemHeight = 200;
@@ -87,9 +86,9 @@ export default class ImageGallery {
     // реинициализируем SimpleLightbox
     this.#simpleLightBox.refresh();
 
+    const lastImage = this.ref.lastElementChild?.children[0].children[0];
     // учитывая lazy, подгрузится при скролле
-    // const lastImage = this.ref.lastElementChild?.firstElementChild;
-    // if (lastImage) return waitForImage(lastImage);
+    if (lastImage) return waitForImageLoading(lastImage);
   }
 
   set options(opts) {
@@ -129,69 +128,52 @@ function getImageType(hit) {
  * @param {object} img
  * @returns Promise
  */
-// function waitForImage(img) {
-//   return new Promise(resolve => {
-//     img.addEventListener(
-//       'load',
-//       ({ target }) => {
-//         resolve(target);
-//       },
-//       { once: true }
-//     );
-//   });
-// }
+function waitForImageLoading(img) {
+  return new Promise(resolve => {
+    img.addEventListener(
+      'load',
+      ({ target }) => {
+        resolve(target);
+      },
+      { once: true }
+    );
+  });
+}
 
-const replaceURLWidth = (url, width) =>
-  url.replace(/(_\d+)(?=\.\w+$)/, `_${width}`);
+function replaceURLWidth(url, width) {
+  return url.replace(/(_\d+)(?=\.\w+$)/, `_${width}`);
+}
 
 /**
  * @param {*} hit - данные изображения из массива hits[]
  * @returns объект с необходимыми(доступными для free) данными
  */
 function getImageData(hit) {
-  const previewWidth = {
+  const PREVIEW_WIDTH = {
     tiny: 180,
     small: 340,
     middle: 640,
     large: 1280,
   };
 
-  const {
-    webformatURL,
-    webformatWidth,
-    pageURL: homePage,
-    // для free версии акка imageURL не приходит(?)
-    imageURL: url,
-    imageWidth: width,
-    imageHeight: height,
-    imageSize: size,
-    largeImageURL,
-    tags,
-    views,
-    downloads,
-    likes,
-    comments,
-  } = hit;
-
-  const smallURL = replaceURLWidth(webformatURL, previewWidth.small);
-  const middleURL = replaceURLWidth(webformatURL, previewWidth.middle);
+  const smallURL = replaceURLWidth(hit.webformatURL, PREVIEW_WIDTH.small);
+  const middleURL = replaceURLWidth(hit.webformatURL, PREVIEW_WIDTH.middle);
 
   return {
     preview: {
-      normal: { url: webformatURL, width: webformatWidth },
-      small: { url: smallURL, width: previewWidth.small },
-      middle: { url: middleURL, width: previewWidth.middle },
-      large: { url: largeImageURL, width: previewWidth.large },
+      normal: { url: hit.webformatURL, width: hit.webformatWidth },
+      small: { url: smallURL, width: PREVIEW_WIDTH.small },
+      middle: { url: middleURL, width: PREVIEW_WIDTH.middle },
+      large: { url: hit.largeImageURL, width: PREVIEW_WIDTH.large },
     },
-    width,
-    height,
-    size,
-    url,
-    homePage,
-    tags,
-    views,
-    downloads,
-    likes,
-    comments,
+    width: hit.imageWidth,
+    height: hit.imageHeight,
+    size: hit.imageSize,
+    homePage: hit.pageURL,
+    tags: hit.tags,
+    views: hit.views,
+    downloads: hit.downloads,
+    likes: hit.likes,
+    comments: hit.comments,
   };
 }
