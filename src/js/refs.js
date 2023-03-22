@@ -10,6 +10,6 @@ export default {
   gallery: getRef('.gallery'),
   header: getRef('.header'),
   filterPanel: getRef('.filter-panel'),
-  filterMenu: getRef('.filter-panel__menu'),
+  filterMenu: getRef('.filter-menu'),
   toggleFilterPanel: getRef('.toggle-filter-panel'),
 };

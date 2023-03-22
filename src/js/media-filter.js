@@ -5,9 +5,10 @@ const { filterPanel, filterMenu, toggleFilterPanel } = refs;
 
 const className = {
   filterPanel: 'filter-panel',
-  filterPanelHidden: `filter-panel--hidden`,
-  filterPanelItem: `filter-panel__item`,
-  filterMenuHidden: `filter-panel__menu--hidden`,
+  filterPanelHidden: 'filter-panel--hidden',
+  filterPanelItem: 'filter-panel__item',
+  filterMenuHidden: 'filter-menu--hidden',
+  filterMenuItem: 'filter-menu__item',
 };
 
 // создаем панель фильтров
@@ -34,31 +35,38 @@ function handleFilterPanelClick({ target, currentTarget }) {
     return showFilterMenu(target, false);
   }
 
+  // открываем меню для фильтра и запоминаем его имя
   dataset.active = target.name;
   target.setAttribute('active', '');
   showFilterMenu(target, true);
 }
 
+// function makeFilterMenuItem(itemClass,)
+
 function makeFilterMenu(name, shouldMake = true) {
-  const { value, alias = {} } = queryParams[name];
+  if (name === 'colors') return makeColorsPalette(name);
+
+  const { value } = queryParams[name];
 
   filterMenu.innerHTML = shouldMake
     ? value
         .map((val, idx) => {
-          const label = alias[idx] || val;
+          const [value, alias] = val.split('?');
 
           return `
-            <li>
+            <li class="${className.filterMenuItem}">
               <a href="#"
                 name="${name}" 
-                value="${val}">
-                <span>${label}</span>
+                value="${value}">
+                <span>${alias || value}</span>
               </a>
             </li>`;
         })
         .join('')
     : '';
 }
+
+// function makeColorsPalette(name) {}
 
 function showFilterMenu({ name }, show = true) {
   const action = show ? 'remove' : 'add';
@@ -70,7 +78,6 @@ function showFilterMenu({ name }, show = true) {
 function makeFilterPanel() {
   const markup = Object.entries(queryParams)
     .map(([name, { caption, value, alias }]) => {
-      // bool -> checkbox
       const control = value.includes('false')
         ? `
         <label>
@@ -78,12 +85,12 @@ function makeFilterPanel() {
           <span>${name}</span>
         </label>`
         : `
-        <button type="button" name = "${name}">
+        <button type="button" name="${name}">
           ${caption || name}
         </button>`;
 
       return `
-        <li class ="${className.filterPanelItem}">
+        <li class="${className.filterPanelItem}">
           ${control}
         </li>`;
     })

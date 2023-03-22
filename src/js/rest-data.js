@@ -9,8 +9,7 @@ export default queryParams = {
   },
 
   order: {
-    value: ['', 'ec', 'trending', 'latest'],
-    alias: ['Most relevant', "Editor's choice"],
+    value: ['?Most relevant', "ec?Editor's choice", 'trending', 'latest'],
   },
 
   orientation: {
@@ -27,7 +26,7 @@ export default queryParams = {
       'green',
       'turquoise',
       'blue',
-      'lilac',
+      'lilac?mediumorchid',
       'pink',
       'white',
       'gray',
