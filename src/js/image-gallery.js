@@ -9,6 +9,7 @@ defOpts = {
 export default class ImageGallery {
   #ref;
   #options;
+  #className;
   #simpleLightBox;
 
   /**
@@ -16,15 +17,19 @@ export default class ImageGallery {
    * @param {object} opts - объект опций
    */
   constructor(classSelector, opts) {
-    this.#ref = document.querySelector(classSelector);
+    if (hasSpaces(classSelector)) {
+      throw new Error('Single class name expected');
+    }
 
+    this.#ref = document.querySelector(classSelector);
     const { nodeName } = this.#ref || '';
 
     if (nodeName !== 'UL' && nodeName !== 'DIV') {
-      throw new Error('Invalid gallery element');
+      throw new Error('<ul> or <div> element expected');
     }
 
     this.options = opts;
+    this.#className = this.ref.className;
 
     // инициализируем simpleLightbox
     this.#simpleLightBox = new SimpleLightbox(`${classSelector} a`, {
@@ -45,7 +50,7 @@ export default class ImageGallery {
    * @returns разметку для одной карточки изображения
    */
   #makeImageCard(hit) {
-    const { className } = this.ref;
+    const className = this.#className;
     const { tags, preview, width, height } = getImageData(hit);
     const { small, middle, large } = preview;
     const { addTransparentBg, transparentBgClass } = this.options;
@@ -109,6 +114,10 @@ export default class ImageGallery {
 //
 // Helpers
 //
+
+function hasSpaces(s) {
+  return /\s/.test(s);
+}
 
 /**
  * @param {object} hit

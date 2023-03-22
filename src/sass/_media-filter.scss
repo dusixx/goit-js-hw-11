@@ -57,15 +57,16 @@ $colorFilterBtnBorder: gray;
 
   transition: background-color var(--transition-params);
 
-  &:hover,
-  &:focus-visible {
-    background-color: rgb($colorFilterBtnBg, 0.1);
-  }
-
   &::after {
     content: '▾';
     font-size: 20px;
     margin-left: 5px;
+  }
+
+  &:hover,
+  &:focus-visible,
+  &[active] {
+    background-color: rgb($colorFilterBtnBg, 0.1);
   }
 }
 
@@ -83,9 +84,38 @@ $colorFilterBtnBorder: gray;
 }
 
 .filter-panel__menu {
-  &--colors {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+
+  @media screen and (min-width: #{$tablet}) {
+    justify-content: center;
   }
 
-  &--o {
+  font-size: 13px;
+  font-family: inherit;
+  text-transform: capitalize;
+
+  &--hidden {
+    display: none;
+  }
+}
+
+.filter-panel__menu a {
+  @extend %link;
+
+  padding: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  border-radius: 10px;
+  color: var(--color-accent);
+  transition: background-color var(--transition-params);
+
+  &:hover,
+  &:focus-visible {
+    background-color: rgb(236, 236, 236);
   }
 }
