@@ -9,7 +9,9 @@ export default {
   backtop: getRef('.backtop'),
   gallery: getRef('.gallery'),
   header: getRef('.header'),
-  filterPanel: getRef('.filter-panel'),
+  filterPanel: getRef('.filter'),
   filterMenu: getRef('.filter-menu'),
-  toggleFilterPanel: getRef('.toggle-filter-panel'),
+  toggleFilterPanel: getRef('.toggle-filter'),
+  filterMenuControls: getRef('.filter-menu__controls'),
+  applyFilter: getRef('.filter-menu [type="submit"]'),
 };

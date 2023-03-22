@@ -1,12 +1,19 @@
 import refs from './refs';
 import queryParams from './rest-data';
 
-const { filterPanel, filterMenu, toggleFilterPanel } = refs;
+const {
+  filterPanel,
+  filterMenu,
+  toggleFilterPanel,
+  filterMenuControls,
+  applyFilter,
+} = refs;
 
 const className = {
-  filterPanel: 'filter-panel',
-  filterPanelHidden: 'filter-panel--hidden',
-  filterPanelItem: 'filter-panel__item',
+  filterPanel: 'filter',
+  filterPanelHidden: 'filter--hidden',
+  filterItem: 'filter__item',
+  filterBtn: 'filter__btn',
   filterMenuHidden: 'filter-menu--hidden',
   filterMenuItem: 'filter-menu__item',
 };
@@ -19,59 +26,70 @@ toggleFilterPanel.addEventListener('click', () =>
 );
 
 filterPanel.addEventListener('click', handleFilterPanelClick);
+applyFilter.addEventListener('click', console.log);
+// filterMenu.addEventListener('click', handleFilterMenuClick);
+// filterMenu.addEventListener('submit', handleFilterMenuSubmit);
 
 function handleFilterPanelClick({ target, currentTarget }) {
-  if (target.nodeName !== 'BUTTON') return;
+  // реагируем только на кнопку-фильтр
+  if (!target.classList.contains(className.filterBtn)) return;
+
   const { dataset } = currentTarget;
 
-  // TODO: сделать формой - удобнее будет доставать - или баттоны не добавятся свойствами?
-  // снимае active с текущего фильтра
+  // снимаем active с текущего фильтра
   currentTarget
     .querySelector(`[name="${dataset.active}"]`)
     ?.removeAttribute('active');
 
   // если меню для фильта отображено - закрываем его
   if (dataset.active === target.name) {
-    dataset.active = filterMenu.innerHTML = '';
+    dataset.active = '';
+    hideFilterMenu();
     return;
   }
 
-  // открываем меню для фильтра и запоминаем его имя
+  // открываем меню и запоминаем имя активного фильтра
   dataset.active = target.name;
   target.setAttribute('active', '');
   showFilterMenu(target);
 }
 
-// function makeFilterMenuItem(itemClass,)
-
 function makeFilterMenu(name) {
   const { value } = queryParams[name];
 
-  filterMenu.innerHTML = value
+  filterMenu.name = name;
+
+  let markup = value
     .map((val, idx) => {
       const [value, alias] = val.split('?');
+      const label = alias || value;
 
-      return `
-            <li class="${className.filterMenuItem}">
-              <a href="#"
-                name="${name}" 
-                value="${value}">
-                <span>${alias || value}</span>
-              </a>
-            </li>`;
+      return name === 'colors'
+        ? `
+        <input 
+          type="checkbox"
+          name="color" 
+          style="background-color: ${label}"
+        >`
+        : `
+        <a href="#" name="${value}">
+          <span>${label}</span>
+        </a>`;
     })
     .join('');
+
+  filterMenuControls.innerHTML = markup;
 }
 
-// TODO: доделать используя input:checkbox(?)
-function makeColorPalette(name) {}
+function showFilterMenu({ name }) {
+  makeFilterMenu(name);
+  // для палитры отображаем кнопку Apply
+  applyFilter.style.display = name === 'colors' ? 'block' : 'none';
+  filterMenu.classList.remove(className.filterMenuHidden);
+}
 
-function showFilterMenu({ name }, show = true) {
-  const action = show ? 'remove' : 'add';
-
-  name === 'colors' ? makeColorPalette(name) : makeFilterMenu(name, show);
-
-  filterMenu.classList[action](className.filterMenuHidden);
+function hideFilterMenu() {
+  filterMenu.classList.add(className.filterMenuHidden);
 }
 
 function makeFilterPanel() {
@@ -84,12 +102,14 @@ function makeFilterPanel() {
           <span>${name}</span>
         </label>`
         : `
-        <button type="button" name="${name}">
-          ${caption || name}
-        </button>`;
+        <button
+          class="${className.filterBtn}" 
+          type="button"
+          name="${name}"
+        >${caption || name}</button>`;
 
       return `
-        <li class="${className.filterPanelItem}">
+        <li class="${className.filterItem}">
           ${control}
         </li>`;
     })

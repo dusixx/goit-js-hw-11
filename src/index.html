@@ -32,14 +32,17 @@
         </form>
 
         <!-- media-filter toggle -->
-        <button class="toggle-filter-panel" type="button">
+        <button class="toggle-filter" type="button">
           <svg><use href="./images/icons.svg#icon-equalizer-2"></use></svg>
         </button>
       </div>
 
-      <!-- media-filter panel-->
-      <ul class="filter-panel">
-        <ul class="filter-menu filter-menu--hidden"></ul>
+      <!-- filter panel-->
+      <ul class="filter">
+        <form class="filter-menu filter-menu--hidden">
+          <div class="filter-menu__controls"></div>
+          <button type="submit" style="display: none">Apply</button>
+        </form>
       </ul>
     </header>
 

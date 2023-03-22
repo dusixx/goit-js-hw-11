@@ -1,7 +1,7 @@
 $colorFilterBtnBg: gray;
 $colorFilterBtnBorder: gray;
 
-.filter-panel {
+.filter {
   position: fixed;
   left: 0;
   top: var(--header-height);
@@ -31,12 +31,12 @@ $colorFilterBtnBorder: gray;
   }
 }
 
-.filter-panel__item {
+.filter__item {
   display: flex;
   user-select: none;
 }
 
-.filter-panel__item button {
+.filter button {
   @extend %btn;
 
   display: flex;
@@ -70,7 +70,7 @@ $colorFilterBtnBorder: gray;
   }
 }
 
-.filter-panel__item label {
+.filter label {
   display: flex;
   align-items: center;
   line-height: 0;
