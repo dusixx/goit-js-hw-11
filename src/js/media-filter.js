@@ -24,6 +24,7 @@ function handleFilterPanelClick({ target, currentTarget }) {
   if (target.nodeName !== 'BUTTON') return;
   const { dataset } = currentTarget;
 
+  // TODO: сделать формой - удобнее будет доставать - или баттоны не добавятся свойствами?
   // снимае active с текущего фильтра
   currentTarget
     .querySelector(`[name="${dataset.active}"]`)
@@ -31,29 +32,26 @@ function handleFilterPanelClick({ target, currentTarget }) {
 
   // если меню для фильта отображено - закрываем его
   if (dataset.active === target.name) {
-    dataset.active = '';
-    return showFilterMenu(target, false);
+    dataset.active = filterMenu.innerHTML = '';
+    return;
   }
 
   // открываем меню для фильтра и запоминаем его имя
   dataset.active = target.name;
   target.setAttribute('active', '');
-  showFilterMenu(target, true);
+  showFilterMenu(target);
 }
 
 // function makeFilterMenuItem(itemClass,)
 
-function makeFilterMenu(name, shouldMake = true) {
-  if (name === 'colors') return makeColorsPalette(name);
-
+function makeFilterMenu(name) {
   const { value } = queryParams[name];
 
-  filterMenu.innerHTML = shouldMake
-    ? value
-        .map((val, idx) => {
-          const [value, alias] = val.split('?');
+  filterMenu.innerHTML = value
+    .map((val, idx) => {
+      const [value, alias] = val.split('?');
 
-          return `
+      return `
             <li class="${className.filterMenuItem}">
               <a href="#"
                 name="${name}" 
@@ -61,23 +59,24 @@ function makeFilterMenu(name, shouldMake = true) {
                 <span>${alias || value}</span>
               </a>
             </li>`;
-        })
-        .join('')
-    : '';
+    })
+    .join('');
 }
 
-// function makeColorsPalette(name) {}
+// TODO: доделать используя input:checkbox(?)
+function makeColorPalette(name) {}
 
 function showFilterMenu({ name }, show = true) {
   const action = show ? 'remove' : 'add';
 
-  makeFilterMenu(name, show);
+  name === 'colors' ? makeColorPalette(name) : makeFilterMenu(name, show);
+
   filterMenu.classList[action](className.filterMenuHidden);
 }
 
 function makeFilterPanel() {
   const markup = Object.entries(queryParams)
-    .map(([name, { caption, value, alias }]) => {
+    .map(([name, { caption, value }]) => {
       const control = value.includes('false')
         ? `
         <label>

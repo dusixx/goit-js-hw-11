@@ -1,6 +1,10 @@
 import axios from 'axios';
 import utils from './utils';
 
+// TODO: для цвета должно быть так при выборе нескольких
+// name: [v1, v2, v3] -> name=v1&name=v2&name=v3...
+// Надо исправить парсинг сурла ответа с учетом этого
+
 const { isInt, isStr, camelToSnake, namesToSnake, parseUrlParams } = utils;
 
 const defOpts = {
