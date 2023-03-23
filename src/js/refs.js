@@ -12,6 +12,6 @@ export default {
   filterPanel: getRef('.filter'),
   filterMenu: getRef('.filter-menu'),
   toggleFilterPanel: getRef('.toggle-filter'),
-  filterMenuControls: getRef('.filter-menu__controls'),
+  filterMenuSubitems: getRef('.filter-menu__subitems'),
   applyFilter: getRef('.filter-menu [type="submit"]'),
 };

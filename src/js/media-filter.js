@@ -5,7 +5,7 @@ const {
   filterPanel,
   filterMenu,
   toggleFilterPanel,
-  filterMenuControls,
+  filterMenuSubitems,
   applyFilter,
 } = refs;
 
@@ -14,12 +14,27 @@ const className = {
   filterPanelHidden: 'filter--hidden',
   filterItem: 'filter__item',
   filterBtn: 'filter__btn',
+  filterMenu: 'filter-menu',
   filterMenuHidden: 'filter-menu--hidden',
   filterMenuItem: 'filter-menu__item',
+  filterMenuLink: 'filter-menu__link',
+};
+
+// TODO: нужен наверное метод типа collectFormData собирающий все данные формы
+// Тогда при любом нажатии на подпункт или при клике на apply собираем данные
+// и вызываем колбек apply.
+
+const filterData = {
+  expanded: null,
+  applied: {},
 };
 
 // создаем панель фильтров
 makeFilterPanel(queryParams);
+
+//
+// Event handlers
+//
 
 toggleFilterPanel.addEventListener('click', () =>
   filterPanel.classList.toggle(className.filterPanelHidden)
@@ -27,37 +42,51 @@ toggleFilterPanel.addEventListener('click', () =>
 
 filterPanel.addEventListener('click', handleFilterPanelClick);
 applyFilter.addEventListener('click', console.log);
-// filterMenu.addEventListener('click', handleFilterMenuClick);
+filterMenuSubitems.addEventListener('click', handleFilterMenuClick);
 // filterMenu.addEventListener('submit', handleFilterMenuSubmit);
 
+function handleFilterMenuClick(e) {
+  if (!e.target.classList.contains(className.filterMenuLink)) return;
+  // для чекбоксов палитры нельзя вызывать!
+  e.preventDefault();
+
+  const { applied, expanded } = filterData;
+  applied[expanded.name] = e.target.name;
+
+  console.log(filterData);
+}
+
 function handleFilterPanelClick({ target, currentTarget }) {
+  // if (target.nodeName === 'INPUT') {
+  //   filterData.applied[target.name] = target.checked;
+  //   return;
+  // }
+
   // реагируем только на кнопку-фильтр
   if (!target.classList.contains(className.filterBtn)) return;
 
-  const { dataset } = currentTarget;
+  filterData.expanded?.removeAttribute('expanded');
 
-  // снимаем active с текущего фильтра
-  currentTarget
-    .querySelector(`[name="${dataset.active}"]`)
-    ?.removeAttribute('active');
-
-  // если меню для фильта отображено - закрываем его
-  if (dataset.active === target.name) {
-    dataset.active = '';
+  // если меню для фильтра отображено - закрываем его
+  if (filterData.expanded?.name === target.name) {
+    filterData.expanded = null;
     hideFilterMenu();
-    return;
+  } else {
+    // открываем меню и запоминаем фильтр
+    filterData.expanded = target;
+    target.setAttribute('expanded', '');
+    showFilterMenu(target);
   }
-
-  // открываем меню и запоминаем имя активного фильтра
-  dataset.active = target.name;
-  target.setAttribute('active', '');
-  showFilterMenu(target);
 }
+
+//
+// Funcs
+//
 
 function makeFilterMenu(name) {
   const { value } = queryParams[name];
 
-  filterMenu.name = name;
+  // filterMenu.name = name;
 
   let markup = value
     .map((val, idx) => {
@@ -72,13 +101,13 @@ function makeFilterMenu(name) {
           style="background-color: ${label}"
         >`
         : `
-        <a href="#" name="${value}">
-          <span>${label}</span>
-        </a>`;
+        <a class="${className.filterMenuLink}" 
+          href="#" name="${value}"
+        >${label}</a>`;
     })
     .join('');
 
-  filterMenuControls.innerHTML = markup;
+  filterMenuSubitems.innerHTML = markup;
 }
 
 function showFilterMenu({ name }) {
