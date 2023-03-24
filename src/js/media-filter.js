@@ -25,8 +25,10 @@ const className = {
 // и вызываем колбек apply.
 
 const filterData = {
-  expanded: null,
-  applied: {},
+  expanded: null, //expandedItem
+  collect() {
+    //const formData = new FormData(filterPanel);
+  },
 };
 
 // создаем панель фильтров
@@ -41,8 +43,8 @@ toggleFilterPanel.addEventListener('click', () =>
 );
 
 filterPanel.addEventListener('click', handleFilterPanelClick);
-applyFilter.addEventListener('click', console.log);
-filterMenuSubitems.addEventListener('click', handleFilterMenuClick);
+//applyFilter.addEventListener('click', console.log);
+//filterMenuSubitems.addEventListener('click', handleFilterMenuClick);
 // filterMenu.addEventListener('submit', handleFilterMenuSubmit);
 
 function handleFilterMenuClick(e) {
@@ -57,11 +59,6 @@ function handleFilterMenuClick(e) {
 }
 
 function handleFilterPanelClick({ target, currentTarget }) {
-  // if (target.nodeName === 'INPUT') {
-  //   filterData.applied[target.name] = target.checked;
-  //   return;
-  // }
-
   // реагируем только на кнопку-фильтр
   if (!target.classList.contains(className.filterBtn)) return;
 

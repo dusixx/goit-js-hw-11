@@ -47,7 +47,7 @@ export default class ImageGallery {
 
   /**
    * @param {object} hit - объект с параметрами изображения
-   * @returns разметку для одной карточки изображения
+   * @returns разметку для карточки изображения
    */
   #makeImageCard(hit) {
     const className = this.#className;
@@ -81,8 +81,8 @@ export default class ImageGallery {
     // реинициализируем SimpleLightbox
     this.#simpleLightBox.refresh();
 
-    const lastImage = this.ref.lastElementChild?.querySelector('img');
     // учитывая lazy, подгрузится при скроле
+    const lastImage = this.ref.lastElementChild?.querySelector('img');
     if (lastImage) return waitForImageLoading(lastImage);
   }
 
