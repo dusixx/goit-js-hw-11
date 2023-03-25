@@ -33,7 +33,7 @@ $colorFilterBtnBorder: gray;
   user-select: none;
 }
 
-.filter__btn {
+.filter__expander {
   @extend %btn;
 
   display: flex;
@@ -67,12 +67,17 @@ $colorFilterBtnBorder: gray;
   }
 }
 
-.filter label {
-  display: flex;
-  align-items: center;
-  line-height: 0;
+.filter__options {
+  // &--hidden {
+  //   display: none;
+  // }
 
-  cursor: pointer;
+  & label {
+    display: flex;
+    align-items: center;
+    line-height: 0;
+    cursor: pointer;
+  }
 
   & input {
     margin-right: 5px;
@@ -80,72 +85,61 @@ $colorFilterBtnBorder: gray;
   }
 }
 
-.filter-menu {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  width: 100%;
+// .filter-menu__link,
+// .filter-menu button[type='submit'] {
+//   @extend %link;
 
-  @media screen and (min-width: #{$tablet}) {
-    justify-content: center;
-  }
+//   padding: 4px;
+//   padding-left: 10px;
+//   padding-right: 10px;
 
-  font-size: 13px;
-  font-family: inherit;
-  text-transform: capitalize;
+//   color: var(--color-accent);
+//   border-radius: 10px;
+//   border-style: unset;
+//   background-color: unset;
 
-  &--hidden {
-    display: none;
-  }
+//   transition: background-color var(--transition-params);
+
+//   &:hover,
+//   &:focus-visible {
+//     background-color: rgb(236, 236, 236);
+//   }
+// }
+
+// .filter__options {
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   flex-wrap: wrap;
+//   gap: 10px;
+// }
+
+.filter__item button[name='applyFilter'] {
+  @extend %btn-primary;
+  width: 40px;
+  height: 20px;
+  border-radius: 5px;
 }
 
-.filter-menu__link,
-.filter-menu button[type='submit'] {
-  @extend %link;
+// стилизуем все, кроме grayscale и transparent
+.filter__options[name='colors'] input[name] {
+  &:not([name='grayscale']):not([name='transparent']) {
+    appearance: unset;
 
-  padding: 4px;
-  padding-left: 10px;
-  padding-right: 10px;
+    display: block;
+    width: 15px;
+    height: 15px;
 
-  color: var(--color-accent);
-  border-radius: 10px;
-  border-style: unset;
-  background-color: unset;
+    border: 2px solid rgb(255, 255, 255);
+    outline: 1px solid rgb(206, 206, 206);
 
-  transition: background-color var(--transition-params);
+    &:hover,
+    &:focus-visible {
+      outline: 1px solid var(--color-text);
+    }
 
-  &:hover,
-  &:focus-visible {
-    background-color: rgb(236, 236, 236);
-  }
-}
-
-.filter-menu__subitems {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.filter-menu__subitems input[name='color'] {
-  appearance: unset;
-
-  display: block;
-  width: 15px;
-  height: 15px;
-
-  border: 2px solid rgb(255, 255, 255);
-  outline: 1px solid rgb(206, 206, 206);
-
-  &:hover,
-  &:focus-visible {
-    outline: 1px solid var(--color-text);
-  }
-
-  &:checked {
-    outline: 2px solid var(--color-text);
+    &:checked {
+      outline: 2px solid var(--color-text);
+    }
   }
 }

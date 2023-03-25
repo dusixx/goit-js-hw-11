@@ -1,5 +1,6 @@
 //
 // default value index == 1
+// value[?alias][:attr]
 //
 
 export default queryParams = {
@@ -18,8 +19,8 @@ export default queryParams = {
 
   colors: {
     value: [
-      'grayscale',
       'transparent',
+      'grayscale',
       'red',
       'orange',
       'yellow',

@@ -1,145 +1,151 @@
+import utils from './utils';
 import refs from './refs';
 import queryParams from './rest-data';
 
-const {
-  filterPanel,
-  filterMenu,
-  toggleFilterPanel,
-  filterMenuSubitems,
-  applyFilter,
-} = refs;
+const { getRef } = utils;
+const { filterMenu, toggleFilterMenu } = refs;
 
-const className = {
-  filterPanel: 'filter',
-  filterPanelHidden: 'filter--hidden',
-  filterItem: 'filter__item',
-  filterBtn: 'filter__btn',
-  filterMenu: 'filter-menu',
-  filterMenuHidden: 'filter-menu--hidden',
-  filterMenuItem: 'filter-menu__item',
-  filterMenuLink: 'filter-menu__link',
-};
-
-// TODO: нужен наверное метод типа collectFormData собирающий все данные формы
-// Тогда при любом нажатии на подпункт или при клике на apply собираем данные
-// и вызываем колбек apply.
-
-const filterData = {
-  expanded: null, //expandedItem
-  collect() {
-    //const formData = new FormData(filterPanel);
-  },
+const CLASS_NAME = {
+  filterMenu: 'filter',
+  filterMenuExpander: 'filter__expander',
+  filterMenuHidden: 'filter--hidden',
+  filterMenuItem: 'filter__item',
+  filterMenuOptions: 'filter__options',
+  filterMenuOptionsHidden: 'filter__options--hidden',
+  // filterMenuOption: 'filter__option',
 };
 
 // создаем панель фильтров
-makeFilterPanel(queryParams);
+makeFiltersMenu(queryParams);
 
 //
 // Event handlers
 //
 
-toggleFilterPanel.addEventListener('click', () =>
-  filterPanel.classList.toggle(className.filterPanelHidden)
+toggleFilterMenu.addEventListener('click', () =>
+  filterMenu.classList.toggle(CLASS_NAME.filterMenuHidden)
 );
 
-filterPanel.addEventListener('click', handleFilterPanelClick);
+// filterMenu.addEventListener('click', handlefilterMenuClick);
 //applyFilter.addEventListener('click', console.log);
 //filterMenuSubitems.addEventListener('click', handleFilterMenuClick);
 // filterMenu.addEventListener('submit', handleFilterMenuSubmit);
 
-function handleFilterMenuClick(e) {
-  if (!e.target.classList.contains(className.filterMenuLink)) return;
-  // для чекбоксов палитры нельзя вызывать!
-  e.preventDefault();
+// function handleFilterMenuClick(e) {
+//   if (!e.target.classList.contains(CLASS_NAME.filterMenuLink)) return;
+//   // для чекбоксов палитры нельзя вызывать!
+//   e.preventDefault();
 
-  const { applied, expanded } = filterData;
-  applied[expanded.name] = e.target.name;
+//   const { applied, expanded } = filterData;
+//   applied[expanded.name] = e.target.name;
 
-  console.log(filterData);
-}
+//   console.log(filterData);
+// }
 
-function handleFilterPanelClick({ target, currentTarget }) {
-  // реагируем только на кнопку-фильтр
-  if (!target.classList.contains(className.filterBtn)) return;
+// function handlefilterMenuClick({ target, currentTarget }) {
+//   // реагируем только на кнопку-фильтр
+//   if (!target.classList.contains(CLASS_NAME.filterBtn)) return;
 
-  filterData.expanded?.removeAttribute('expanded');
+//   filterData.expanded?.removeAttribute('expanded');
 
-  // если меню для фильтра отображено - закрываем его
-  if (filterData.expanded?.name === target.name) {
-    filterData.expanded = null;
-    hideFilterMenu();
-  } else {
-    // открываем меню и запоминаем фильтр
-    filterData.expanded = target;
-    target.setAttribute('expanded', '');
-    showFilterMenu(target);
-  }
-}
+//   // если меню для фильтра отображено - закрываем его
+//   if (filterData.expanded?.name === target.name) {
+//     filterData.expanded = null;
+//     hideFilterMenu();
+//   } else {
+//     // открываем меню и запоминаем фильтр
+//     filterData.expanded = target;
+//     target.setAttribute('expanded', '');
+//     showFilterMenu(target);
+//   }
+// }
 
 //
 // Funcs
 //
 
-function makeFilterMenu(name) {
-  const { value } = queryParams[name];
-
-  // filterMenu.name = name;
-
-  let markup = value
-    .map((val, idx) => {
-      const [value, alias] = val.split('?');
-      const label = alias || value;
-
-      return name === 'colors'
-        ? `
-        <input 
-          type="checkbox"
-          name="color" 
-          style="background-color: ${label}"
-        >`
-        : `
-        <a class="${className.filterMenuLink}" 
-          href="#" name="${value}"
-        >${label}</a>`;
-    })
-    .join('');
-
-  filterMenuSubitems.innerHTML = markup;
-}
-
-function showFilterMenu({ name }) {
-  makeFilterMenu(name);
-  // для палитры отображаем кнопку Apply
-  applyFilter.style.display = name === 'colors' ? 'block' : 'none';
-  filterMenu.classList.remove(className.filterMenuHidden);
-}
-
-function hideFilterMenu() {
-  filterMenu.classList.add(className.filterMenuHidden);
-}
-
-function makeFilterPanel() {
+/**
+ * @param {object} queryParams данные о параметрах сервиса
+ */
+function makeFiltersMenu(queryParams) {
   const markup = Object.entries(queryParams)
     .map(([name, { caption, value }]) => {
-      const control = value.includes('false')
-        ? `
-        <label>
-          <input type="checkbox" name=${name}>
-          <span>${name}</span>
-        </label>`
-        : `
-        <button
-          class="${className.filterBtn}" 
-          type="button"
-          name="${name}"
-        >${caption || name}</button>`;
+      const type = value.includes('false') && 'checkbox';
 
       return `
-        <li class="${className.filterItem}">
-          ${control}
+        <li class="${CLASS_NAME.filterMenuItem}">
+          ${getFilterItemMarkup(type, { name, caption, value })}
         </li>`;
     })
     .join('');
 
-  filterPanel.insertAdjacentHTML('afterbegin', markup);
+  filterMenu.insertAdjacentHTML('afterbegin', markup);
+}
+
+/**
+ * @param {string} type
+ * @param {object} name - имя параметра, caption - отображаемое имя
+ * @returns разметка для фильтра
+ */
+function getFilterItemMarkup(type, { name, caption, value }) {
+  const optionsList = getFilterOptionsListMarkup({ name, value });
+
+  switch (type) {
+    case 'checkbox':
+      return `
+        <label>
+          <input type="checkbox" name=${name}>
+          <span>${caption || name}</span>
+        </label>`;
+
+    default: /* button */
+      return `
+        <button
+          class="${CLASS_NAME.filterMenuExpander}" 
+          type="button" name="${name}"
+        >${caption || name}</button>
+        ${optionsList}`;
+  }
+}
+
+// TODO: как-то надо разделить фукнцию на более мелкие
+
+/**
+ * @param {array} value - массив значений параметра
+ * @param {boolean} isColorPalette
+ * @returns разметка ul-списка опций фильтра
+ */
+function getFilterOptionsListMarkup({ name, value }) {
+  const classList = `${CLASS_NAME.filterMenuOptions} ${CLASS_NAME.filterMenuOptionsHidden}`;
+  const isColorPalette = name === 'colors';
+
+  const applyBtn = isColorPalette
+    ? `<button type="button" name="applyFilter">OK</button>`
+    : '';
+
+  const optionItemsMarkup = value
+    .map(v => {
+      const [value, alias] = v.split('?');
+      const caption = isColorPalette ? value : alias || value;
+
+      const style = isColorPalette
+        ? `style="background-color: ${alias || value}"`
+        : '';
+
+      return `
+        <li>
+          <label>
+            <input type="checkbox" name="${value}" ${style}>
+            <span>${caption}</span>
+          </label>
+        </li>`;
+    })
+    .join('');
+
+  return `
+    <div>
+      <ul class="${classList}" 
+        name="${name}">${optionItemsMarkup}</ul>
+      ${applyBtn}
+    </div>`;
 }

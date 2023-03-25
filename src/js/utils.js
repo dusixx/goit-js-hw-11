@@ -8,6 +8,7 @@ const isInt = v => Number.isInteger(v);
 const isNum = v => !isNaN(v - parseFloat(v));
 const isObj = v => Object.prototype.toString.call(v) === '[object Object]';
 const normId = id => `${id}`.replace(/[^$\w]/gi, '').replace(/^\d+/, '');
+const getRef = document.querySelector.bind(document);
 
 //
 // ID name
@@ -120,6 +121,7 @@ export default {
   info,
   succ,
   normId,
+  getRef,
   snakeToCamel,
   camelToSnake,
   namesToSnake,

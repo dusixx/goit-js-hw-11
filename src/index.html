@@ -25,26 +25,28 @@
             >
               &times;
             </button>
-            <button class="search-form__btn-search" type="submit">
+            <button
+              class="search-form__btn-search"
+              type="submit"
+              title="Click to start searching..."
+            >
               &#x2315;
             </button>
           </div>
         </form>
 
         <!-- media-filter toggle -->
-        <button class="toggle-filter" type="button">
+        <button
+          class="toggle-filter"
+          type="button"
+          title="Click to toggle options..."
+        >
           <svg><use href="./images/icons.svg#icon-equalizer-2"></use></svg>
         </button>
       </div>
 
       <!-- filter panel-->
-      <!-- TODO верхний контейнер надо сделать формой  -->
-      <form class="filter">
-        <div class="filter-menu filter-menu--hidden">
-          <div class="filter-menu__subitems"></div>
-        </div>
-        <button type="submit" style="display: none">Apply</button>
-      </form>
+      <ul class="filter filter--hidden"></ul>
     </header>
 
     <main>
@@ -66,7 +68,6 @@
         <!-- backtop -->
         <a href="#" class="backtop backtop--hidden" data-backtop>&#9650;</a>
       </section>
-      <div class="funky">aaa</div>
     </main>
 
     <script src="index.js" type="module"></script>

@@ -1,5 +1,7 @@
+import utils from './utils';
+
 const searchFormRef = document.querySelector('.search-form');
-const getRef = document.querySelector.bind(document);
+const { getRef } = utils;
 
 export default {
   searchForm: searchFormRef,
@@ -9,9 +11,6 @@ export default {
   backtop: getRef('.backtop'),
   gallery: getRef('.gallery'),
   header: getRef('.header'),
-  filterPanel: getRef('.filter'),
-  filterMenu: getRef('.filter-menu'),
-  toggleFilterPanel: getRef('.toggle-filter'),
-  filterMenuSubitems: getRef('.filter-menu__subitems'),
-  applyFilter: getRef('.filter-menu [type="submit"]'),
+  filterMenu: getRef('.filter'),
+  toggleFilterMenu: getRef('.toggle-filter'),
 };
