@@ -5,16 +5,18 @@
 
 export default queryParams = {
   image_type: {
-    caption: 'type',
-    value: ['all', 'photo', 'illustration', 'vector'],
+    caption: 0,
+    value: ['?all images', 'photo', 'illustration', 'vector'],
   },
 
   order: {
+    caption: 0,
     value: ['?Most relevant', "ec?Editor's choice", 'trending', 'latest'],
   },
 
   orientation: {
-    value: ['all', 'horizontal', 'vertical'],
+    caption: 0,
+    value: ['?any orientation', 'horizontal', 'vertical'],
   },
 
   colors: {

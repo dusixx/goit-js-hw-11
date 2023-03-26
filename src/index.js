@@ -6,22 +6,41 @@ import refs from './js/refs';
 import hwData from './js/hw-data';
 import _ from './js/backtop';
 import _ from './js/header';
-import _ from './js/filter';
+import filter from './js/filter';
 
 //
 // Init
 //
 
+const {
+  filterList,
+  toggleFilterList,
+  clearBtn,
+  searchForm,
+  searchInput,
+  loader,
+  backtop,
+} = refs;
+
+const { CLASS_NAME, makeFilterList } = filter;
 const { defSearchOpts, message } = hwData;
-const { clearBtn, searchForm, searchInput, loader, backtop } = refs;
 const { error, info, succ, getViewportClientRect, scrollByTop } = utils;
 
 const gallery = new ImageGallery('.gallery');
 const pbs = new PixabayService(defSearchOpts);
 
+makeFilterList(filterList, queryParams);
+
 //
 // Event handlers
 //
+
+// todo: надо импортировать интерфейс и среди опций toggler как-то...
+// чтобы этот код по минимум знал об устройстве фильтров
+
+toggleFilterList.addEventListener('click', () =>
+  filterList.classList.toggle(CLASS_NAME.filterListHidden)
+);
 
 clearBtn.addEventListener('click', handleClearInputClick);
 searchForm.addEventListener('submit', handleSearchFormSubmit);

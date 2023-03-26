@@ -1,6 +1,7 @@
 $colorFilterBtnBg: gray;
 $colorFilterBtnBorder: gray;
 $filterExpanderHeight: 35px;
+$filterMenuPadding: 12px;
 
 .filter-list {
   position: fixed;
@@ -44,8 +45,8 @@ $filterExpanderHeight: 35px;
   align-items: center;
 
   height: $filterExpanderHeight;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 17px;
+  padding-right: 17px;
 
   text-transform: inherit;
   font-family: inherit;
@@ -61,6 +62,11 @@ $filterExpanderHeight: 35px;
     content: '▾';
     font-size: 20px;
     margin-left: 5px;
+  }
+
+  & span {
+    font-size: 10px;
+    opacity: 0.6;
   }
 
   &:hover,
@@ -81,7 +87,7 @@ $filterExpanderHeight: 35px;
 
   display: none;
 
-  padding: 12px;
+  padding: $filterMenuPadding;
   background-color: var(--color-header-bg);
   border: 1px solid rgba(white, 0.2);
 

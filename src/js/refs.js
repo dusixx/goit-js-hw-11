@@ -1,7 +1,7 @@
 import utils from './utils';
 
-const searchFormRef = document.querySelector('.search-form');
 const { getRef } = utils;
+const searchFormRef = getRef('.search-form');
 
 export default {
   searchForm: searchFormRef,
