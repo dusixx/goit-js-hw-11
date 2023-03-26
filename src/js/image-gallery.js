@@ -17,7 +17,7 @@ export default class ImageGallery {
    * @param {object} opts - объект опций
    */
   constructor(classSelector, opts) {
-    if (hasSpaces(classSelector)) {
+    if (/\s/.test(classSelector)) {
       throw new Error('Single class name expected');
     }
 
@@ -114,10 +114,6 @@ export default class ImageGallery {
 //
 // Helpers
 //
-
-function hasSpaces(s) {
-  return /\s/.test(s);
-}
 
 /**
  * @param {object} hit

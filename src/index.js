@@ -6,7 +6,7 @@ import refs from './js/refs';
 import hwData from './js/hw-data';
 import _ from './js/backtop';
 import _ from './js/header';
-import _ from './js/media-filter';
+import _ from './js/filter';
 
 //
 // Init

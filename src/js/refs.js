@@ -11,6 +11,6 @@ export default {
   backtop: getRef('.backtop'),
   gallery: getRef('.gallery'),
   header: getRef('.header'),
-  filterMenu: getRef('.filter'),
-  toggleFilterMenu: getRef('.toggle-filter'),
+  filterList: getRef('.filter-list'),
+  toggleFilterList: getRef('.toggle-filter-list'),
 };

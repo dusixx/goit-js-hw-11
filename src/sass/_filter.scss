@@ -1,7 +1,8 @@
 $colorFilterBtnBg: gray;
 $colorFilterBtnBorder: gray;
+$filterExpanderHeight: 35px;
 
-.filter {
+.filter-list {
   position: fixed;
   left: 0;
   top: var(--header-height);
@@ -28,8 +29,10 @@ $colorFilterBtnBorder: gray;
   }
 }
 
-.filter__item {
+.filter {
+  position: relative;
   display: flex;
+  align-items: center;
   user-select: none;
 }
 
@@ -40,7 +43,7 @@ $colorFilterBtnBorder: gray;
   justify-content: center;
   align-items: center;
 
-  height: 35px;
+  height: $filterExpanderHeight;
   padding-left: 20px;
   padding-right: 20px;
 
@@ -62,15 +65,32 @@ $colorFilterBtnBorder: gray;
 
   &:hover,
   &:focus-visible,
-  &[expanded] {
+  &--expanded {
     background-color: rgb($colorFilterBtnBg, 0.2);
   }
 }
 
+.filter__menu {
+  position: absolute;
+  top: $filterExpanderHeight;
+  z-index: 10;
+
+  padding: 12px;
+  background-color: var(--color-header-bg);
+  border: 1px solid rgba(white, 0.2);
+
+  &--hidden {
+    display: none;
+  }
+}
+
 .filter__options {
-  // &--hidden {
-  //   display: none;
-  // }
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 5px;
+
+  color: rgb(194, 194, 194);
 
   & label {
     display: flex;
@@ -83,45 +103,16 @@ $colorFilterBtnBorder: gray;
     margin-right: 5px;
     cursor: inherit;
   }
+
+  & span {
+    display: block;
+    white-space: nowrap;
+  }
 }
 
-// .filter-menu__link,
-// .filter-menu button[type='submit'] {
-//   @extend %link;
-
-//   padding: 4px;
-//   padding-left: 10px;
-//   padding-right: 10px;
-
-//   color: var(--color-accent);
-//   border-radius: 10px;
-//   border-style: unset;
-//   background-color: unset;
-
-//   transition: background-color var(--transition-params);
-
-//   &:hover,
-//   &:focus-visible {
-//     background-color: rgb(236, 236, 236);
-//   }
-// }
-
-// .filter__options {
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   flex-wrap: wrap;
-//   gap: 10px;
-// }
-
-.filter__item button[name='applyFilter'] {
-  @extend %btn-primary;
-  width: 40px;
-  height: 20px;
-  border-radius: 5px;
-}
-
+//
 // стилизуем все, кроме grayscale и transparent
+//
 .filter__options[name='colors'] input[name] {
   &:not([name='grayscale']):not([name='transparent']) {
     appearance: unset;
@@ -130,16 +121,48 @@ $colorFilterBtnBorder: gray;
     width: 15px;
     height: 15px;
 
-    border: 2px solid rgb(255, 255, 255);
+    border: 1px solid rgb(255, 255, 255);
     outline: 1px solid rgb(206, 206, 206);
 
     &:hover,
     &:focus-visible {
-      outline: 1px solid var(--color-text);
+      outline: 1px solid var(--color-accent);
     }
 
     &:checked {
-      outline: 2px solid var(--color-text);
+      outline: 3px solid var(--color-accent);
     }
+
+    & ~ span {
+      display: none;
+    }
+  }
+}
+
+.filter__options[name='colors'] {
+  display: flex;
+  flex-direction: row;
+}
+
+.filter__options[name='colors'] input[name='grayscale'] {
+  margin-bottom: 10px;
+
+  & ~ span {
+    margin-bottom: 10px;
+  }
+}
+
+.filter__menu button[name='applyFilter'] {
+  @extend %btn-primary;
+
+  width: 40px;
+  height: 20px;
+  margin-top: 10px;
+  border-radius: 7px;
+
+  transition: filter var(--transition-params);
+
+  &:hover {
+    filter: brightness(1.1);
   }
 }
