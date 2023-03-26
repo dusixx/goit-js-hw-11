@@ -7,8 +7,11 @@ const isFunc = v => typeof v === 'function';
 const isInt = v => Number.isInteger(v);
 const isNum = v => !isNaN(v - parseFloat(v));
 const isObj = v => Object.prototype.toString.call(v) === '[object Object]';
+
 const normId = id => `${id}`.replace(/[^$\w]/gi, '').replace(/^\d+/, '');
+
 const getRef = document.querySelector.bind(document);
+const getRefs = document.querySelectorAll.bind(document);
 
 //
 // ID name
@@ -122,6 +125,7 @@ export default {
   succ,
   normId,
   getRef,
+  getRefs,
   snakeToCamel,
   camelToSnake,
   namesToSnake,

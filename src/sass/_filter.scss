@@ -70,10 +70,16 @@ $filterExpanderHeight: 35px;
   }
 }
 
+.filter__expander--expanded ~ .filter__menu {
+  display: block;
+}
+
 .filter__menu {
   position: absolute;
   top: $filterExpanderHeight;
   z-index: 10;
+
+  display: none;
 
   padding: 12px;
   background-color: var(--color-header-bg);

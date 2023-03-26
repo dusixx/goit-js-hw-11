@@ -1,3 +1,7 @@
+import utils from './utils';
+
+const { getRefs } = utils;
+
 const CLASS_NAME = {
   filterList: 'filter-list',
   filterListHidden: 'filter-list--hidden',
@@ -5,8 +9,9 @@ const CLASS_NAME = {
   filterItemExpander: 'filter__expander',
   filterItemExpanderExpanded: 'filter__expander--expanded',
   filterItemMenu: 'filter__menu',
+  filterItemOption: 'filter__option',
   filterItemOptions: 'filter__options',
-  filterItemMenuHidden: 'filter__menu--hidden',
+  // filterItemMenuHidden: 'filter__menu--hidden',
 };
 
 /**
@@ -25,6 +30,7 @@ function makeFilterList(filterList, queryParams) {
     .join('');
 
   filterList?.insertAdjacentHTML('afterbegin', markup);
+  overrideCheckboxBehavior();
 }
 
 /**
@@ -57,8 +63,8 @@ function getFilterItemMarkup(type, { name, caption, value }) {
  * @returns разметка ul-списка опций фильтра
  */
 function getFilterItemMenuMarkup({ name, value }) {
-  const classList = `${CLASS_NAME.filterItemOptions}`;
   const isColorPalette = name === 'colors';
+  const multiselect = isColorPalette ? 'multiselect' : '';
 
   const applyBtn = isColorPalette
     ? `<button type="button" name="applyFilter">Go</button>`
@@ -74,7 +80,7 @@ function getFilterItemMenuMarkup({ name, value }) {
         : '';
 
       return `
-        <li>
+        <li class="${CLASS_NAME.filterItemOption}">
           <label>
             <input type="checkbox" name="${value}" ${style}>
             <span>${caption}</span>
@@ -84,10 +90,36 @@ function getFilterItemMenuMarkup({ name, value }) {
     .join('');
 
   return `
-    <div class="${CLASS_NAME.filterItemMenu} ${CLASS_NAME.filterItemMenuHidden}">
-      <ul class="${classList}" name="${name}">${itemOptionsMarkup}</ul>
+    <div class="${CLASS_NAME.filterItemMenu}">
+      <ul class="${CLASS_NAME.filterItemOptions}"
+        name="${name}" ${multiselect}
+      >${itemOptionsMarkup}</ul>
       ${applyBtn}
     </div>`;
+}
+
+function isCheckbox(el) {
+  return el.nodeName === 'INPUT' && el.type === 'checkbox';
+}
+
+function overrideCheckboxBehavior() {
+  const selector = `.${CLASS_NAME.filterItemOptions}:not([multiselect])`;
+
+  // ставим обработчики для всех ul.filter__options,
+  // у которых нет атрибута multiselect
+  getRefs(selector)?.forEach(itm =>
+    itm.addEventListener('click', e => {
+      if (!isCheckbox(e.target)) return;
+
+      // снимаем у всех
+      e.currentTarget
+        .querySelectorAll('input[type="checkbox"]')
+        ?.forEach(itm => (itm.checked = false));
+
+      // кроме текущего
+      e.target.checked = true;
+    })
+  );
 }
 
 export default {
