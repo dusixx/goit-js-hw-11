@@ -11,7 +11,6 @@ const CLASS_NAME = {
   filterItemMenu: 'filter__menu',
   filterItemOption: 'filter__option',
   filterItemOptions: 'filter__options',
-  // filterItemMenuHidden: 'filter__menu--hidden',
 };
 
 /**
@@ -102,6 +101,10 @@ function isCheckbox(el) {
   return el.nodeName === 'INPUT' && el.type === 'checkbox';
 }
 
+/**
+ * Ставит для всех ul.filter__options:not([multiselect]) input {...}
+ * поведение как у input:radio. То бишь, можно выделить всего один из группы
+ */
 function overrideCheckboxBehavior() {
   const selector = `.${CLASS_NAME.filterItemOptions}:not([multiselect])`;
 

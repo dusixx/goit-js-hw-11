@@ -1,11 +1,11 @@
 import utils from './utils';
 import refs from './refs';
 import queryParams from './rest-data';
-import filterMarkup from './filter-markup';
+import filterBase from './filter-base';
 
 const { getRef, getRefs } = utils;
 const { filterList, toggleFilterList } = refs;
-const { makeFilterList, CLASS_NAME } = filterMarkup;
+const { makeFilterList, CLASS_NAME } = filterBase;
 
 //
 // inerface
@@ -17,14 +17,6 @@ const { makeFilterList, CLASS_NAME } = filterMarkup;
 // }
 
 makeFilterList(filterList, queryParams);
-
-function checkOneOnly(checkbox) {
-  console.log(checkbox);
-}
-
-// после makeFilterList()
-// const filterMenuOptions = getRef(`.${CLASS_NAME.filterItemOptions}`);
-// console.log(filterMenuOptions);
 
 //
 // Event handlers
