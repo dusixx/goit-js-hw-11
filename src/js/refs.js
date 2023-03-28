@@ -4,6 +4,7 @@ const { getRef } = utils;
 const searchFormRef = getRef('.search-form');
 
 export default {
+  body: document.documentElement,
   searchForm: searchFormRef,
   searchInput: searchFormRef?.searchQuery,
   clearBtn: searchFormRef?.clearBtn,

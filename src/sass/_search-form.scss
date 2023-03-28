@@ -50,22 +50,19 @@
 
   position: absolute;
   right: 0;
-
   width: var(--search-btn-width);
   height: 100%;
 
   font-size: 30px;
-
   border-radius: var(--search-form-border-radius);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 
-  opacity: 1;
   transform: scale(var(--search-btn-scale));
-  transition: opacity var(--transition-params);
+  transition: filter var(--transition-params);
 
   &:hover {
-    opacity: 0.8;
+    filter: brightness(1.1);
   }
 }
 
@@ -74,19 +71,17 @@
 
   position: absolute;
   right: var(--search-btn-clear-right);
-  //top: 50%;
-  //transform: translate(0, -50%);
 
   height: 100%;
   width: var(--search-btn-clear-width);
 
   font-size: 22px;
+  color: rgba(gray, 0.8);
   background-color: unset;
 
-  opacity: 0.4;
-  transition: opacity var(--transition-params);
+  transition: color var(--transition-params);
 
   &:hover {
-    opacity: 0.8;
+    color: var(--color-accent);
   }
 }

@@ -30,6 +30,21 @@ $filterMenuPadding: 12px;
   }
 }
 
+.filter-list label {
+  & input[type='checkbox'] {
+    cursor: inherit;
+
+    &:not([name='colors']) {
+      margin-right: 5px;
+    }
+
+    & ~ span {
+      display: block;
+      white-space: nowrap;
+    }
+  }
+}
+
 .filter {
   position: relative;
   display: flex;
@@ -51,6 +66,7 @@ $filterMenuPadding: 12px;
   text-transform: inherit;
   font-family: inherit;
   font-size: inherit;
+  white-space: nowrap;
 
   border-radius: 20px;
   background-color: rgb($colorFilterBtnBg, 0);
@@ -64,11 +80,6 @@ $filterMenuPadding: 12px;
     margin-left: 5px;
   }
 
-  & span {
-    font-size: 10px;
-    opacity: 0.6;
-  }
-
   &:hover,
   &:focus-visible,
   &--expanded {
@@ -76,6 +87,22 @@ $filterMenuPadding: 12px;
   }
 }
 
+// clear filter
+.filter__expander span {
+  display: none;
+
+  margin-right: 7px;
+  font-size: 18px;
+  transition: color var(--transition-params);
+
+  &:hover,
+  &:focus-visible {
+    transform: scale(1.2);
+    color: var(--color-accent);
+  }
+}
+
+// show filter menu
 .filter__expander--expanded ~ .filter__menu {
   display: block;
 }
@@ -96,6 +123,15 @@ $filterMenuPadding: 12px;
   }
 }
 
+.filter {
+  & label {
+    display: flex;
+    align-items: center;
+    line-height: 0;
+    cursor: pointer;
+  }
+}
+
 .filter__options {
   display: flex;
   flex-wrap: wrap;
@@ -104,29 +140,22 @@ $filterMenuPadding: 12px;
 
   color: rgb(194, 194, 194);
 
-  & label {
-    display: flex;
-    align-items: center;
-    line-height: 0;
-    cursor: pointer;
-  }
+  // & input {
+  //   margin-right: 5px;
+  //   cursor: inherit;
+  // }
 
-  & input {
-    margin-right: 5px;
-    cursor: inherit;
-  }
-
-  & span {
-    display: block;
-    white-space: nowrap;
-  }
+  // & span {
+  //   display: block;
+  //   white-space: nowrap;
+  // }
 }
 
 //
 // стилизуем все, кроме grayscale и transparent
 //
-.filter__options[name='colors'] input[name] {
-  &:not([name='grayscale']):not([name='transparent']) {
+.filter__options[name='colors'] input[value] {
+  &:not([value='grayscale']):not([value='transparent']) {
     appearance: unset;
 
     display: block;
@@ -156,7 +185,7 @@ $filterMenuPadding: 12px;
   flex-direction: row;
 }
 
-.filter__options[name='colors'] input[name='grayscale'] {
+.filter__options[name='colors'] input[value='grayscale'] {
   margin-bottom: 10px;
 
   & ~ span {

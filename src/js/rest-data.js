@@ -1,6 +1,10 @@
 //
-// default value index == 1
-// value[?alias][:attr]
+//value[?alias]
+//
+// defaults:
+// value index == 0
+// nodeName: 'button',
+// nodeType: 'button',
 //
 
 export default queryParams = {
@@ -20,6 +24,8 @@ export default queryParams = {
   },
 
   colors: {
+    multiselect: true,
+    isColorPalette: true,
     value: [
       'transparent',
       'grayscale',
@@ -39,7 +45,8 @@ export default queryParams = {
   },
 
   safesearch: {
-    value: ['false', 'true'],
+    nodeType: 'checkbox',
+    value: ['true'],
   },
 
   // order: {

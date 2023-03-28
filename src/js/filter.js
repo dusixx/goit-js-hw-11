@@ -1,222 +1,239 @@
+//
+// NOTE: функционал зависит от разметки и неоптимизирован
+//
+
 import utils from './utils';
 import refs from './refs';
 import queryParams from './rest-data';
+import filterMarkup from './filter-markup';
 
-const { filterList } = refs;
-const { getRefs } = utils;
+const { getRefs, isObj, isFunc } = utils;
+const { filterList, body } = refs;
+const { makeFilterList, CLASS_NAME, APPLY_BUTTON_NAME } = filterMarkup;
 
-const APPLY_BUTTON_NAME = 'applyFilter';
-const FILTER_MENU_ID = 'filter_menu';
+let onApplyHandler;
+let filterListToggler;
 
-const CLASS_NAME = {
-  filterList: 'filter-list',
-  filterListHidden: 'filter-list--hidden',
-  filterItem: 'filter',
-  filterItemExpander: 'filter__expander',
-  filterItemExpanderExpanded: 'filter__expander--expanded',
-  filterItemMenu: 'filter__menu',
-  filterItemOption: 'filter__option',
-  filterItemOptions: 'filter__options',
-};
+export default class Filter {
+  static #instance;
+  /**
+   * @param {object} {...}
+   *    toggler - элемент для открытия/закрытия панели фильтров
+   *    onApply - обработчик, вызваемый в момент применения параметров
+   */
+  constructor({ toggler, onApply } = {}) {
+    // синглтон
+    if (Filter.#instance) return Filter.#instance;
 
-filterList.addEventListener('click', handleFilterListClick);
+    makeFilterList(filterList, queryParams);
 
-function handleFilterListClick({ target }) {
-  const { classList } = target;
+    // кастомное поведение контролов
+    setCheckboxBehavior();
+    setInputElementBehavior();
+    setApplyFilterBehavior();
 
-  // button.filter__expander
-  if (classList.contains(CLASS_NAME.filterItemExpander)) {
-    const isExpanded = classList.toggle(CLASS_NAME.filterItemExpanderExpanded);
-    const filterExpander = target;
+    // ставим обработчик для тоглера
+    if (isFunc(toggler?.addEventListener)) {
+      (filterListToggler = toggler).addEventListener('click', () =>
+        filterList.classList.toggle(CLASS_NAME.filterListHidden)
+      );
+    }
 
-    // 'click' нельзя - не откроется меню при клике на expander
-    document.documentElement.addEventListener('mousedown', ({ target }) => {
-      if (
-        target.id !== FILTER_MENU_ID &&
-        !target.closest(`#${FILTER_MENU_ID}`)
-      ) {
-        collapseFilterMenu(filterExpander);
-      }
-    });
+    // обработчик кстомного самбита формы
+    if (isFunc(onApply)) onApplyHandler = onApply;
+
+    Filter.#instance = this;
   }
 }
 
-/**
- * @param {object} queryParams данные о параметрах REST API
- */
-function makeFilterList(filterList, queryParams) {
-  const markup = Object.entries(queryParams)
-    .map(([name, { caption, value }]) => {
-      const type = value.includes('false') && 'checkbox';
-
-      return `
-        <div class="${CLASS_NAME.filterItem}">
-          ${getFilterItemMarkup(type, { name, caption, value })}
-        </div>`;
-    })
-    .join('');
-
-  // рендерим разметку
-  filterList?.insertAdjacentHTML('afterbegin', markup);
-
-  // ставим кастомное поведение
-  setCheckboxBehavior();
-  setApplyFilterBehavior();
-  // setFilterMenuBehavior();
-}
-
-/**
- * @param {object} name - имя параметра, caption - отображаемое имя
- * @param {string} type
- * @returns разметка для фильтра
- */
-function getFilterItemMarkup(type, { name, caption, value }) {
-  const itemMenuMarkup = getFilterItemMenuMarkup({ name, value });
-
-  // TODO: неверно надо написать функцию клика и установки кепшна и юзать тут ее,
-  // чтобы чекбокс ставить тоже
-  if (utils.isInt(caption)) {
-    const [val, alias] = value[caption].split('?');
-    caption = alias || val;
-  }
-
-  switch (type) {
-    case 'checkbox':
-      return `
-        <label>
-          <input type="checkbox" name=${name}>
-          <span>${caption || name}</span>
-        </label>`;
-
-    default: /* button */
-      return `
-        <button
-          class="${CLASS_NAME.filterItemExpander}" type="button" 
-            name="${name}"><span></span>${caption || name}</button>
-        ${itemMenuMarkup}`;
-  }
-}
-
-/**
- * @param {array} value - массив значений параметра
- * @returns разметка ul-списка опций фильтра
- */
-function getFilterItemMenuMarkup({ name, value }) {
-  const isColorPalette = name === 'colors';
-  const multiselect = isColorPalette ? 'multiselect' : '';
-
-  const applyBtn = isColorPalette
-    ? `<button type="button" name="${APPLY_BUTTON_NAME}">Go</button>`
-    : '';
-
-  const itemOptionsMarkup = value
-    .map(v => {
-      const [value, alias] = v.split('?');
-      const caption = isColorPalette ? value : alias || value;
-
-      const style = isColorPalette
-        ? `style="background-color: ${alias || value}"`
-        : '';
-
-      return `
-        <li class="${CLASS_NAME.filterItemOption}">
-          <label>
-            <input type="checkbox" name="${value}" ${style}>
-            <span>${caption}</span>
-          </label>
-        </li>`;
-    })
-    .join('');
-
-  return `
-    <div class="${CLASS_NAME.filterItemMenu}" id="filter_menu">
-      <ul class="${CLASS_NAME.filterItemOptions}"
-        name="${name}" ${multiselect}
-      >${itemOptionsMarkup}</ul>
-      ${applyBtn}
-    </div>`;
-}
+//
+//////////////////////////
+// Основной функционал
+//////////////////////////
+//
 
 function isCheckbox(el) {
   return el.nodeName === 'INPUT' && el.type === 'checkbox';
 }
 
+filterList.addEventListener('click', handleFilterExpanderClick);
+
+function handleFilterExpanderClick({ target }) {
+  const { classList } = target;
+  //
+  // ловим клик по button.filter__expander
+  //
+  // TODO: надо обновлять чекбоксы при открытии для !multiline
+  // Надо для этого написать setData() и все делать через нее
+  //
+  if (classList.contains(CLASS_NAME.filterItemExpander)) {
+    const filterItem = target.parentNode;
+    const filterExpander = target;
+
+    // при клике на button.filter__expander--epxanded - закрываем меню
+    const isExpanded = !classList.toggle(CLASS_NAME.filterItemExpanderExpanded);
+    if (isExpanded) return collapseFilterMenu(filterExpander);
+
+    //
+    // ловим клики за пределами текущего div.filter
+    //
+    body.addEventListener('click', handleBodyMousedown);
+
+    function handleBodyMousedown({ target }) {
+      const wasClickedOutsideFilterItem =
+        target.closest(`.${CLASS_NAME.filterItem}`) !== filterItem;
+
+      if (wasClickedOutsideFilterItem) {
+        collapseFilterMenu(filterExpander);
+        body.removeEventListener('click', handleBodyMousedown);
+      }
+    }
+  }
+}
+
 /**
- * Ставит для всех ul.filter__options:not([multiselect]) input
- * поведение как у input:radio. То бишь, можно выбрать только один из многих
+ * Ставит для всех .filter-list input поведение, при котром
+ * если в контейнере нет кнопки applyFilter - опция применяется сразу
+ */
+function setInputElementBehavior() {
+  filterList.addEventListener('change', handleInputChange);
+
+  function handleInputChange({ target }) {
+    if (target.nodeName !== 'INPUT') return;
+
+    const hasApplyBtn =
+      target.closest(`.${CLASS_NAME.filterItemOptions}`)?.nextElementSibling
+        ?.name === APPLY_BUTTON_NAME;
+
+    if (!hasApplyBtn) submitFilterData();
+  }
+}
+
+/**
+ * Ставит для всех .filter__options:not([multiselect]) input
+ * поведение как у input:radio - можно выбрать лишь один из многих
  */
 function setCheckboxBehavior() {
-  const filterOpts = `.${CLASS_NAME.filterItemOptions}`;
-  const filterOptsNoMulti = `${filterOpts}:not([multiselect])`;
+  const filterOpts = `.${CLASS_NAME.filterItemOptions}:not([multiselect])`;
 
-  // ставим обработчики для всех ul.filter__options,
-  // у которых нет атрибута multiselect
-  getRefs(filterOptsNoMulti)?.forEach(itm =>
-    itm.addEventListener('click', e => {
-      if (!isCheckbox(e.target)) return;
-      //
-      selectOneOnly(e);
-      updateExpanderCaption(e);
-    })
+  // ставим обработчики для всех .filter__options,у которых нет [multiselect]
+  getRefs(filterOpts)?.forEach(itm =>
+    itm.addEventListener('click', handleCheckboxClick)
   );
 
-  function selectOneOnly(e) {
-    // снимаем у всех
-    e.currentTarget
-      .querySelectorAll('input[type="checkbox"]')
-      ?.forEach(itm => (itm.checked = false));
-
-    // кроме текущего
-    e.target.checked = true;
+  function handleCheckboxClick(e) {
+    if (!isCheckbox(e.target)) return;
+    selectOnlyOne(e);
+    updateFilterItem(e);
   }
 
-  function updateExpanderCaption({ target }) {
+  function selectOnlyOne({ target, currentTarget }) {
+    // снимаем у всех
+    currentTarget
+      .querySelectorAll('input[type="checkbox"]')
+      ?.forEach(itm => (itm.checked = false));
+    // кроме текущего
+    target.checked = true;
+  }
+
+  function updateFilterItem({ target }) {
+    const { filterExpander } = getParentFilterItem(target);
     const caption = target.nextElementSibling.textContent;
-    const filterItem = target.closest(`.${CLASS_NAME.filterItem}`);
-    const filterExpander = filterItem.firstElementChild;
 
     filterExpander.textContent = caption;
     collapseFilterMenu(filterExpander);
   }
 }
 
-function setApplyFilterBehavior(e) {
+/**
+ * ???
+ */
+function setApplyFilterBehavior() {
   const applyBtns = filterList.querySelectorAll(
     `button[name="${APPLY_BUTTON_NAME}"]`
   );
 
   applyBtns.forEach(itm => {
     itm.addEventListener('click', e => {
-      updateExpanderCaption(e);
+      updateFilterItemOnApply(e);
+      submitFilterData();
     });
   });
 
-  function updateExpanderCaption({ target }) {
-    const filterItem = target.closest(`.${CLASS_NAME.filterItem}`);
-    const filterExpander = filterItem.firstElementChild;
-    const filterExpanderCounter = filterExpander.firstElementChild;
+  function updateFilterItemOnApply({ target }) {
+    const { filterItem, filterExpander } = getParentFilterItem(target);
+    const clearFilter = filterExpander.firstElementChild;
 
-    // считаем кол-во включенных выбранных чекбоксов
-    const appliedCount = filterItem.querySelectorAll(
-      'input[type="checkbox"]:not(disabled):checked'
-    ).length;
+    // считаем кол-во выбранных (включенных) чекбоксов
+    const checkedCount = getCheckedOptions(filterItem).length;
 
-    // TODO: лучше крестик для очистки
-    filterExpanderCounter.textContent = appliedCount || '';
-    filterExpanderCounter.style.marginRight = appliedCount && '5px';
+    // показываем кнопку очистки фильтра, при необходимости
+    clearFilter.style.display = checkedCount ? 'inline' : 'none';
+    if (checkedCount) setClearFilterBehavior(clearFilter);
+
+    // закрываем меню
     collapseFilterMenu(filterExpander);
   }
+}
+
+/**
+ * @param {object} clearFilter - элемент "кнопки" очистки фильтра
+ */
+function setClearFilterBehavior(clearFilter) {
+  clearFilter?.addEventListener(
+    'click',
+    ({ target }) => {
+      const { filterItem } = getParentFilterItem(target);
+      // снимаем все опции и скрываем кнопку
+      getCheckedOptions(filterItem).forEach(itm => (itm.checked = false));
+      target.style.display = 'none';
+
+      submitFilterData();
+    },
+    { once: true }
+  );
+}
+
+/**
+ * @param {object} parent - элемент, относительно которого получаем список опций
+ * @param {boolean} enabled - если true, вернет только :not(disabled) опции
+ * @returns {NodeList} список элементов
+ */
+function getCheckedOptions(parent, enabled = true) {
+  const state = enabled ? ':not(disabled)' : '';
+  return parent.querySelectorAll(`input[type="checkbox"]${state}:checked`);
+}
+
+function getParentFilterItem(child) {
+  // NOTE: разметка критична (для firstElementChild)
+  const filterItem = child.closest(`.${CLASS_NAME.filterItem}`);
+  const filterExpander = filterItem?.firstElementChild;
+
+  return { filterItem, filterExpander };
 }
 
 function collapseFilterMenu(filterExpander) {
   filterExpander.classList.remove(CLASS_NAME.filterItemExpanderExpanded);
 }
 
-function collectData() {
-  // filterList.
+function submitFilterData() {
+  return onApplyHandler && onApplyHandler(getData(filterList));
 }
 
-export default {
-  CLASS_NAME,
-  makeFilterList,
-};
+/**
+ * @param {object} form - целевая форма
+ * @returns данные формы в формате {name: value, name1: [values],...}
+ */
+function getData(form) {
+  const formData = new FormData(form);
+
+  // если в массиве одно значение, ставим его как есть
+  return Array.from(formData.keys()).reduce((obj, name) => {
+    let values = formData.getAll(name);
+    obj[name] = values.length === 1 ? values[0] : values;
+
+    return obj;
+  }, {});
+}
+
+function setData() {}
