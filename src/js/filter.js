@@ -3,7 +3,7 @@ import refs from './refs';
 import queryParams from './rest-data';
 import filterMarkup from './filter-markup';
 
-const { getRefs, isObj, isFunc } = utils;
+const { getRefs, isObj, isFunc, fitIntoRange } = utils;
 const { filterList, body } = refs;
 const { makeFilterList, CLASS_NAME, APPLY_BUTTON_NAME } = filterMarkup;
 
@@ -28,21 +28,23 @@ export default class Filter {
     setCheckboxBehavior();
     setInputElementBehavior();
     setApplyFilterBehavior();
+    setFilterExpanderBehavior();
+    handleGrayscaleCheckboxClick();
 
     // ставим обработчик для тоглера
     setFilterListToggler(toggler);
 
-    // обработчик кстомного самбита формы
+    // обработчик самбита формы
     onApplyHandler = isFunc(onApply) ? onApply : null;
 
     Filter.#instance = this;
   }
 }
 
-//////////////////////////
-// Основной функционал
-//////////////////////////
-
+/**
+ *
+ * @param {*} toggler
+ */
 function setFilterListToggler(toggler) {
   const toggleFilterList = () =>
     filterList.classList.toggle(CLASS_NAME.filterListHidden);
@@ -59,13 +61,18 @@ function isCheckbox(el) {
   return el.nodeName === 'INPUT' && el.type === 'checkbox';
 }
 
-filterList.addEventListener('click', handleFilterExpanderClick);
+/**
+ *
+ */
+function setFilterExpanderBehavior() {
+  filterList.addEventListener('click', handleFilterExpanderClick);
 
-function handleFilterExpanderClick({ target }) {
-  const { classList } = target;
+  function handleFilterExpanderClick({ target }) {
+    const { classList } = target;
 
-  // ловим клик по button.filter__expander
-  if (classList.contains(CLASS_NAME.filterItemExpander)) {
+    // ловим клик по button.filter__expander
+    if (!classList.contains(CLASS_NAME.filterItemExpander)) return;
+
     const filterItem = target.parentNode;
     const filterExpander = target;
 
@@ -90,6 +97,29 @@ function handleFilterExpanderClick({ target }) {
 
 /**
  *
+ */
+function handleGrayscaleCheckboxClick() {
+  filterList
+    .querySelector(`.${CLASS_NAME.filterItemOption}#grayscale`)
+    ?.addEventListener('click', disableUnderlying);
+
+  function disableUnderlying({ target, currentTarget }) {
+    if (target.nodeName !== 'INPUT') return;
+
+    // отключаем нижележащие чекбоксы
+    for (
+      let sib = currentTarget.nextElementSibling;
+      sib !== null;
+      sib = sib.nextElementSibling
+    ) {
+      sib.style.opacity = target.checked ? '0.5' : null;
+      sib.firstElementChild.firstElementChild.disabled = target.checked;
+    }
+  }
+}
+
+/**
+ *
  * Ставит для всех .filter-list input поведение, при котром
  * если в контейнере нет кнопки типа Apply - опция применяется сразу
  */
@@ -99,12 +129,22 @@ function setInputElementBehavior() {
   function handleInputChange({ target }) {
     if (target.nodeName !== 'INPUT') return;
 
+    checkValue(target);
+
     const hasApplyBtn =
       // кнопка стоит сразу после блока опций
       target.closest(`.${CLASS_NAME.filterItemOptions}`)?.nextElementSibling
         ?.name === APPLY_BUTTON_NAME;
 
     if (!hasApplyBtn) submitFilterData();
+  }
+
+  function checkValue(target) {
+    const { type, value, min, max } = target;
+
+    if (type.toLowerCase() === 'number') {
+      target.value = fitIntoRange({ value, min, max });
+    }
   }
 }
 
@@ -241,4 +281,4 @@ function getData(form) {
   }, {});
 }
 
-function setData() {}
+function setData(data = {}) {}

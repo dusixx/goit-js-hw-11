@@ -16,7 +16,7 @@ $filterMenuPadding: 12px;
   flex-wrap: wrap;
   justify-content: center;
   align-content: center;
-  gap: 10px;
+  gap: 15px;
 
   font-size: 13px;
   text-transform: capitalize;
@@ -52,6 +52,32 @@ $filterMenuPadding: 12px;
   user-select: none;
 }
 
+.filter#safesearch {
+  margin-left: 60px;
+}
+
+.filter-list input[type='number'] {
+  height: 25px;
+  width: 60px;
+
+  margin-left: 5px;
+  padding-left: 5px;
+
+  font-size: 13px;
+  color: inherit;
+
+  border-radius: 10px;
+  border: 1px solid rgb($colorFilterBtnBorder, 0.4);
+  outline: none;
+
+  transition: border-color var(--transition-params);
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgb($colorFilterBtnBorder, 0.8);
+  }
+}
+
 .filter__expander {
   @extend %btn;
 
@@ -71,6 +97,7 @@ $filterMenuPadding: 12px;
   border-radius: 20px;
   background-color: rgb($colorFilterBtnBg, 0);
   border: 1px solid rgb($colorFilterBtnBorder, 0.3);
+  outline: none;
 
   transition: background-color var(--transition-params);
 
@@ -185,13 +212,17 @@ $filterMenuPadding: 12px;
   flex-direction: row;
 }
 
-.filter__options[name='colors'] input[value='grayscale'] {
+.filter__option#grayscale {
   margin-bottom: 10px;
-
-  & ~ span {
-    margin-bottom: 10px;
-  }
 }
+
+// .filter__options[name='colors'] input[value='grayscale'] {
+//   margin-bottom: 10px;
+
+//   & ~ span {
+//     margin-bottom: 10px;
+//   }
+// }
 
 .filter__menu button[name='applyFilter'] {
   @extend %btn-primary;

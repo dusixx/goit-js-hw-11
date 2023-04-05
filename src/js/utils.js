@@ -14,6 +14,19 @@ const getRef = document.querySelector.bind(document);
 const getRefs = document.querySelectorAll.bind(document);
 
 //
+// Numeric
+//
+
+function fitIntoRange({ value, min, max }) {
+  if (!isNum(value)) return NaN;
+
+  if (!isNum(min)) min = -Infinity;
+  if (!isNum(max)) max = Infinity;
+
+  return Math.max(min, Math.min(max, value));
+}
+
+//
 // ID name
 //
 
@@ -126,6 +139,7 @@ export default {
   normId,
   getRef,
   getRefs,
+  fitIntoRange,
   snakeToCamel,
   camelToSnake,
   namesToSnake,

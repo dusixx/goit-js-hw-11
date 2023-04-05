@@ -29,9 +29,10 @@ function makeFilterList() {
   filterList?.insertAdjacentHTML('beforeend', markup);
 
   // ставим дефолтные
-  filterList
-    .querySelectorAll('[type="checkbox"][default]')
-    .forEach(itm => (itm.checked = true));
+  filterList.querySelectorAll('[type="checkbox"][checked]').forEach(itm => {
+    itm.checked = true;
+    itm.removeAttribute('checked');
+  });
 }
 
 /**
@@ -43,22 +44,20 @@ function makeFilterMenuItem([paramName, paramValue]) {
   if (!isObj(paramValue)) return;
 
   const { type, caption } = paramValue;
-  const params = {
-    ...paramValue,
-    name: paramName,
-    caption: caption || paramName.replaceAll('_', ' '),
-  };
+  const id = paramName.replaceAll('_', '-');
+  const params = { ...paramValue, name: paramName };
 
   switch (type) {
     case 'number':
+    case 'text':
       return `
-        <div class="${CLASS_NAME.filterItem}">
+        <div class="${CLASS_NAME.filterItem}" id="${id}">
           ${makeFilterTextbox(params)}
         </div>`;
 
     case 'checkbox':
       return `
-        <div class="${CLASS_NAME.filterItem}">
+        <div class="${CLASS_NAME.filterItem}" id="${id}">
           ${makeFilterCheckbox(params)}
         </div>`;
 
@@ -70,24 +69,36 @@ function makeFilterMenuItem([paramName, paramValue]) {
   }
 }
 
-function makeFilterCheckbox({ name, value, caption, checked }) {
+function makeFilterCheckbox({ name, value = '', caption, checked }) {
+  caption = caption || name.replaceAll('_', ' ');
+
   return `
     <label>
       <input type="checkbox"
         name="${name}" value="${value}"
-        ${checked ? 'default' : ''}
+        ${checked ? 'checked' : ''}
       />
       <span>${caption || name}</span>
     </label>`;
 }
 
-function makeFilterTextbox({ name, value, caption, checked }) {
+function makeFilterTextbox(params) {
+  const {
+    name,
+    value = '',
+    caption = name.replaceAll('_', ' '),
+    min,
+    max,
+    type,
+    checked,
+  } = params;
+
   return `
     <label>
       <span>${caption || name}</span>
-      <input type="number"
-        name="${name}" value="${value}"
-        ${checked ? 'default' : ''}
+      <input type="${type}" name="${name}" value="${value}"
+        ${isInt(min) ? `min="${min}"` : ''}
+        ${isInt(max) ? `max="${max}"` : ''}
       />
     </label>`;
 }
@@ -134,15 +145,18 @@ function makeFilterExpanderMenu(params) {
     .map((val, idx) => {
       let style = '';
       let title = '';
+      let id = '';
       const [value, alias] = val.split('?');
 
       if (colorPalette) {
         title = value;
+        id = value;
         style = `background-color: ${alias || value}`;
         defValueIdx = -1;
       }
 
       return makeFilterMenuOption({
+        id,
         name,
         value,
         style,
@@ -168,17 +182,17 @@ function makeFilterExpanderMenu(params) {
  * @returns
  */
 function makeFilterMenuOption(params) {
-  const { name, value, caption, title, style, isDefault } = params;
+  const { name, value, caption, title, style, isDefault, id } = params;
 
   // value ставим даже пустое, иначе будет взято стандартное "on"
   return `
-    <li class="${CLASS_NAME.filterItemOption}">
+    <li class="${CLASS_NAME.filterItemOption}" ${id ? `id="${id}"` : ''} >
       <label>
         <input type="checkbox"
           name="${name}" value="${value}" 
           ${title ? `title="${title}"` : ''} 
           ${style ? `style="${style}"` : ''} 
-          ${isDefault ? 'default' : ''}
+          ${isDefault ? 'checked' : ''}
         />
         <span>${caption}</span>
       </label>
