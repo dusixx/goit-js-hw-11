@@ -1,8 +1,10 @@
-import utils from './utils';
+// !!! надо переписать втупую под каждый параметр без типов и прочей "гибкости"
+
+// import utils from './utils';
 import refs from './refs';
 
-const { filterList, body } = refs;
-const { getRefs, isInt } = utils;
+const { filterList } = refs;
+// const { getRefs, isInt } = utils;
 
 const APPLY_BUTTON_NAME = 'applyFilter';
 const CLASS_NAME = {
@@ -31,6 +33,11 @@ function makeFilterList(filterList, queryParams) {
 
   // рендерим разметку
   filterList?.insertAdjacentHTML('afterbegin', markup);
+
+  // ставим дефолтные
+  filterList
+    .querySelectorAll('[type="checkbox"][default]')
+    .forEach(itm => (itm.checked = true));
 }
 
 /**
@@ -38,29 +45,32 @@ function makeFilterList(filterList, queryParams) {
  * @returns разметка для фильтра
  */
 function getFilterItemMarkup(params) {
-  const itemMenuMarkup = getFilterItemMenuMarkup(params);
-  let { nodeType, name, caption, value, multiselect } = params;
+  const { nodeType, name, defValue, value, multiselect, caption } = params;
 
-  if (isInt(caption)) {
-    const [val, alias] = value[caption].split('?');
-    caption = alias || val;
-  }
+  const defIdx = value[defValue] ? defValue : 0;
+  const [val, alias] = value[defIdx].split('?');
+  const captionBtn = caption || (multiselect ? name : alias || val || name);
 
   switch (nodeType) {
     case 'checkbox':
       return `
         <label>
-          <input type="checkbox" name=${name} value=${value}>
+          <input type="checkbox" name="${name}" value="${value}">
           <span>${caption || name}</span>
         </label>`;
+
+    case 'text':
+      return `
+        <span>${caption || name}</span>
+        <input type="text" name="${name}" required>`;
 
     default: /* button */
       return `
         <button
           class="${CLASS_NAME.filterItemExpander}" 
           type="button" ><span title="Clear filter">&times;</span>
-            ${caption || name}</button>
-        ${itemMenuMarkup}`;
+            ${captionBtn}</button>
+        ${getFilterItemMenuMarkup({ ...params, defValue: defIdx })}`;
   }
 }
 
@@ -68,15 +78,19 @@ function getFilterItemMarkup(params) {
  * @param {array} value - массив значений параметра
  * @returns разметка ul-списка опций фильтра
  */
-function getFilterItemMenuMarkup({ name, value, multiselect, isColorPalette }) {
+function getFilterItemMenuMarkup(params) {
+  const { name, value, multiselect, isColorPalette, defValue } = params;
+
   const applyBtn = multiselect
     ? `<button type="button" name="${APPLY_BUTTON_NAME}">Go</button>`
     : '';
 
   const itemOptionsMarkup = value
-    .map(v => {
-      const [value, alias] = v.split('?');
+    .map((itm, idx) => {
+      const [value, alias] = itm.split('?');
       const caption = isColorPalette ? value : alias || value;
+      const title = isColorPalette ? `title="${caption}"` : '';
+      const def = !multiselect && idx === defValue ? 'default' : '';
 
       const style = isColorPalette
         ? `style="background-color: ${alias || value}"`
@@ -85,11 +99,8 @@ function getFilterItemMenuMarkup({ name, value, multiselect, isColorPalette }) {
       return `
         <li class="${CLASS_NAME.filterItemOption}">
           <label>
-            <input type="checkbox" 
-              name="${name}" 
-              value="${value}"
-              title="${caption}"
-              ${style} >
+            <input type="checkbox" name="${name}" 
+              value="${value}" ${title} ${style} ${def}>
             <span>${caption}</span>
           </label>
         </li>`;

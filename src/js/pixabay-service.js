@@ -99,6 +99,7 @@ export default class PixabayService {
   set queryParams(params) {
     let qp = this.#queryParams;
 
+    // TODO: добавлять не лучшая идея вроде
     this.#queryParams =
       params === null
         ? {}

@@ -1,25 +1,21 @@
-//
-//value[?alias]
-//
-// defaults:
-// value index == 0
-// nodeName: 'button',
-// nodeType: 'button',
-//
-
 export default queryParams = {
+  per_page: {
+    nodeType: 'text',
+    value: [''],
+  },
+
   image_type: {
-    caption: 0,
+    // nodeType: 'button:button' // def
+    // defValue: 0 // def
     value: ['?all images', 'photo', 'illustration', 'vector'],
   },
 
   order: {
-    caption: 0,
-    value: ['?Most relevant', "ec?Editor's choice", 'trending', 'latest'],
+    // value[?alias]
+    value: ['?most relevant', "ec?editor's choice", 'trending', 'latest'],
   },
 
   orientation: {
-    caption: 0,
     value: ['?any orientation', 'horizontal', 'vertical'],
   },
 

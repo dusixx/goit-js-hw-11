@@ -1,7 +1,3 @@
-//
-// NOTE: функционал зависит от разметки и неоптимизирован
-//
-
 import utils from './utils';
 import refs from './refs';
 import queryParams from './rest-data';
@@ -17,12 +13,12 @@ let filterListToggler;
 export default class Filter {
   static #instance;
   /**
+   *
    * @param {object} {...}
    *    toggler - элемент для открытия/закрытия панели фильтров
    *    onApply - обработчик, вызваемый в момент применения параметров
    */
   constructor({ toggler, onApply } = {}) {
-    // синглтон
     if (Filter.#instance) return Filter.#instance;
 
     makeFilterList(filterList, queryParams);
@@ -33,24 +29,30 @@ export default class Filter {
     setApplyFilterBehavior();
 
     // ставим обработчик для тоглера
-    if (isFunc(toggler?.addEventListener)) {
-      (filterListToggler = toggler).addEventListener('click', () =>
-        filterList.classList.toggle(CLASS_NAME.filterListHidden)
-      );
-    }
+    setFilterListToggler(toggler);
 
     // обработчик кстомного самбита формы
-    if (isFunc(onApply)) onApplyHandler = onApply;
+    onApplyHandler = isFunc(onApply) ? onApply : null;
 
     Filter.#instance = this;
   }
 }
 
-//
 //////////////////////////
 // Основной функционал
 //////////////////////////
-//
+
+function setFilterListToggler(toggler) {
+  const toggleFilterList = () =>
+    filterList.classList.toggle(CLASS_NAME.filterListHidden);
+
+  if (isFunc(toggler?.addEventListener)) {
+    (filterListToggler = toggler).addEventListener('click', toggleFilterList);
+  } else {
+    filterListToggler?.removeEventListener('click', toggleFilterList);
+    filterListToggler = null;
+  }
+}
 
 function isCheckbox(el) {
   return el.nodeName === 'INPUT' && el.type === 'checkbox';
@@ -60,11 +62,8 @@ filterList.addEventListener('click', handleFilterExpanderClick);
 
 function handleFilterExpanderClick({ target }) {
   const { classList } = target;
-  //
+
   // ловим клик по button.filter__expander
-  //
-  // TODO: надо обновлять чекбоксы при открытии для !multiline
-  // Надо для этого написать setData() и все делать через нее
   //
   if (classList.contains(CLASS_NAME.filterItemExpander)) {
     const filterItem = target.parentNode;
@@ -74,7 +73,6 @@ function handleFilterExpanderClick({ target }) {
     const isExpanded = !classList.toggle(CLASS_NAME.filterItemExpanderExpanded);
     if (isExpanded) return collapseFilterMenu(filterExpander);
 
-    //
     // ловим клики за пределами текущего div.filter
     //
     body.addEventListener('click', handleBodyMousedown);
@@ -92,8 +90,9 @@ function handleFilterExpanderClick({ target }) {
 }
 
 /**
+ *
  * Ставит для всех .filter-list input поведение, при котром
- * если в контейнере нет кнопки applyFilter - опция применяется сразу
+ * если в контейнере нет кнопки типа Apply - опция применяется сразу
  */
 function setInputElementBehavior() {
   filterList.addEventListener('change', handleInputChange);
@@ -102,6 +101,7 @@ function setInputElementBehavior() {
     if (target.nodeName !== 'INPUT') return;
 
     const hasApplyBtn =
+      // кнопка стоит сразу после блока опций
       target.closest(`.${CLASS_NAME.filterItemOptions}`)?.nextElementSibling
         ?.name === APPLY_BUTTON_NAME;
 
@@ -110,6 +110,7 @@ function setInputElementBehavior() {
 }
 
 /**
+ *
  * Ставит для всех .filter__options:not([multiselect]) input
  * поведение как у input:radio - можно выбрать лишь один из многих
  */
@@ -146,6 +147,7 @@ function setCheckboxBehavior() {
 }
 
 /**
+ *
  * ???
  */
 function setApplyFilterBehavior() {
@@ -177,6 +179,7 @@ function setApplyFilterBehavior() {
 }
 
 /**
+ *
  * @param {object} clearFilter - элемент "кнопки" очистки фильтра
  */
 function setClearFilterBehavior(clearFilter) {
@@ -184,6 +187,7 @@ function setClearFilterBehavior(clearFilter) {
     'click',
     ({ target }) => {
       const { filterItem } = getParentFilterItem(target);
+
       // снимаем все опции и скрываем кнопку
       getCheckedOptions(filterItem).forEach(itm => (itm.checked = false));
       target.style.display = 'none';
@@ -195,12 +199,13 @@ function setClearFilterBehavior(clearFilter) {
 }
 
 /**
+ *
  * @param {object} parent - элемент, относительно которого получаем список опций
- * @param {boolean} enabled - если true, вернет только :not(disabled) опции
+ * @param {boolean} enabled - если true, вернет только :not([disabled]) опции
  * @returns {NodeList} список элементов
  */
 function getCheckedOptions(parent, enabled = true) {
-  const state = enabled ? ':not(disabled)' : '';
+  const state = enabled ? ':not([disabled])' : '';
   return parent.querySelectorAll(`input[type="checkbox"]${state}:checked`);
 }
 
@@ -221,6 +226,7 @@ function submitFilterData() {
 }
 
 /**
+ *
  * @param {object} form - целевая форма
  * @returns данные формы в формате {name: value, name1: [values],...}
  */
@@ -229,7 +235,7 @@ function getData(form) {
 
   // если в массиве одно значение, ставим его как есть
   return Array.from(formData.keys()).reduce((obj, name) => {
-    let values = formData.getAll(name);
+    const values = formData.getAll(name);
     obj[name] = values.length === 1 ? values[0] : values;
 
     return obj;
