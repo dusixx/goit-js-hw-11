@@ -1,17 +1,11 @@
 export default queryParams = {
-  per_page: {
-    nodeType: 'text',
-    value: [''],
-  },
-
   image_type: {
-    // nodeType: 'button:button' // def
-    // defValue: 0 // def
+    // value[?alias]
+    // defValueIdx: 0
     value: ['?all images', 'photo', 'illustration', 'vector'],
   },
 
   order: {
-    // value[?alias]
     value: ['?most relevant', "ec?editor's choice", 'trending', 'latest'],
   },
 
@@ -20,8 +14,8 @@ export default queryParams = {
   },
 
   colors: {
-    multiselect: true,
-    isColorPalette: true,
+    caption: 'Colors',
+    colorPalette: true,
     value: [
       'transparent',
       'grayscale',
@@ -41,8 +35,13 @@ export default queryParams = {
   },
 
   safesearch: {
-    nodeType: 'checkbox',
-    value: ['true'],
+    type: 'checkbox',
+    checked: true,
+    value: 'true',
+  },
+
+  per_page: {
+    type: 'number',
   },
 
   // order: {

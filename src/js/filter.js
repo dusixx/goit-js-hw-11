@@ -19,6 +19,7 @@ export default class Filter {
    *    onApply - обработчик, вызваемый в момент применения параметров
    */
   constructor({ toggler, onApply } = {}) {
+    // singleton
     if (Filter.#instance) return Filter.#instance;
 
     makeFilterList(filterList, queryParams);
@@ -64,7 +65,6 @@ function handleFilterExpanderClick({ target }) {
   const { classList } = target;
 
   // ловим клик по button.filter__expander
-  //
   if (classList.contains(CLASS_NAME.filterItemExpander)) {
     const filterItem = target.parentNode;
     const filterExpander = target;
@@ -74,7 +74,6 @@ function handleFilterExpanderClick({ target }) {
     if (isExpanded) return collapseFilterMenu(filterExpander);
 
     // ловим клики за пределами текущего div.filter
-    //
     body.addEventListener('click', handleBodyMousedown);
 
     function handleBodyMousedown({ target }) {
