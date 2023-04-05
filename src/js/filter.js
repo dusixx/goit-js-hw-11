@@ -3,8 +3,8 @@ import refs from './refs';
 import queryParams from './rest-data';
 import filterMarkup from './filter-markup';
 
-const { getRefs, isObj, isFunc, fitIntoRange } = utils;
 const { filterList, body } = refs;
+const { getRefs, isObj, isFunc, fitIntoRange, debounce } = utils;
 const { makeFilterList, CLASS_NAME, APPLY_BUTTON_NAME } = filterMarkup;
 
 let onApplyHandler;
@@ -40,6 +40,10 @@ export default class Filter {
     Filter.#instance = this;
   }
 }
+
+// отключаем стандартное поведение, иначе при нажатии Enter
+// в любом из input:number(text) будет перегружаться станица
+filterList.addEventListener('submit', e => e.preventDefault());
 
 /**
  *
@@ -101,7 +105,7 @@ function setFilterExpanderBehavior() {
 function handleGrayscaleCheckboxClick() {
   filterList
     .querySelector(`.${CLASS_NAME.filterItemOption}#grayscale`)
-    ?.addEventListener('click', disableUnderlying);
+    ?.addEventListener('change', disableUnderlying);
 
   function disableUnderlying({ target, currentTarget }) {
     if (target.nodeName !== 'INPUT') return;
@@ -124,7 +128,10 @@ function handleGrayscaleCheckboxClick() {
  * если в контейнере нет кнопки типа Apply - опция применяется сразу
  */
 function setInputElementBehavior() {
-  filterList.addEventListener('change', handleInputChange);
+  filterList.addEventListener(
+    'change',
+    handleInputChange /* debounce(handleInputChange, 1000) надо только для number*/
+  );
 
   function handleInputChange({ target }) {
     if (target.nodeName !== 'INPUT') return;
@@ -136,14 +143,14 @@ function setInputElementBehavior() {
       target.closest(`.${CLASS_NAME.filterItemOptions}`)?.nextElementSibling
         ?.name === APPLY_BUTTON_NAME;
 
-    if (!hasApplyBtn) submitFilterData();
+    if (!hasApplyBtn) submitFilterData(target);
   }
 
   function checkValue(target) {
     const { type, value, min, max } = target;
 
     if (type.toLowerCase() === 'number') {
-      target.value = fitIntoRange({ value, min, max });
+      target.value = fitIntoRange({ value, min, max }) || min || 0;
     }
   }
 }
@@ -197,7 +204,7 @@ function setApplyFilterBehavior() {
   applyBtns.forEach(itm => {
     itm.addEventListener('click', e => {
       updateFilterItemOnApply(e);
-      submitFilterData();
+      submitFilterData(e.target);
     });
   });
 
@@ -228,10 +235,14 @@ function setClearFilterBehavior(clearFilter) {
       const { filterItem } = getParentFilterItem(target);
 
       // снимаем все опции и скрываем кнопку
-      getCheckedOptions(filterItem).forEach(itm => (itm.checked = false));
+      getCheckedOptions(filterItem).forEach(itm => {
+        // вызываем click, чтобы при снятии grayscale включались нижлежащие
+        itm.checked && itm.click();
+      });
+
       target.style.display = 'none';
 
-      submitFilterData();
+      submitFilterData(target);
     },
     { once: true }
   );
@@ -260,8 +271,13 @@ function collapseFilterMenu(filterExpander) {
   filterExpander.classList.remove(CLASS_NAME.filterItemExpanderExpanded);
 }
 
-function submitFilterData() {
-  return onApplyHandler && onApplyHandler(getData(filterList));
+/**
+ *
+ * @param {*} targetInput - инициатор события
+ * @returns
+ */
+function submitFilterData(target) {
+  return onApplyHandler && onApplyHandler(getData(filterList), target);
 }
 
 /**

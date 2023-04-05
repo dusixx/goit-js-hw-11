@@ -53,20 +53,23 @@ $filterMenuPadding: 12px;
 }
 
 .filter#safesearch {
-  margin-left: 60px;
+  @media screen and (min-width: #{$tablet}) {
+    margin-left: 60px;
+  }
 }
 
 .filter-list input[type='number'] {
-  height: 25px;
-  width: 60px;
+  height: 30px;
+  width: 50px;
 
+  text-align: center;
   margin-left: 5px;
-  padding-left: 5px;
+  padding: 0 7px 0 7px;
 
   font-size: 13px;
   color: inherit;
 
-  border-radius: 10px;
+  border-radius: 7px;
   border: 1px solid rgb($colorFilterBtnBorder, 0.4);
   outline: none;
 
@@ -74,8 +77,16 @@ $filterMenuPadding: 12px;
 
   &:hover,
   &:focus-visible {
-    border-color: rgb($colorFilterBtnBorder, 0.8);
+    border-color: rgb($colorFilterBtnBorder, 0.7);
   }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  -moz-appearance: textfield;
 }
 
 .filter__expander {

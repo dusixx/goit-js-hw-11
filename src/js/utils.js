@@ -1,5 +1,6 @@
 import { Notify } from 'notiflix';
 import throttle from 'lodash.throttle';
+import debounce from 'lodash.debounce';
 
 const isDef = v => typeof v !== 'undefined';
 const isStr = v => typeof v === 'string';
@@ -147,5 +148,6 @@ export default {
   scrollByTop,
   scrollToTop,
   throttle,
+  debounce,
   getViewportClientRect,
 };
