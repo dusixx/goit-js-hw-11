@@ -19,7 +19,7 @@ export default class Filter {
    *    onApply - обработчик, вызваемый в момент применения параметров
    */
   constructor({ toggler, onApply } = {}) {
-    // singleton
+    // синглтон
     if (Filter.#instance) return Filter.#instance;
 
     makeFilterList(filterList, queryParams);
@@ -29,12 +29,10 @@ export default class Filter {
     setInputElementBehavior();
     setApplyFilterBehavior();
     setFilterExpanderBehavior();
-    handleGrayscaleCheckboxClick();
+    handleGrayscaleCheckboxChange();
 
-    // ставим обработчик для тоглера
+    // ставим обработчик для тоглера и самбита формы
     setFilterListToggler(toggler);
-
-    // обработчик самбита формы
     onApplyHandler = isFunc(onApply) ? onApply : null;
 
     Filter.#instance = this;
@@ -42,11 +40,13 @@ export default class Filter {
 }
 
 // отключаем стандартное поведение, иначе при нажатии Enter
-// в любом из input:number(text) будет перегружаться станица
+// в любом из input:number(text) будет перегружаться страница
 filterList.addEventListener('submit', e => e.preventDefault());
 
 /**
  *
+ * Ставит обработчик, показывающий/скрывающий меню при клике на toggler
+ * Если toggler не функция, снимает обработчик
  * @param {*} toggler
  */
 function setFilterListToggler(toggler) {
@@ -61,12 +61,9 @@ function setFilterListToggler(toggler) {
   }
 }
 
-function isCheckbox(el) {
-  return el.nodeName === 'INPUT' && el.type === 'checkbox';
-}
-
 /**
  *
+ * Устанавливает поведение для меню (закрытие/открытие)
  */
 function setFilterExpanderBehavior() {
   filterList.addEventListener('click', handleFilterExpanderClick);
@@ -81,10 +78,13 @@ function setFilterExpanderBehavior() {
     const filterExpander = target;
 
     // при клике на button.filter__expander--epxanded - закрываем меню
+
     const isExpanded = !classList.toggle(CLASS_NAME.filterItemExpanderExpanded);
     if (isExpanded) return collapseFilterMenu(filterExpander);
 
-    // ловим клики за пределами текущего div.filter
+    // если был клик за пределами текущего div.filter - закрываем меню
+    // и снимаем обработчик с body
+
     body.addEventListener('click', handleBodyMousedown);
 
     function handleBodyMousedown({ target }) {
@@ -101,8 +101,9 @@ function setFilterExpanderBehavior() {
 
 /**
  *
+ * При включенном grayscale отключает остальные цвета в палитре
  */
-function handleGrayscaleCheckboxClick() {
+function handleGrayscaleCheckboxChange() {
   filterList
     .querySelector(`.${CLASS_NAME.filterItemOption}#grayscale`)
     ?.addEventListener('change', disableUnderlying);
@@ -128,10 +129,7 @@ function handleGrayscaleCheckboxClick() {
  * если в контейнере нет кнопки типа Apply - опция применяется сразу
  */
 function setInputElementBehavior() {
-  filterList.addEventListener(
-    'change',
-    handleInputChange /* debounce(handleInputChange, 1000) надо только для number*/
-  );
+  filterList.addEventListener('change', handleInputChange);
 
   function handleInputChange({ target }) {
     if (target.nodeName !== 'INPUT') return;
@@ -146,6 +144,10 @@ function setInputElementBehavior() {
     if (!hasApplyBtn) submitFilterData(target);
   }
 
+  /**
+   * Корректирует value в рамках диапазона [min,max]
+   * @param {*} target - input:number элемент
+   */
   function checkValue(target) {
     const { type, value, min, max } = target;
 
@@ -153,6 +155,10 @@ function setInputElementBehavior() {
       target.value = fitIntoRange({ value, min, max }) || min || 0;
     }
   }
+}
+
+function isCheckbox(el) {
+  return el.nodeName === 'INPUT' && el.type === 'checkbox';
 }
 
 /**
@@ -194,7 +200,7 @@ function setCheckboxBehavior() {
 
 /**
  *
- * ???
+ * Ставит для всех кнопок типа Apply поведение, при клике на них
  */
 function setApplyFilterBehavior() {
   const applyBtns = filterList.querySelectorAll(
@@ -226,6 +232,7 @@ function setApplyFilterBehavior() {
 
 /**
  *
+ * Ставит паоведение для кнопки(х) очитски фильтра
  * @param {object} clearFilter - элемент "кнопки" очистки фильтра
  */
 function setClearFilterBehavior(clearFilter) {
@@ -235,11 +242,8 @@ function setClearFilterBehavior(clearFilter) {
       const { filterItem } = getParentFilterItem(target);
 
       // снимаем все опции и скрываем кнопку
-      getCheckedOptions(filterItem).forEach(itm => {
-        // вызываем click, чтобы при снятии grayscale включались нижлежащие
-        itm.checked && itm.click();
-      });
-
+      // click(), чтобы включались/выключались нижлежащие
+      getCheckedOptions(filterItem).forEach(itm => itm.checked && itm.click());
       target.style.display = 'none';
 
       submitFilterData(target);
@@ -260,7 +264,6 @@ function getCheckedOptions(parent, enabled = true) {
 }
 
 function getParentFilterItem(child) {
-  // NOTE: разметка критична (для firstElementChild)
   const filterItem = child.closest(`.${CLASS_NAME.filterItem}`);
   const filterExpander = filterItem?.firstElementChild;
 
@@ -283,7 +286,7 @@ function submitFilterData(target) {
 /**
  *
  * @param {object} form - целевая форма
- * @returns данные формы в формате {name: value, name1: [values],...}
+ * @returns данные формы в формате {name: v1, name1: [v1, v2,...],...}
  */
 function getData(form) {
   const formData = new FormData(form);
