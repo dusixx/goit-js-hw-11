@@ -15,6 +15,15 @@ export default class Filter {
   static #instance;
 
   setData = setData;
+
+  show() {
+    return filterList.classList.remove(CLASS_NAME.filterListHidden);
+  }
+
+  hide() {
+    return filterList.classList.add(CLASS_NAME.filterListHidden);
+  }
+
   getData() {
     return getData(filterList);
   }
@@ -22,11 +31,12 @@ export default class Filter {
   /**
    * @param {object} {...}
    *    toggler - элемент для открытия/закрытия панели фильтров
-   *    onChange - обработчик, вызваемый в момент применения параметров
+   *    onChange - обработчик, вызваемый при изменении параметров
    */
   constructor({ toggler, onChange, data } = {}) {
     // синглтон
     if (Filter.#instance) return Filter.#instance;
+    Filter.#instance = this;
 
     // создаем панель фильтров
     makeFilterList(filterList, queryParams);
@@ -42,8 +52,6 @@ export default class Filter {
     setFilterListToggler(toggler);
     onChangeHandler = isFunc(onChange) ? onChange : null;
     setData(data);
-
-    Filter.#instance = this;
   }
 }
 
@@ -163,7 +171,7 @@ function setInputElementBehavior() {
 }
 
 function isCheckbox(el) {
-  return el.nodeName === 'INPUT' && el.type === 'checkbox';
+  return el.nodeName === 'INPUT' && el.type.toLowerCase() === 'checkbox';
 }
 
 /**
@@ -222,12 +230,13 @@ function setApplyFilterBehavior() {
     const { filterItem, filterExpander } = getParentFilterItem(target);
     const clearFilter = filterExpander.firstElementChild;
 
-    // считаем кол-во выбранных (включенных) чекбоксов
-    const checkedCount = getCheckedOptions(filterItem).length;
+    const checked = getCheckedOptions(filterItem);
+    // data-active="true"
+    checked.forEach(itm => (itm.dataset.active = 'true'));
 
     // показываем кнопку очистки фильтра, при необходимости
-    clearFilter.style.display = checkedCount ? 'inline' : 'none';
-    if (checkedCount) setClearFilterBehavior(clearFilter);
+    clearFilter.style.display = checked.length ? 'inline' : 'none';
+    if (checked.length) setClearFilterBehavior(clearFilter);
 
     // закрываем меню
     collapseFilterMenu(filterExpander);
@@ -247,7 +256,12 @@ function setClearFilterBehavior(clearFilter) {
 
       // снимаем все опции и скрываем кнопку
       // click(), чтобы включались/выключались нижлежащие
-      getCheckedOptions(filterItem).forEach(itm => itm.checked && itm.click());
+      getCheckedOptions(filterItem).forEach(itm => {
+        itm.checked && itm.click();
+        // data-active="false"
+        itm.dataset.active = 'false';
+      });
+
       target.style.display = 'none';
 
       submitFilterData(target);
@@ -290,14 +304,29 @@ function submitFilterData(initiator) {
 /**
  *
  * @param {object} form - целевая форма
- * @returns данные формы в формате {name: v1, name1: [v1, v2,...],...}
+ * @returns объект с данными {name: value,...}
  */
 function getData(form) {
-  const formData = new FormData(form);
+  // массив имен актуальных input-ов
+  const elementNames = Array.from(new FormData(form).keys());
 
-  // если в массиве одно значение, ставим его как есть
-  return Array.from(formData.keys()).reduce((obj, name) => {
-    const values = formData.getAll(name);
+  return elementNames.reduce((obj, name) => {
+    let elements = form[name];
+    elements = elements.length ? Array.from(elements) : [elements];
+
+    // получаем массив значений для активных элементов
+    const values = elements
+      .filter(elem => {
+        const dataActive = elem.dataset.active;
+        const checked = isCheckbox(elem) ? elem.checked : true;
+        const active = dataActive ? dataActive === 'true' : true;
+
+        // если есть атрибут data-active и он "true" - опция была применена
+        // Актуально для multiselect опций, применяемых кнопкой Apply
+        return !elem.disabled && active && checked;
+      })
+      .map(elem => elem.value);
+
     obj[name] = values.length === 1 ? values[0] : values;
 
     return obj;
@@ -377,3 +406,20 @@ function setOptionsGroup(group, value) {
 function setData(data) {
   Object.entries(data).forEach(([name, value]) => setOption(name, value));
 }
+
+/**
+ *
+ * @param {object} form - целевая форма
+ * @returns данные формы в формате {name: v1, name1: [v1, v2,...],...}
+ */
+// function getData(form) {
+//   const formData = new FormData(form);
+
+//   // если в массиве одно значение, ставим его как есть
+//   return Array.from(formData.keys()).reduce((obj, name) => {
+//     const values = formData.getAll(name);
+//     obj[name] = values.length === 1 ? values[0] : values;
+
+//     return obj;
+//   }, {});
+// }

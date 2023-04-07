@@ -42,7 +42,8 @@ export default queryParams = {
 
   per_page: {
     type: 'number',
-    min: 3,
+    // min: 3,
+    min: 20,
     max: 200,
     value: 20,
   },

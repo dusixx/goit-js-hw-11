@@ -66,8 +66,15 @@ function parseUrlParams(str) {
   res = (res[1] || res[0]).split('&');
 
   return res.reduce((obj, itm) => {
-    const [name, val = ''] = itm.split('=');
-    obj[name] = isNum(val) ? Number(val) : val;
+    let [name, val = ''] = itm.split('=');
+    val = isNum(val) ? +val : val;
+
+    if (obj.hasOwnProperty(name)) {
+      if (!Array.isArray(obj[name])) obj[name] = [obj[name]];
+      obj[name].push(val);
+    } else {
+      obj[name] = val;
+    }
 
     return obj;
   }, {});

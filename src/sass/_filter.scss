@@ -31,6 +31,11 @@ $filterMenuPadding: 12px;
 }
 
 .filter-list label {
+  // & ~ span {
+  //   display: block;
+  //   white-space: nowrap;
+  // }
+
   & input[type='checkbox'] {
     cursor: inherit;
 
@@ -53,8 +58,8 @@ $filterMenuPadding: 12px;
 }
 
 .filter#safesearch {
-  @media screen and (min-width: #{$tablet}) {
-    margin-right: 10px;
+  @media screen and (min-width: #{$desktop}) {
+    // margin-right: 10px;
     margin-left: 60px;
   }
 }
@@ -69,7 +74,7 @@ $filterMenuPadding: 12px;
 
   color: inherit;
   border-radius: 7px;
-  border: 1px solid rgb($colorFilterBtnBorder, 0.4);
+  border: 1px solid rgb($colorFilterBtnBorder, 0.3);
   outline: none;
 
   transition: border-color var(--transition-params);

@@ -13,6 +13,7 @@ const CLASS_NAME = {
   filterListHidden: 'filter-list--hidden',
   filterItem: 'filter',
   filterItemExpander: 'filter__expander',
+  filterItemClear: 'filter__clear',
   filterItemExpanderExpanded: 'filter__expander--expanded',
   filterItemMenu: 'filter__menu',
   filterItemOption: 'filter__option',
@@ -117,10 +118,11 @@ function makeFilterExpander(params) {
   const expanderCaption = caption || defAlias || defValue;
 
   return `
-    <button
-      class="${CLASS_NAME.filterItemExpander}" 
-      type="button" ><span title="Clear filter">&times;</span>
-        ${expanderCaption}</button>
+    <button class="${CLASS_NAME.filterItemExpander}" type="button">
+        <span class="${CLASS_NAME.filterItemClear}" title="Clear filter"
+          >&times;</span>
+        ${expanderCaption}
+    </button>
     ${makeFilterExpanderMenu({ ...params, name, defValueIdx })}`;
 }
 
@@ -161,6 +163,7 @@ function makeFilterExpanderMenu(params) {
         value,
         style,
         title,
+        multisel,
         caption: alias || value,
         isDefault: idx === defValueIdx,
       });
@@ -182,7 +185,8 @@ function makeFilterExpanderMenu(params) {
  * @returns
  */
 function makeFilterMenuOption(params) {
-  const { name, value, caption, title, style, isDefault, id } = params;
+  const { name, value, caption, title, style, isDefault, id, multisel } =
+    params;
 
   // value ставим даже пустое, иначе будет взято стандартное "on"
   return `
@@ -193,6 +197,7 @@ function makeFilterMenuOption(params) {
           ${title ? `title="${title}"` : ''} 
           ${style ? `style="${style}"` : ''} 
           ${isDefault ? 'checked' : ''}
+          ${multisel ? 'data-active="false"' : ''}
         />
         <span>${caption}</span>
       </label>

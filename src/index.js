@@ -1,3 +1,5 @@
+// NOTE: Спинер при малом кол-ве результатов на страницу работает некорректно
+
 import './sass/index.scss';
 import PixabayService from './js/pixabay-service';
 import ImageGallery from './js/image-gallery';
@@ -14,16 +16,31 @@ import _ from './js/header';
 
 const { defSearchOpts, message } = hwData;
 const { clearBtn, searchForm, searchInput, loader, backtop } = refs;
-const { error, info, succ, getViewportClientRect, scrollByTop } = utils;
+const {
+  error,
+  info,
+  succ,
+  getViewportClientRect,
+  scrollByTop,
+  parseUrlParams,
+} = utils;
 
 const gallery = new ImageGallery('.gallery');
-const pbs = new PixabayService(defSearchOpts);
+const pbs = new PixabayService();
 
 const filter = new Filter({
   toggler: refs.toggleFilterList,
   onChange: handleFilterChange,
   data: defSearchOpts,
 });
+
+filter.show();
+
+console.log(
+  parseUrlParams(
+    'https://pixabay.com/api/?key=34055483-ceef684195bde25252735e6a5&colors=transparent&colors=lilac&safesearch=true&per_page=40&q=car&page=1'
+  )
+);
 
 //
 // Event handlers
@@ -42,22 +59,28 @@ function handleClearInputClick(e) {
 
 function handleSearchFormSubmit(e) {
   e.preventDefault();
+  startSearching({ queryData: filter.getData() });
+}
 
-  const query = e.currentTarget.searchQuery.value.trim();
-  if (!query) return info(message.EMPTY_SEARCH_QUERY);
+function handleFilterChange(queryData) {
+  startSearching({ silentMode: true, queryData });
+}
+
+function startSearching({ silentMode, queryData } = {}) {
+  const query = searchForm.searchQuery.value.trim();
+  if (!query) {
+    if (!silentMode) info(message.EMPTY_SEARCH_QUERY);
+    return;
+  }
 
   pbs.queryParams = {
+    ...queryData,
     q: query,
     page: 1,
   };
 
   gallery.clear();
-  // запускаем поиск
   showLoader();
-}
-
-function handleFilterChange(data, initiator) {
-  console.log(data);
 }
 
 //

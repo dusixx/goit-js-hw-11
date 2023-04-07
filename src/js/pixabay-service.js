@@ -30,11 +30,18 @@ export default class PixabayService {
    */
   buildQuery(params) {
     // обновляем параметры в кеше
-    this.queryParams = params;
+    if (params) this.queryParams = params;
 
-    const pstr = Object.entries(this.queryParams).map(
-      ([name, value]) => `${name}=${value}`
-    );
+    const pstr = Object.entries(this.queryParams)
+      // пустые значения игнорим
+      .filter(([, value]) => value)
+      .map(
+        ([name, value]) => `${name}=${value}`
+        // Array.isArray(value)
+        //   ? // name=value1&name=value2&...
+        //     value.map(v => `${name}=${v}`).join('&')
+        //   : `${name}=${value}`
+      );
 
     return encodeURI(
       `${this.#baseUrl}?key=${this.#apiKey}${
@@ -63,7 +70,7 @@ export default class PixabayService {
       this.currentPage = this.page;
       this.page += this.options.pageIncrement;
 
-      console.log(resp);
+      console.log(resp.config.url);
 
       return { ...(this.#response = resp) };
 
@@ -97,15 +104,14 @@ export default class PixabayService {
    * @param {*} params - строка|объект параметров или null
    */
   set queryParams(params) {
-    let qp = this.#queryParams;
+    // let qp = this.#queryParams;
 
-    // TODO: добавлять не лучшая идея вроде
     this.#queryParams =
       params === null
         ? {}
         : isStr(params)
-        ? { ...qp, ...parseUrlParams(params) }
-        : { ...qp, ...namesToSnake(params) };
+        ? parseUrlParams(params) // ? { ...qp, ...parseUrlParams(params) }
+        : namesToSnake(params); // : { ...qp, ...namesToSnake(params) };
   }
 
   get baseUrl() {

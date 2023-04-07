@@ -5,7 +5,7 @@
   height: calc(var(--header-height) * 0.9);
 
   min-width: calc($mobile * 0.5);
-  width: 70vw;
+  width: 80vw;
 
   @media screen and (min-width: #{$desktop}) {
     width: 50vw;
