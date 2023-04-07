@@ -37,8 +37,8 @@ searchForm.addEventListener('submit', handleSearchFormSubmit);
 
 function handleGalleryClick({ target }) {
   if (target.classList.contains('img-tag')) {
-    searchInput.value = target.textContent;
-    startSearching(false, { q: target.textContent });
+    searchForm.searchQuery.value = target.textContent;
+    startSearching(false, filter.getData());
   }
 }
 
