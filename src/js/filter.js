@@ -10,10 +10,9 @@ const { getRefs, isObj, isFunc, fitIntoRange, getTypeName, camelToSnake } =
 
 let onChangeHandler;
 let filterListToggler;
+let instance;
 
 export default class Filter {
-  static #instance;
-
   setData = setData;
 
   show() {
@@ -35,8 +34,8 @@ export default class Filter {
    */
   constructor({ toggler, onChange, data } = {}) {
     // синглтон
-    if (Filter.#instance) return Filter.#instance;
-    Filter.#instance = this;
+    if (instance) return instance;
+    instance = this;
 
     // создаем панель фильтров
     makeFilterList(filterList, queryParams);
