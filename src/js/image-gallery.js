@@ -51,7 +51,9 @@ export default class ImageGallery {
    */
   #makeImageCard(hit) {
     const className = this.#className;
-    const { tags, preview, width, height } = getImageData(hit);
+    const { tags, preview, width, height, likes, views, comments, downloads } =
+      getImageData(hit);
+
     const { small, middle, large } = preview;
     const { addTransparentBg, transparentBgClass } = this.options;
 
@@ -61,12 +63,20 @@ export default class ImageGallery {
 
     return `
       <li class="${className}__item ${transpBgClass}">
-        <a href="${large.url}">
+        <a class="${className}__link" href="${large.url}">
           <img class="${className}__img"
             srcset = "${small.url} 1x, ${middle.url} 2x"
             src="${small.url}"
             alt="${tags}"
             loading="lazy">
+        <div class="img-overlay">
+          <ul class="img-overlay__info">
+            <li>${likes}</li>
+            <li>${comments}</li>
+            <li>${views}</li>
+            <li>${downloads}</li>
+          </ul>
+        </div>
         </a>
       </li>`;
   }

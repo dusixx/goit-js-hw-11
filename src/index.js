@@ -36,12 +36,6 @@ const filter = new Filter({
 
 filter.show();
 
-console.log(
-  parseUrlParams(
-    'https://pixabay.com/api/?key=34055483-ceef684195bde25252735e6a5&colors=transparent&colors=lilac&safesearch=true&per_page=40&q=car&page=1'
-  )
-);
-
 //
 // Event handlers
 //

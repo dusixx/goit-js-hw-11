@@ -56,31 +56,6 @@ function namesToSnake(obj = {}) {
 }
 
 /**
- * @param {string} v -> ...name1=value1&name2=value2...
- * @return {object} { name1: value1,...}
- */
-function parseUrlParams(str) {
-  if (!str || !isStr(str)) return {};
-
-  let res = str.split('?');
-  res = (res[1] || res[0]).split('&');
-
-  return res.reduce((obj, itm) => {
-    let [name, val = ''] = itm.split('=');
-    val = isNum(val) ? +val : val;
-
-    if (obj.hasOwnProperty(name)) {
-      if (!Array.isArray(obj[name])) obj[name] = [obj[name]];
-      obj[name].push(val);
-    } else {
-      obj[name] = val;
-    }
-
-    return obj;
-  }, {});
-}
-
-/**
  * @returns текущий клиентский размер вьюпорта
  */
 function getViewportClientRect() {
@@ -153,7 +128,6 @@ export default {
   snakeToCamel,
   camelToSnake,
   namesToSnake,
-  parseUrlParams,
   scrollByTop,
   scrollToTop,
   throttle,

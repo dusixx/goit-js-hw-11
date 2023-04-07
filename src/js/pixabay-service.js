@@ -1,11 +1,8 @@
 import axios from 'axios';
 import utils from './utils';
 
-// TODO: для цвета должно быть так при выборе нескольких
-// name: [v1, v2, v3] -> name=v1&name=v2&name=v3...
-// Надо исправить парсинг сурла ответа с учетом этого
-
-const { isInt, isStr, camelToSnake, namesToSnake, parseUrlParams } = utils;
+const { isInt, isObj, isStr, camelToSnake, namesToSnake, parseUrlParams } =
+  utils;
 
 const defOpts = {
   pageIncrement: 1,
@@ -25,32 +22,21 @@ export default class PixabayService {
   }
 
   /**
+   *
    * Формирует строку запроса к серверу, добавляя к baseUrl
    * параметры из #queryParams с именами в snake_case
    */
   buildQuery(params) {
-    // обновляем параметры в кеше
+    // обновляем параметры
     if (params) this.queryParams = params;
 
-    const pstr = Object.entries(this.queryParams)
-      // пустые значения игнорим
-      .filter(([, value]) => value)
-      .map(
-        ([name, value]) => `${name}=${value}`
-        // Array.isArray(value)
-        //   ? // name=value1&name=value2&...
-        //     value.map(v => `${name}=${v}`).join('&')
-        //   : `${name}=${value}`
-      );
-
-    return encodeURI(
-      `${this.#baseUrl}?key=${this.#apiKey}${
-        pstr.length ? `&${pstr.join('&')}` : ``
-      }`
-    );
+    return `${this.#baseUrl}?key=${this.#apiKey}&${new URLSearchParams(
+      this.#queryParams
+    )}`;
   }
 
   /**
+   *
    * Делает запрос на сервер с заданными параметрами
    * @param {*} params
    */
@@ -58,19 +44,12 @@ export default class PixabayService {
     try {
       // обновляем параметры и делаем запрос на сервер
       const resp = await axios.get(this.buildQuery(params));
-      resp.ok = true;
 
-      // Обновляем параметры актуальными данными на всякий случай
-      // Декодируем, иначе, если запрос уже был закодирован -
-      // при следующем вызове buildQuery() он будет кодироваться снова.
-      // Строка "обфусцируется" и растет в длинне вплоть до лимита
-      this.queryParams = decodeURI(resp.config.url);
+      resp.ok = true;
 
       // если задана page, инкрементируем ее, сохраняя текущую
       this.currentPage = this.page;
       this.page += this.options.pageIncrement;
-
-      console.log(resp.config.url);
 
       return { ...(this.#response = resp) };
 
@@ -87,6 +66,7 @@ export default class PixabayService {
   }
 
   /**
+   *
    * Вернет объект {param_name: value,...}
    * c именами параметров запроса в snake_case без ключа
    */
@@ -98,20 +78,14 @@ export default class PixabayService {
   }
 
   /**
-   * Обновляет параметры в кеше, при (params === null) - очищает кеш
+   *
    * Валидации значений не происходит, допускается { page: 0, ... }
    * Можно задать объект валидации { paramName: validator = () => {...} }
-   * @param {*} params - строка|объект параметров или null
+   * @param {*} params - объект параметров или null
    */
   set queryParams(params) {
-    // let qp = this.#queryParams;
-
-    this.#queryParams =
-      params === null
-        ? {}
-        : isStr(params)
-        ? parseUrlParams(params) // ? { ...qp, ...parseUrlParams(params) }
-        : namesToSnake(params); // : { ...qp, ...namesToSnake(params) };
+    if (params === null) this.#queryParams = {};
+    else if (isObj(params)) this.#queryParams = namesToSnake(params);
   }
 
   get baseUrl() {
@@ -119,6 +93,7 @@ export default class PixabayService {
   }
 
   /**
+   *
    * Последний ответ от сервера или объект ошибки
    */
   get response() {
@@ -134,6 +109,7 @@ export default class PixabayService {
   }
 
   /**
+   *
    * Если был задан инкремент(!=0) в опциях -
    * возвращает страницу после инкрементации
    */

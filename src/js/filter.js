@@ -41,6 +41,10 @@ export default class Filter {
     // создаем панель фильтров
     makeFilterList(filterList, queryParams);
 
+    // отключаем стандартное поведение, иначе при нажатии Enter
+    // в любом из input:(number|text) будет перегружаться страница
+    filterList.addEventListener('submit', e => e.preventDefault());
+
     // кастомное поведение контролов
     setCheckboxBehavior();
     setInputElementBehavior();
@@ -54,10 +58,6 @@ export default class Filter {
     setData(data);
   }
 }
-
-// отключаем стандартное поведение, иначе при нажатии Enter
-// в любом из input:(number|text) будет перегружаться страница
-filterList.addEventListener('submit', e => e.preventDefault());
 
 /**
  *
@@ -406,20 +406,3 @@ function setOptionsGroup(group, value) {
 function setData(data) {
   Object.entries(data).forEach(([name, value]) => setOption(name, value));
 }
-
-/**
- *
- * @param {object} form - целевая форма
- * @returns данные формы в формате {name: v1, name1: [v1, v2,...],...}
- */
-// function getData(form) {
-//   const formData = new FormData(form);
-
-//   // если в массиве одно значение, ставим его как есть
-//   return Array.from(formData.keys()).reduce((obj, name) => {
-//     const values = formData.getAll(name);
-//     obj[name] = values.length === 1 ? values[0] : values;
-
-//     return obj;
-//   }, {});
-// }

@@ -21,7 +21,7 @@ const CLASS_NAME = {
 };
 
 /**
- *
+ * Создает разметку для панели фильтров
  */
 function makeFilterList() {
   const markup = Object.entries(queryParams).map(makeFilterMenuItem).join('');
