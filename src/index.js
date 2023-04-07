@@ -16,14 +16,7 @@ import _ from './js/header';
 
 const { defSearchOpts, message } = hwData;
 const { clearBtn, searchForm, searchInput, loader, backtop } = refs;
-const {
-  error,
-  info,
-  succ,
-  getViewportClientRect,
-  scrollByTop,
-  parseUrlParams,
-} = utils;
+const { error, info, succ, getViewportClientRect, scrollByTop } = utils;
 
 const gallery = new ImageGallery('.gallery');
 const pbs = new PixabayService();
@@ -40,8 +33,16 @@ filter.show();
 // Event handlers
 //
 
+gallery.ref.addEventListener('click', handleGalleryClick);
 clearBtn.addEventListener('click', handleClearInputClick);
 searchForm.addEventListener('submit', handleSearchFormSubmit);
+
+function handleGalleryClick({ target }) {
+  if (target.classList.contains('img-tag')) {
+    searchInput.value = target.textContent;
+    startSearching(false, { q: target.textContent });
+  }
+}
 
 function handleClearInputClick(e) {
   searchInput.value = '';
@@ -53,14 +54,14 @@ function handleClearInputClick(e) {
 
 function handleSearchFormSubmit(e) {
   e.preventDefault();
-  startSearching({ queryData: filter.getData() });
+  startSearching(false, filter.getData());
 }
 
 function handleFilterChange(queryData) {
-  startSearching({ silentMode: true, queryData });
+  startSearching(true, queryData);
 }
 
-function startSearching({ silentMode, queryData } = {}) {
+function startSearching(silentMode, queryData) {
   const query = searchForm.searchQuery.value.trim();
   if (!query) {
     if (!silentMode) info(message.EMPTY_SEARCH_QUERY);
@@ -80,6 +81,10 @@ function startSearching({ silentMode, queryData } = {}) {
 //
 // Infinity scroll
 //
+
+function showLoader(show = true) {
+  loader.style.display = show ? 'flex' : 'none';
+}
 
 const observer = new IntersectionObserver(handleGalleryScroll, {
   root: null,
@@ -123,12 +128,4 @@ async function handleGalleryScroll([entry], observer) {
     error(err.message);
     console.error(err);
   }
-}
-
-//
-// Helpers
-//
-
-function showLoader(show = true) {
-  loader.style.display = show ? 'flex' : 'none';
 }

@@ -45,17 +45,6 @@ function camelToSnake(str) {
 }
 
 /**
- * @param {object} obj
- * @returns - копию obj с именами свойств в snake_case
- */
-function namesToSnake(obj = {}) {
-  return Object.entries(obj).reduce((res, [name, value]) => {
-    res[camelToSnake(name)] = value;
-    return res;
-  }, {});
-}
-
-/**
  * @returns текущий клиентский размер вьюпорта
  */
 function getViewportClientRect() {
@@ -127,7 +116,6 @@ export default {
   fitIntoRange,
   snakeToCamel,
   camelToSnake,
-  namesToSnake,
   scrollByTop,
   scrollToTop,
   throttle,

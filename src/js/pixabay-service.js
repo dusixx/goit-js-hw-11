@@ -136,3 +136,14 @@ export default class PixabayService {
     return this.page > Math.ceil(totalHits / this.perPage) || !hits?.length;
   }
 }
+
+/**
+ * @param {object} obj
+ * @returns - копию obj с именами свойств в snake_case
+ */
+function namesToSnake(obj = {}) {
+  return Object.entries(obj).reduce((res, [name, value]) => {
+    res[camelToSnake(name)] = value;
+    return res;
+  }, {});
+}

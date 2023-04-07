@@ -193,9 +193,6 @@ $filterMenuPadding: 12px;
   // }
 }
 
-//
-// стилизуем все, кроме grayscale и transparent
-//
 .filter__options[name='colors'] input[value] {
   &:not([value='grayscale']):not([value='transparent']) {
     appearance: unset;
@@ -231,19 +228,15 @@ $filterMenuPadding: 12px;
   margin-bottom: 10px;
 }
 
-// .filter__options[name='colors'] input[value='grayscale'] {
-//   margin-bottom: 10px;
-
-//   & ~ span {
-//     margin-bottom: 10px;
-//   }
-// }
-
 .filter__menu button[name='applyFilter'] {
   @extend %btn-primary;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   width: 40px;
-  height: 20px;
+  height: 22px;
   margin-top: 10px;
   border-radius: 7px;
 

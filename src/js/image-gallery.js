@@ -51,8 +51,19 @@ export default class ImageGallery {
    */
   #makeImageCard(hit) {
     const className = this.#className;
-    const { tags, preview, width, height, likes, views, comments, downloads } =
-      getImageData(hit);
+    const iconsPath = new URL('../images/icons.svg', import.meta.url);
+
+    const {
+      tags,
+      preview,
+      width,
+      height,
+      likes,
+      views,
+      comments,
+      downloads,
+      homePage,
+    } = getImageData(hit);
 
     const { small, middle, large } = preview;
     const { addTransparentBg, transparentBgClass } = this.options;
@@ -60,6 +71,12 @@ export default class ImageGallery {
     // NOTE: png не гарантирует прозрачность
     const transpBgClass =
       addTransparentBg && getImageType(hit) === 'png' ? transparentBgClass : '';
+
+    const makeTagsList = tags =>
+      tags
+        .split(/\s*,\s*/)
+        .map(tag => `<li class="img-tag">${tag}</li>`)
+        .join('');
 
     return `
       <li class="${className}__item ${transpBgClass}">
@@ -69,15 +86,40 @@ export default class ImageGallery {
             src="${small.url}"
             alt="${tags}"
             loading="lazy">
-        <div class="img-overlay">
-          <ul class="img-overlay__info">
-            <li>${likes}</li>
-            <li>${comments}</li>
-            <li>${views}</li>
-            <li>${downloads}</li>
-          </ul>
-        </div>
-        </a>
+          </a>
+
+          <div class = "img-overlay-upper">
+            <ul class="img-tags">${makeTagsList(tags)}</ul>
+          </div>
+          
+          <div class="img-overlay">
+            <ul class="img-info">
+              <li class="img-info__item" title="Likes">
+                <a href="${homePage}" target="_blank" rel="noopener noreferrer">
+                  <svg><use href="${iconsPath}#icon-heart"></use></svg>
+                  ${likes}
+                </a>
+              </li>
+              <li class="img-info__item" title="Comments">
+                <a href="${homePage}" target="_blank" rel="noopener noreferrer">
+                  <svg><use href="${iconsPath}#icon-bubble"></use></svg>
+                  ${comments}
+                </a>
+              </li>
+              <li class="img-info__item" title="Views">
+                <a href="${homePage}" target="_blank" rel="noopener noreferrer">
+                  <svg><use href="${iconsPath}#icon-eye"></use></svg>
+                  ${views}
+                </a>
+              </li>
+              <li class="img-info__item" title="Downloads">
+                <a href="${homePage}" target="_blank" rel="noopener noreferrer">
+                  <svg><use href="${iconsPath}#icon-download"></use></svg>
+                  ${downloads}
+                </a>
+             </li>
+            </ul>
+          </div>
       </li>`;
   }
 
