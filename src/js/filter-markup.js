@@ -139,7 +139,7 @@ function makeFilterExpanderMenu(params) {
       </button>`
     : '';
 
-  console.log(value);
+  // console.log(value);
 
   const optionsMarkup = value
     .map((val, idx) => {

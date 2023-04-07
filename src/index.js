@@ -21,7 +21,8 @@ const pbs = new PixabayService(defSearchOpts);
 
 const filter = new Filter({
   toggler: refs.toggleFilterList,
-  onApply: console.log,
+  onChange: handleFilterChange,
+  data: defSearchOpts,
 });
 
 //
@@ -53,6 +54,10 @@ function handleSearchFormSubmit(e) {
   gallery.clear();
   // запускаем поиск
   showLoader();
+}
+
+function handleFilterChange(data, initiator) {
+  console.log(data);
 }
 
 //

@@ -54,6 +54,7 @@ $filterMenuPadding: 12px;
 
 .filter#safesearch {
   @media screen and (min-width: #{$tablet}) {
+    margin-right: 10px;
     margin-left: 60px;
   }
 }
@@ -66,9 +67,7 @@ $filterMenuPadding: 12px;
   margin-left: 5px;
   padding: 0 7px 0 7px;
 
-  font-size: 13px;
   color: inherit;
-
   border-radius: 7px;
   border: 1px solid rgb($colorFilterBtnBorder, 0.4);
   outline: none;

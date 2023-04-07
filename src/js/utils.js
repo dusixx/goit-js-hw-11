@@ -10,6 +10,7 @@ const isNum = v => !isNaN(v - parseFloat(v));
 const isObj = v => Object.prototype.toString.call(v) === '[object Object]';
 
 const normId = id => `${id}`.replace(/[^$\w]/gi, '').replace(/^\d+/, '');
+const getTypeName = v => Object.prototype.toString.call(v).match(/(\S+)\]$/)[1];
 
 const getRef = document.querySelector.bind(document);
 const getRefs = document.querySelectorAll.bind(document);
@@ -28,7 +29,7 @@ function fitIntoRange({ value, min, max }) {
 }
 
 //
-// ID name
+// String
 //
 
 function snakeToCamel(str) {
@@ -140,6 +141,7 @@ export default {
   normId,
   getRef,
   getRefs,
+  getTypeName,
   fitIntoRange,
   snakeToCamel,
   camelToSnake,

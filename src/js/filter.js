@@ -4,24 +4,31 @@ import queryParams from './rest-data';
 import filterMarkup from './filter-markup';
 
 const { filterList, body } = refs;
-const { getRefs, isObj, isFunc, fitIntoRange, debounce } = utils;
 const { makeFilterList, CLASS_NAME, APPLY_BUTTON_NAME } = filterMarkup;
+const { getRefs, isObj, isFunc, fitIntoRange, getTypeName, camelToSnake } =
+  utils;
 
-let onApplyHandler;
+let onChangeHandler;
 let filterListToggler;
 
 export default class Filter {
   static #instance;
+
+  setData = setData;
+  getData() {
+    return getData(filterList);
+  }
+
   /**
-   *
    * @param {object} {...}
    *    toggler - элемент для открытия/закрытия панели фильтров
-   *    onApply - обработчик, вызваемый в момент применения параметров
+   *    onChange - обработчик, вызваемый в момент применения параметров
    */
-  constructor({ toggler, onApply } = {}) {
+  constructor({ toggler, onChange, data } = {}) {
     // синглтон
     if (Filter.#instance) return Filter.#instance;
 
+    // создаем панель фильтров
     makeFilterList(filterList, queryParams);
 
     // кастомное поведение контролов
@@ -29,18 +36,19 @@ export default class Filter {
     setInputElementBehavior();
     setApplyFilterBehavior();
     setFilterExpanderBehavior();
-    handleGrayscaleCheckboxChange();
+    handleGrayscaleOptionChange();
 
-    // ставим обработчик для тоглера и самбита формы
+    // ставим заданные параметры
     setFilterListToggler(toggler);
-    onApplyHandler = isFunc(onApply) ? onApply : null;
+    onChangeHandler = isFunc(onChange) ? onChange : null;
+    setData(data);
 
     Filter.#instance = this;
   }
 }
 
 // отключаем стандартное поведение, иначе при нажатии Enter
-// в любом из input:number(text) будет перегружаться страница
+// в любом из input:(number|text) будет перегружаться страница
 filterList.addEventListener('submit', e => e.preventDefault());
 
 /**
@@ -101,9 +109,9 @@ function setFilterExpanderBehavior() {
 
 /**
  *
- * При включенном grayscale отключает остальные цвета в палитре
+ * При включенном grayscale отключает выбор других цветов в палитре
  */
-function handleGrayscaleCheckboxChange() {
+function handleGrayscaleOptionChange() {
   filterList
     .querySelector(`.${CLASS_NAME.filterItemOption}#grayscale`)
     ?.addEventListener('change', disableUnderlying);
@@ -111,12 +119,9 @@ function handleGrayscaleCheckboxChange() {
   function disableUnderlying({ target, currentTarget }) {
     if (target.nodeName !== 'INPUT') return;
 
+    let sib = currentTarget.nextElementSibling;
     // отключаем нижележащие чекбоксы
-    for (
-      let sib = currentTarget.nextElementSibling;
-      sib !== null;
-      sib = sib.nextElementSibling
-    ) {
+    for (; sib !== null; sib = sib.nextElementSibling) {
       sib.style.opacity = target.checked ? '0.5' : null;
       sib.firstElementChild.firstElementChild.disabled = target.checked;
     }
@@ -181,11 +186,10 @@ function setCheckboxBehavior() {
   }
 
   function selectOnlyOne({ target, currentTarget }) {
-    // снимаем у всех
+    // снимаем у всех, кроме текущего
     currentTarget
       .querySelectorAll('input[type="checkbox"]')
       ?.forEach(itm => (itm.checked = false));
-    // кроме текущего
     target.checked = true;
   }
 
@@ -254,7 +258,7 @@ function setClearFilterBehavior(clearFilter) {
 
 /**
  *
- * @param {object} parent - элемент, относительно которого получаем список опций
+ * @param {object} parent - элемент, для которого получаем список опций
  * @param {boolean} enabled - если true, вернет только :not([disabled]) опции
  * @returns {NodeList} список элементов
  */
@@ -276,11 +280,11 @@ function collapseFilterMenu(filterExpander) {
 
 /**
  *
- * @param {*} targetInput - инициатор события
+ * @param {object} initiator - инициатор события
  * @returns
  */
-function submitFilterData(target) {
-  return onApplyHandler && onApplyHandler(getData(filterList), target);
+function submitFilterData(initiator) {
+  return onChangeHandler && onChangeHandler(getData(filterList), initiator);
 }
 
 /**
@@ -300,4 +304,76 @@ function getData(form) {
   }, {});
 }
 
-function setData(data = {}) {}
+/**
+ *
+ * @param {*} cbox
+ * @param {*} value
+ */
+function checkOption(cbox, checked = true) {
+  cbox.checked = !checked;
+  cbox.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+}
+
+/**
+ *
+ * @param {*} inputElem
+ * @param {*} value
+ */
+function changeValue(inputElem, value) {
+  inputElem.value = value;
+  inputElem.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+/**
+ *
+ * @param {*} name
+ * @param {*} value
+ * @returns
+ */
+function setOption(name, value) {
+  name = camelToSnake(name);
+
+  if (!filterList.hasOwnProperty(name)) return;
+  const elem = filterList[name];
+
+  switch (getTypeName(elem)) {
+    case 'RadioNodeList':
+      return setOptionsGroup(elem, value);
+
+    case 'HTMLInputElement':
+      return elem.type === 'checkbox'
+        ? checkOption(elem, value)
+        : changeValue(elem, value);
+  }
+}
+
+/**
+ *
+ * @param {*} group
+ * @param {*} value
+ * @returns
+ */
+function setOptionsGroup(group, value) {
+  if (!Array.isArray(value)) value = [value];
+
+  const multiselOptions = group[0].closest(
+    `.${CLASS_NAME.filterItemOptions}[multiselect]`
+  );
+
+  if (multiselOptions) {
+    // заданные ставим, остальные снимаем и кликаем на Apply
+    group.forEach(cb => checkOption(cb, value.includes(cb.value)));
+    return multiselOptions.nextElementSibling.click();
+  }
+
+  // ставим заданный, остальные будут сняты в setCheckboxBehavior()
+  group.forEach(cb => value.includes(cb.value) && checkOption(cb));
+}
+
+/**
+ *
+ * @param {*} data
+ */
+function setData(data) {
+  Object.entries(data).forEach(([name, value]) => setOption(name, value));
+}
