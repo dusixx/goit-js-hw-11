@@ -1,5 +1,3 @@
-// NOTE: Спинер при малом кол-ве результатов на страницу работает некорректно
-
 import './sass/index.scss';
 import PixabayService from './js/pixabay-service';
 import ImageGallery from './js/image-gallery';
@@ -61,6 +59,14 @@ function handleFilterChange(queryData) {
   startSearching(true, queryData);
 }
 
+//
+// Helpers
+//
+
+function showLoader(show = true) {
+  loader.style.display = show ? 'flex' : 'none';
+}
+
 function startSearching(silentMode, queryData) {
   const query = searchForm.searchQuery.value.trim();
   if (!query) {
@@ -82,10 +88,6 @@ function startSearching(silentMode, queryData) {
 // Infinity scroll
 //
 
-function showLoader(show = true) {
-  loader.style.display = show ? 'flex' : 'none';
-}
-
 const observer = new IntersectionObserver(handleGalleryScroll, {
   root: null,
   rootMargin: '0px',
@@ -93,6 +95,8 @@ const observer = new IntersectionObserver(handleGalleryScroll, {
 });
 
 observer.observe(loader);
+
+// NOTE: Спинер при малом кол-ве результатов работает некорректно
 
 async function handleGalleryScroll([entry], observer) {
   if (!entry.isIntersecting) return;
