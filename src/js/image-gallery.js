@@ -32,7 +32,7 @@ export default class ImageGallery {
     this.#className = this.ref.className;
 
     // инициализируем simpleLightbox
-    this.#simpleLightBox = new SimpleLightbox(`${classSelector} a`, {
+    this.#simpleLightBox = new SimpleLightbox(`.${this.#className}__link`, {
       captionsData: 'alt',
     });
   }

@@ -1,8 +1,7 @@
 import axios from 'axios';
 import utils from './utils';
 
-const { isInt, isObj, isStr, camelToSnake, namesToSnake, parseUrlParams } =
-  utils;
+const { isInt, isObj, isStr, camelToSnake, parseUrlParams } = utils;
 
 const defOpts = {
   pageIncrement: 1,
