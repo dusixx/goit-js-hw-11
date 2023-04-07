@@ -1,4 +1,4 @@
-export default queryParams = {
+const queryParams = {
   image_type: {
     // value[?alias]
     // defValueIdx: 0
@@ -81,6 +81,7 @@ export default queryParams = {
   // ],
 };
 
+export default queryParams;
 // const searchParams = (
 //   'q key lang id image_type orientation category min_width min_height ' +
 //   'colors editors_choice safesearch order page per_page'
