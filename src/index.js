@@ -96,8 +96,6 @@ const observer = new IntersectionObserver(handleGalleryScroll, {
 
 observer.observe(loader);
 
-// NOTE: Спинер при малом кол-ве результатов работает некорректно
-
 async function handleGalleryScroll([entry], observer) {
   if (!entry.isIntersecting) return;
 
