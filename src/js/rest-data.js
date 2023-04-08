@@ -1,7 +1,8 @@
+// value[?alias]
+// defValueIdx: 0
+
 const queryParams = {
   image_type: {
-    // value[?alias]
-    // defValueIdx: 0
     value: ['?all images', 'photo', 'illustration', 'vector'],
   },
 
@@ -42,20 +43,10 @@ const queryParams = {
 
   per_page: {
     type: 'number',
-    // min: 3,
-    min: 20,
+    min: 20, // 3
     max: 200,
     value: 20,
   },
-
-  // order: {
-  //   value: ['popular', 'latest'],
-  // },
-
-  // editorsChoice: {
-  //   caption: "Editor's choice",
-  //   value: ['false', 'true'],
-  // },
 
   // category: [
   //   'backgrounds',
@@ -82,7 +73,3 @@ const queryParams = {
 };
 
 export default queryParams;
-// const searchParams = (
-//   'q key lang id image_type orientation category min_width min_height ' +
-//   'colors editors_choice safesearch order page per_page'
-// ).split(' ');
