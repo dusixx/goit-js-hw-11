@@ -85,7 +85,7 @@ function startSearching(queryData, silentMode) {
 }
 
 //
-// Infinity scroll
+// Infinite scroll
 //
 
 const observer = new IntersectionObserver(handleGalleryScroll, {

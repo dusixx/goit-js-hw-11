@@ -142,6 +142,12 @@ function handleGrayscaleOptionChange() {
  */
 function setInputElementBehavior() {
   filterList.addEventListener('change', handleInputChange);
+  filterList.addEventListener('click', handleInputClick);
+
+  function handleInputClick({ target }) {
+    if (target.nodeName !== 'INPUT') return;
+    target.select();
+  }
 
   function handleInputChange({ target }) {
     if (target.nodeName !== 'INPUT') return;
