@@ -78,6 +78,8 @@
 
 .img-tags {
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 3px;
   height: 20px;
 
@@ -109,6 +111,7 @@
 .img-info {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 5px;
   margin: auto 10px 10px auto;
 
