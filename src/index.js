@@ -38,7 +38,7 @@ searchForm.addEventListener('submit', handleSearchFormSubmit);
 function handleGalleryClick({ target }) {
   if (target.classList.contains('img-tag')) {
     searchForm.searchQuery.value = target.textContent;
-    startSearching(false, filter.getData());
+    startSearching(filter.getData());
   }
 }
 
@@ -52,11 +52,11 @@ function handleClearInputClick(e) {
 
 function handleSearchFormSubmit(e) {
   e.preventDefault();
-  startSearching(false, filter.getData());
+  startSearching(filter.getData());
 }
 
 function handleFilterChange(queryData) {
-  startSearching(true, queryData);
+  startSearching(queryData, true);
 }
 
 //
@@ -67,7 +67,7 @@ function showLoader(show = true) {
   loader.style.display = show ? 'flex' : 'none';
 }
 
-function startSearching(silentMode, queryData) {
+function startSearching(queryData, silentMode) {
   const query = searchForm.searchQuery.value.trim();
   if (!query) {
     if (!silentMode) info(message.EMPTY_SEARCH_QUERY);

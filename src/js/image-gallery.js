@@ -113,7 +113,9 @@ export default class ImageGallery {
                 </a>
               </li>
               <li class="img-info__item" title="Downloads">
-                <a href="${homePage}" target="_blank" rel="noopener noreferrer">
+                <a href="${
+                  large.url
+                }" download target="_blank" rel="noopener noreferrer">
                   <svg><use href="${iconsPath}#icon-download"></use></svg>
                   ${downloads}
                 </a>
