@@ -145,7 +145,11 @@ function setInputElementBehavior() {
   filterList.addEventListener('click', handleInputClick);
 
   function handleInputClick({ target }) {
-    if (target.nodeName !== 'INPUT') return;
+    if (
+      target.nodeName !== 'INPUT' ||
+      !['number', 'text'].includes(target.type)
+    )
+      return;
     target.select();
   }
 
