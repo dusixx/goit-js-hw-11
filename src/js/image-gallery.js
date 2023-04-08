@@ -75,7 +75,7 @@ export default class ImageGallery {
     const makeTagsList = tags =>
       tags
         .split(/\s*,\s*/)
-        .map(tag => `<li class="img-tag">${tag}</li>`)
+        .map(tag => `<li class="img-tags__item">${tag}</li>`)
         .join('');
 
     return `

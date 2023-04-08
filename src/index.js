@@ -36,7 +36,7 @@ clearBtn.addEventListener('click', handleClearInputClick);
 searchForm.addEventListener('submit', handleSearchFormSubmit);
 
 function handleGalleryClick({ target }) {
-  if (target.classList.contains('img-tag')) {
+  if (target.classList.contains('img-tags__item')) {
     searchForm.searchQuery.value = target.textContent;
     startSearching(filter.getData());
   }
