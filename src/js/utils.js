@@ -56,6 +56,12 @@ function camelToSnake(str) {
     .replace(/_+/g, '_');
 }
 
+function getFileType(str) {
+  return String(str)
+    .match(/[^\.]+$/)[0]
+    .toLowerCase();
+}
+
 /**
  * @returns текущий клиентский размер вьюпорта
  */
@@ -133,5 +139,6 @@ export default {
   throttle,
   debounce,
   formatNumber,
+  getFileType,
   getViewportClientRect,
 };

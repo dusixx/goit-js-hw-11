@@ -42,19 +42,67 @@
 }
 
 //
+// Download btn
+//
+
+$downloadBtnOffsetLarge: 8px;
+$downloadBtnSize: 25px;
+
+.gallery__download-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+
+  @media screen and (min-width: #{$bp-tablet}) {
+    top: $downloadBtnOffsetLarge;
+    right: $downloadBtnOffsetLarge;
+  }
+
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  width: $downloadBtnSize;
+  height: $downloadBtnSize;
+
+  background-color: var(--color-accent);
+  color: white;
+
+  border-radius: 50%;
+  opacity: 0.4;
+
+  transition: opacity var(--transition-params);
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  svg {
+    width: 70%;
+    height: 70%;
+    fill: currentColor;
+  }
+}
+
+//
 // Overlay
 //
 
 .gallery__item:hover,
 .gallery__item:focus-visible {
   & .img-overlay,
-  & .img-overlay-upper {
+  & .gallery__overlay-upper {
     transform: translateY(0);
+  }
+
+  & .gallery__download-btn {
+    display: flex;
   }
 }
 
 .img-overlay,
-.img-overlay-upper {
+.gallery__overlay-upper {
   position: absolute;
   left: 0;
   right: 0;
@@ -74,8 +122,11 @@
   background: var(--overlay-bg);
 }
 
-.img-overlay-upper {
+.gallery__overlay-upper {
   top: 0;
+  display: flex;
+  justify-content: space-between;
+
   padding-bottom: 20px;
   transform: translateY(-100%);
   background: var(--overlay-upper-bg);
@@ -109,6 +160,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 3px;
+  width: calc(100% - ($downloadBtnOffsetLarge + $downloadBtnSize));
 }
 
 .img-info {
@@ -120,17 +172,14 @@
 }
 
 .img-info__item {
-  @media screen and (min-width: #{$bp-tablet}) and (max-width: #{$bp-desktop}) {
-    &[title^='Views'] {
-      display: none;
-    }
+  &[title^='Downloads'] {
+    display: none;
   }
 
   @media screen and (max-width: 280px) {
     font-size: 12px;
     padding: 1px;
 
-    &[title^='Comments'],
     &[title^='Views'] {
       display: none;
     }

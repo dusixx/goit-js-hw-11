@@ -1,7 +1,7 @@
 import axios from 'axios';
 import utils from './utils';
 
-const { isInt, isObj, isStr, camelToSnake, parseUrlParams } = utils;
+const { isInt, isObj, isStr, camelToSnake } = utils;
 
 const defOpts = {
   pageIncrement: 1,
@@ -145,4 +145,45 @@ function namesToSnake(obj = {}) {
     res[camelToSnake(name)] = value;
     return res;
   }, {});
+}
+
+/**
+ * @param {object} hit - данные изображения из hits[]
+ * @returns объект с необходимыми(доступными для free) данными
+ */
+export function getImageData(hit) {
+  const PREVIEW_WIDTH = {
+    tiny: 180,
+    small: 340,
+    middle: 640,
+    large: 1280,
+  };
+
+  const getImageFilename = previewURL =>
+    previewURL.match(/[^\/]+$/)[0].replace(/_\d+/, '');
+
+  const replaceURLWidth = (url, width) =>
+    url.replace(/(_\d+)(?=\.\w+$)/, `_${width}`);
+
+  const smallURL = replaceURLWidth(hit.webformatURL, PREVIEW_WIDTH.small);
+  const middleURL = replaceURLWidth(hit.webformatURL, PREVIEW_WIDTH.middle);
+
+  return {
+    preview: {
+      normal: { url: hit.webformatURL, width: hit.webformatWidth },
+      small: { url: smallURL, width: PREVIEW_WIDTH.small },
+      middle: { url: middleURL, width: PREVIEW_WIDTH.middle },
+      large: { url: hit.largeImageURL, width: PREVIEW_WIDTH.large },
+    },
+    width: hit.imageWidth,
+    height: hit.imageHeight,
+    size: hit.imageSize,
+    homePage: hit.pageURL,
+    tags: hit.tags,
+    views: hit.views,
+    downloads: hit.downloads,
+    likes: hit.likes,
+    comments: hit.comments,
+    fileName: getImageFilename(hit.previewURL),
+  };
 }

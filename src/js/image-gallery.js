@@ -1,8 +1,13 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+
+import makeImageCard from './image-gallery-markup';
+import { getImageData } from './pixabay-service';
+import FileSaver from 'file-saver';
 import utils from './utils';
 
-const { formatNumber } = utils;
+const { formatNumber, getFileType } = utils;
+const { saveAs } = FileSaver;
 
 const defOpts = {
   addTransparentBg: true,
@@ -34,6 +39,9 @@ export default class ImageGallery {
     this.options = opts;
     this.#className = this.ref.className;
 
+    // ставим обработчик кликов
+    this.#ref.addEventListener('click', handleGalleryClick);
+
     // инициализируем simpleLightbox
     this.#simpleLightBox = new SimpleLightbox(`.${this.#className}__link`, {
       captionsData: 'alt',
@@ -53,79 +61,19 @@ export default class ImageGallery {
    * @returns разметку для карточки изображения
    */
   #makeImageCard(hit) {
-    const className = this.#className;
-    const iconsPath = new URL('../images/icons.svg', import.meta.url);
-
-    const {
-      tags,
-      preview,
-      width,
-      height,
-      likes,
-      views,
-      comments,
-      downloads,
-      homePage,
-    } = getImageData(hit);
-
-    const { small, middle, large } = preview;
     const { addTransparentBg, transparentBgClass } = this.options;
 
-    // NOTE: png не гарантирует прозрачность
+    // png не гарантирует прозрачность
     const transpBgClass =
-      addTransparentBg && getImageType(hit) === 'png' ? transparentBgClass : '';
+      addTransparentBg && getFileType(hit.largeImageURL) === 'png'
+        ? transparentBgClass
+        : '';
 
-    const makeTagsList = tags =>
-      tags
-        .split(/\s*,\s*/)
-        .map(tag => `<li class="img-tags__item">${tag}</li>`)
-        .join('');
-
-    return `
-      <li class="${className}__item ${transpBgClass}">
-        <a class="${className}__link" href="${large.url}">
-          <img class="${className}__img"
-            srcset = "${middle.url} 1x, ${large.url} 2x"
-            src="${middle.url}"
-            alt="${tags}"
-            loading="lazy">
-          </a>
-
-          <div class = "img-overlay-upper">
-            <ul class="img-tags">${makeTagsList(tags)}</ul>
-          </div>
-          
-          <div class="img-overlay">
-            <ul class="img-info">
-              <li class="img-info__item" title="Likes: ${likes}">
-                <a href="${homePage}" target="_blank" rel="noopener noreferrer">
-                  <svg><use href="${iconsPath}#icon-heart"></use></svg>
-                  ${formatNumber(likes)}
-                </a>
-              </li>
-              <li class="img-info__item" title="Comments: ${comments}">
-                <a href="${homePage}" target="_blank" rel="noopener noreferrer">
-                  <svg><use href="${iconsPath}#icon-bubble"></use></svg>
-                  ${formatNumber(comments)}
-                </a>
-              </li>
-              <li class="img-info__item" title="Views: ${views}">
-                <a href="${homePage}" target="_blank" rel="noopener noreferrer">
-                  <svg><use href="${iconsPath}#icon-eye"></use></svg>
-                  ${formatNumber(views)}
-                </a>
-              </li>
-              <li class="img-info__item" title="Downloads: ${downloads}">
-                <a href="${
-                  large.url
-                }" download target="_blank" rel="noopener noreferrer">
-                  <svg><use href="${iconsPath}#icon-download"></use></svg>
-                  ${formatNumber(downloads)}
-                </a>
-             </li>
-            </ul>
-          </div>
-      </li>`;
+    return makeImageCard({
+      ...getImageData(hit),
+      transpBgClass,
+      galleryClassName: this.#className,
+    });
   }
 
   /**
@@ -168,18 +116,6 @@ export default class ImageGallery {
   }
 }
 
-//
-// Helpers
-//
-
-/**
- * @param {object} hit
- * @returns расширение файла изображения
- */
-function getImageType(hit) {
-  return hit.largeImageURL.match(/[^\.]+$/)[0].toLowerCase();
-}
-
 /**
  * @param {object} img
  * @returns промис, который выполнится в момент загрузки img
@@ -196,40 +132,11 @@ function waitForImageLoading(img) {
   });
 }
 
-function replaceURLWidth(url, width) {
-  return url.replace(/(_\d+)(?=\.\w+$)/, `_${width}`);
-}
+function handleGalleryClick(e) {
+  const btn = e.target.closest('.gallery__download-btn');
 
-/**
- * @param {object} hit - данные изображения из hits[]
- * @returns объект с необходимыми(доступными для free) данными
- */
-function getImageData(hit) {
-  const PREVIEW_WIDTH = {
-    tiny: 180,
-    small: 340,
-    middle: 640,
-    large: 1280,
-  };
-
-  const smallURL = replaceURLWidth(hit.webformatURL, PREVIEW_WIDTH.small);
-  const middleURL = replaceURLWidth(hit.webformatURL, PREVIEW_WIDTH.middle);
-
-  return {
-    preview: {
-      normal: { url: hit.webformatURL, width: hit.webformatWidth },
-      small: { url: smallURL, width: PREVIEW_WIDTH.small },
-      middle: { url: middleURL, width: PREVIEW_WIDTH.middle },
-      large: { url: hit.largeImageURL, width: PREVIEW_WIDTH.large },
-    },
-    width: hit.imageWidth,
-    height: hit.imageHeight,
-    size: hit.imageSize,
-    homePage: hit.pageURL,
-    tags: hit.tags,
-    views: hit.views,
-    downloads: hit.downloads,
-    likes: hit.likes,
-    comments: hit.comments,
-  };
+  if (btn) {
+    e.preventDefault();
+    saveAs(btn.href, btn.dataset.filename);
+  }
 }
