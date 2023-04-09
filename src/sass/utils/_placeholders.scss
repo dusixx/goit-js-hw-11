@@ -1,0 +1,43 @@
+%link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--transition-params);
+}
+
+%btn {
+  @extend %link;
+
+  padding: 0;
+  line-height: 0;
+  border-style: unset;
+}
+
+%btn-primary {
+  @extend %btn;
+
+  color: white;
+  background-color: var(--color-accent);
+}
+
+%input-no-spin-buttons {
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  -moz-appearance: textfield;
+}
+
+%visually-hidden {
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  margin: -1px;
+}

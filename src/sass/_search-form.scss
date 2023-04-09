@@ -40,7 +40,7 @@
     opacity: 0.7;
   }
 
-  &:placeholder-shown ~ .search-form__btn-clear {
+  &:placeholder-shown ~ .search-form__clear-btn {
     display: none;
   }
 }
@@ -81,9 +81,16 @@
   color: rgba(gray, 0.8);
   background-color: unset;
 
-  transition: color var(--transition-params);
+  transition: color var(--transition-params), transform var(--transition-params);
 
   &:hover {
     color: var(--color-accent);
+    transform: scale(1.2);
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
   }
 }
