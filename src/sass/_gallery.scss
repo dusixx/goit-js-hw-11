@@ -116,7 +116,7 @@
   align-items: center;
   justify-content: right;
   flex-wrap: wrap;
-  gap: 3px;
+  column-gap: 6px;
 }
 
 .img-info__item {
@@ -127,6 +127,7 @@
   }
 
   @media screen and (max-width: 280px) {
+    font-size: 12px;
     padding: 1px;
 
     &[title^='Comments'],
