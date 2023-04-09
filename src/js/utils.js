@@ -3,6 +3,7 @@
 import { Notify } from 'notiflix';
 import throttle from 'lodash.throttle';
 import debounce from 'lodash.debounce';
+import FileSaver from 'file-saver';
 
 const isDef = v => typeof v !== 'undefined';
 const isStr = v => typeof v === 'string';
@@ -140,5 +141,6 @@ export default {
   debounce,
   formatNumber,
   getFileType,
+  saveFileAs: FileSaver.saveAs,
   getViewportClientRect,
 };

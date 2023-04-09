@@ -3,11 +3,9 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import makeImageCard from './image-gallery-markup';
 import { getImageData } from './pixabay-service';
-import FileSaver from 'file-saver';
 import utils from './utils';
 
-const { formatNumber, getFileType } = utils;
-const { saveAs } = FileSaver;
+const { formatNumber, getFileType, saveFileAs } = utils;
 
 const defOpts = {
   addTransparentBg: true,
@@ -137,6 +135,6 @@ function handleGalleryClick(e) {
 
   if (btn) {
     e.preventDefault();
-    saveAs(btn.href, btn.dataset.filename);
+    saveFileAs(btn.href, btn.dataset.filename);
   }
 }
