@@ -1,5 +1,8 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import utils from './utils';
+
+const { formatNumber } = utils;
 
 const defOpts = {
   addTransparentBg: true,
@@ -94,30 +97,30 @@ export default class ImageGallery {
           
           <div class="img-overlay">
             <ul class="img-info">
-              <li class="img-info__item" title="Likes">
+              <li class="img-info__item" title="Likes: ${likes}">
                 <a href="${homePage}" target="_blank" rel="noopener noreferrer">
                   <svg><use href="${iconsPath}#icon-heart"></use></svg>
-                  ${likes}
+                  ${formatNumber(likes)}
                 </a>
               </li>
-              <li class="img-info__item" title="Comments">
+              <li class="img-info__item" title="Comments: ${comments}">
                 <a href="${homePage}" target="_blank" rel="noopener noreferrer">
                   <svg><use href="${iconsPath}#icon-bubble"></use></svg>
-                  ${comments}
+                  ${formatNumber(comments)}
                 </a>
               </li>
-              <li class="img-info__item" title="Views">
+              <li class="img-info__item" title="Views: ${views}">
                 <a href="${homePage}" target="_blank" rel="noopener noreferrer">
                   <svg><use href="${iconsPath}#icon-eye"></use></svg>
-                  ${views}
+                  ${formatNumber(views)}
                 </a>
               </li>
-              <li class="img-info__item" title="Downloads">
+              <li class="img-info__item" title="Downloads: ${downloads}">
                 <a href="${
                   large.url
                 }" download target="_blank" rel="noopener noreferrer">
                   <svg><use href="${iconsPath}#icon-download"></use></svg>
-                  ${downloads}
+                  ${formatNumber(downloads)}
                 </a>
              </li>
             </ul>

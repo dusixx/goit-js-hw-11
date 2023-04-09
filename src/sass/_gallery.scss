@@ -121,7 +121,7 @@
 
 .img-info__item {
   @media screen and (min-width: #{$bp-tablet}) and (max-width: #{$bp-desktop}) {
-    &[title='Views'] {
+    &[title^='Views'] {
       display: none;
     }
   }
@@ -129,8 +129,8 @@
   @media screen and (max-width: 280px) {
     padding: 1px;
 
-    &[title='Comments'],
-    &[title='Views'] {
+    &[title^='Comments'],
+    &[title^='Views'] {
       display: none;
     }
   }
