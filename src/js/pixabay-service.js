@@ -129,8 +129,8 @@ export default class PixabayService {
   }
 
   get isEOSReached() {
-    // в случае неудачного fetch response.data === undefined
-    // И вернет true -> (this.page > NaN || !undefined)
+    // В случае неудачного fetch (response.data === undefined)
+    // вернет true -> (this.page > NaN || !undefined)
     const { totalHits, hits } = this.#response.data || '';
     return this.page > Math.ceil(totalHits / this.perPage) || !hits?.length;
   }

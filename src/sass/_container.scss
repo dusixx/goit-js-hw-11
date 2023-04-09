@@ -1,12 +1,12 @@
 .container {
   margin: 0 auto;
 
-  @media screen and (min-width: #{$tablet}) {
+  @media screen and (min-width: #{$bp-tablet}) {
     padding-left: calc(var(--container-padding) / 2);
     padding-right: calc(var(--container-padding) / 2);
   }
 
-  @media screen and (min-width: #{$desktop}) {
+  @media screen and (min-width: #{$bp-desktop}) {
     padding-left: var(--container-padding);
     padding-right: var(--container-padding);
   }

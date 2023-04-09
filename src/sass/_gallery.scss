@@ -20,16 +20,16 @@
   border-radius: 7px;
   overflow: hidden;
 
-  @media screen and (min-width: #{$mobile}) {
+  @media screen and (min-width: #{$bp-mobile}) {
     height: 150px;
   }
 
-  @media screen and (min-width: #{$tablet}) {
+  @media screen and (min-width: #{$bp-tablet}) {
     height: 180px;
     --gallery-items-per-row: 3;
   }
 
-  @media screen and (min-width: #{$desktop}) {
+  @media screen and (min-width: #{$bp-desktop}) {
     height: 200px;
     --gallery-items-per-row: 4;
   }
@@ -80,7 +80,7 @@
   transform: translateY(-100%);
   background: var(--overlay-upper-bg);
 
-  @media screen and (max-width: #{$mobile}) {
+  @media screen and (max-width: #{$bp-mobile}) {
     display: none;
   }
 }
@@ -120,7 +120,7 @@
 }
 
 .img-info__item {
-  @media screen and (min-width: #{$tablet}) and (max-width: #{$desktop}) {
+  @media screen and (min-width: #{$bp-tablet}) and (max-width: #{$bp-desktop}) {
     &[title='Views'] {
       display: none;
     }

@@ -11,7 +11,7 @@ const APPLY_BUTTON_CAPTION = 'Go';
 const CLASS_NAME = {
   filterList: 'filter-list',
   filterListHidden: 'filter-list--hidden',
-  filterItem: 'filter',
+  filterItem: 'filter-list__item',
   filterItemExpander: 'filter__expander',
   filterItemClear: 'filter__clear',
   filterItemExpanderExpanded: 'filter__expander--expanded',

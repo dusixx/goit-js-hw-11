@@ -1,7 +1,6 @@
-$colorFilterBtnBg: gray;
-$colorFilterBtnBorder: gray;
-$filterExpanderHeight: 35px;
-$filterMenuPadding: 12px;
+//
+// Filter list
+//
 
 .filter-list {
   position: fixed;
@@ -9,19 +8,19 @@ $filterMenuPadding: 12px;
   top: var(--header-height);
   z-index: 9;
 
-  width: 100%;
-  padding: 9px;
-
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-content: center;
   gap: 15px;
 
+  width: 100%;
+  padding: 9px;
+
   font-size: 13px;
   text-transform: capitalize;
   background-color: white;
-  border-bottom: 1px solid rgb(231, 231, 231);
+  border-bottom: 1px solid var(--color-gray-light);
 
   transition: transform var(--transition-params);
 
@@ -31,11 +30,6 @@ $filterMenuPadding: 12px;
 }
 
 .filter-list label {
-  // & ~ span {
-  //   display: block;
-  //   white-space: nowrap;
-  // }
-
   & input[type='checkbox'] {
     cursor: inherit;
 
@@ -50,40 +44,32 @@ $filterMenuPadding: 12px;
   }
 }
 
-.filter {
+.filter-list__item {
   position: relative;
+
   display: flex;
   align-items: center;
   user-select: none;
-}
 
-.filter#safesearch {
-  @media screen and (min-width: #{$desktop}) {
-    // margin-right: 10px;
-    margin-left: 60px;
+  & label {
+    display: flex;
+    align-items: center;
+    line-height: 0;
+    cursor: pointer;
+  }
+
+  &#safesearch {
+    @media screen and (min-width: #{$bp-desktop}) {
+      margin-left: 60px;
+    }
   }
 }
 
-.filter-list input[type='number'] {
-  height: 30px;
-  width: 50px;
+//
+// Input[:number]
+//
 
-  text-align: center;
-  margin-left: 5px;
-  padding: 0 7px 0 7px;
-
-  color: inherit;
-  border-radius: 7px;
-  border: 1px solid rgb($colorFilterBtnBorder, 0.3);
-  outline: none;
-
-  transition: border-color var(--transition-params);
-
-  &:hover,
-  &:focus-visible {
-    border-color: rgb($colorFilterBtnBorder, 0.7);
-  }
-
+%input-no-spin-buttons {
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -93,6 +79,33 @@ $filterMenuPadding: 12px;
   -moz-appearance: textfield;
 }
 
+.filter-list input[type='number'] {
+  @extend %input-no-spin-buttons;
+
+  height: 30px;
+  width: 50px;
+
+  text-align: center;
+  margin-left: 5px;
+  padding: 0 7px 0 7px;
+
+  color: inherit;
+  border-radius: 7px;
+  border: 1px solid var(--color-gray-light);
+  outline: none;
+
+  transition: border-color var(--transition-params);
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--color-gray-darker);
+  }
+}
+
+//
+// Expander btn
+//
+
 .filter__expander {
   @extend %btn;
 
@@ -100,18 +113,19 @@ $filterMenuPadding: 12px;
   justify-content: center;
   align-items: center;
 
-  height: $filterExpanderHeight;
+  height: var(--filter-expander-heigth);
   padding-left: 17px;
   padding-right: 17px;
 
-  text-transform: inherit;
   font-family: inherit;
   font-size: inherit;
+
+  text-transform: capitalize;
   white-space: nowrap;
 
   border-radius: 20px;
-  background-color: rgb($colorFilterBtnBg, 0);
-  border: 1px solid rgb($colorFilterBtnBorder, 0.3);
+  background-color: transparent;
+  border: 1px solid var(--color-gray-light);
   outline: none;
 
   transition: background-color var(--transition-params);
@@ -125,12 +139,15 @@ $filterMenuPadding: 12px;
   &:hover,
   &:focus-visible,
   &--expanded {
-    background-color: rgb($colorFilterBtnBg, 0.2);
+    background-color: var(--color-gray-lighter);
   }
 }
 
-// clear filter
-.filter__expander span {
+.filter__expander--expanded ~ .filter__menu {
+  display: block;
+}
+
+.filter__clear {
   display: none;
 
   margin-right: 7px;
@@ -144,33 +161,19 @@ $filterMenuPadding: 12px;
   }
 }
 
-// show filter menu
-.filter__expander--expanded ~ .filter__menu {
-  display: block;
-}
-
 .filter__menu {
   position: absolute;
-  top: $filterExpanderHeight;
+  top: var(--filter-expander-heigth);
   z-index: 10;
 
   display: none;
 
-  padding: $filterMenuPadding;
+  padding: 12px;
   background-color: var(--color-header-bg);
   border: 1px solid rgba(white, 0.2);
 
   &--hidden {
     display: none;
-  }
-}
-
-.filter {
-  & label {
-    display: flex;
-    align-items: center;
-    line-height: 0;
-    cursor: pointer;
   }
 }
 
@@ -180,17 +183,16 @@ $filterMenuPadding: 12px;
   flex-direction: column;
   gap: 5px;
 
-  color: rgb(194, 194, 194);
+  color: var(--color-gray-lighter);
+}
 
-  // & input {
-  //   margin-right: 5px;
-  //   cursor: inherit;
-  // }
+//
+// Color palette
+//
 
-  // & span {
-  //   display: block;
-  //   white-space: nowrap;
-  // }
+.filter__options[name='colors'] {
+  display: flex;
+  flex-direction: row;
 }
 
 .filter__options[name='colors'] input[value] {
@@ -201,8 +203,8 @@ $filterMenuPadding: 12px;
     width: 15px;
     height: 15px;
 
-    border: 1px solid rgb(255, 255, 255);
-    outline: 1px solid rgb(206, 206, 206);
+    border: 1px solid var(--color-gray-light);
+    outline: 1px solid var(--color-gray-light);
 
     &:hover,
     &:focus-visible {
@@ -219,14 +221,13 @@ $filterMenuPadding: 12px;
   }
 }
 
-.filter__options[name='colors'] {
-  display: flex;
-  flex-direction: row;
-}
-
 .filter__option#grayscale {
   margin-bottom: 10px;
 }
+
+//
+// Apply button
+//
 
 .filter__menu button[name='applyFilter'] {
   @extend %btn-primary;
@@ -238,8 +239,8 @@ $filterMenuPadding: 12px;
   width: 40px;
   height: 22px;
   margin-top: 10px;
-  border-radius: 7px;
 
+  border-radius: 7px;
   transition: filter var(--transition-params);
 
   &:hover {

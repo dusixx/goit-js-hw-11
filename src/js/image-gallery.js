@@ -82,8 +82,8 @@ export default class ImageGallery {
       <li class="${className}__item ${transpBgClass}">
         <a class="${className}__link" href="${large.url}">
           <img class="${className}__img"
-            srcset = "${small.url} 1x, ${middle.url} 2x"
-            src="${small.url}"
+            srcset = "${middle.url} 1x, ${large.url} 2x"
+            src="${middle.url}"
             alt="${tags}"
             loading="lazy">
           </a>
