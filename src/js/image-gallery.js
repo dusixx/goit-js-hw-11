@@ -23,22 +23,21 @@ export default class ImageGallery {
    * @param {object} opts - объект опций
    */
   constructor(classSelector, opts) {
-    if (/\s/.test(classSelector)) {
-      throw new Error('Single class name expected');
-    }
+    if (/\s/.test(classSelector)) throw new Error('Single class name expected');
 
     this.#ref = document.querySelector(classSelector);
     const { nodeName } = this.#ref || '';
 
-    if (nodeName !== 'UL' && nodeName !== 'DIV') {
+    if (nodeName !== 'UL' && nodeName !== 'DIV')
       throw new Error('<ul> or <div> element expected');
-    }
 
     this.options = opts;
     this.#className = this.ref.className;
 
     // ставим обработчик кликов
     this.#ref.addEventListener('click', handleGalleryClick);
+
+    // todo: убрать привзяку к className
 
     // инициализируем simpleLightbox
     this.#simpleLightBox = new SimpleLightbox(`.${this.#className}__link`, {

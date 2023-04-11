@@ -45,25 +45,22 @@
 // Download btn
 //
 
-$downloadBtnOffsetLarge: 8px;
-$downloadBtnSize: 25px;
-
 .gallery__download-btn {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: var(--download-btn-offset);
+  right: var(--download-btn-offset);
 
-  @media screen and (min-width: #{$bp-tablet}) {
-    top: $downloadBtnOffsetLarge;
-    right: $downloadBtnOffsetLarge;
+  @media screen and (min-width: #{$bp-mobile}) {
+    --download-btn-offset: 8px;
+    --download-btn-size: 30px;
   }
 
   display: none;
   justify-content: center;
   align-items: center;
 
-  width: $downloadBtnSize;
-  height: $downloadBtnSize;
+  width: var(--download-btn-size);
+  height: var(--download-btn-size);
 
   background-color: var(--color-accent);
   color: white;
@@ -79,8 +76,8 @@ $downloadBtnSize: 25px;
   }
 
   svg {
-    width: 70%;
-    height: 70%;
+    width: 80%;
+    height: 80%;
     fill: currentColor;
   }
 }
@@ -160,7 +157,7 @@ $downloadBtnSize: 25px;
   align-items: center;
   flex-wrap: wrap;
   gap: 3px;
-  width: calc(100% - ($downloadBtnOffsetLarge + $downloadBtnSize));
+  width: calc(100% - (var(--download-btn-offset) + var(--download-btn-size)));
 }
 
 .img-info {

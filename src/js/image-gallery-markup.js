@@ -3,12 +3,12 @@ import utils from './utils';
 const { formatNumber } = utils;
 
 // const CLASS_NAME = {
-//   gallery: 'gallery',
 //   galleryItem: 'gallery__item',
 //   galleryLink: 'gallery__link',
 //   galleryImg: 'gallery__img',
 //   galleryImgOverlayUpper: 'gallery__overlay-upper',
 //   galleryImgOverlay: 'gallery__overlay',
+//   galleryImgInfo: 'img-info',
 // };
 
 export default function makeImageCard(params) {
