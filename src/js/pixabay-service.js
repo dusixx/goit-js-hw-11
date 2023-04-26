@@ -50,6 +50,8 @@ export default class PixabayService {
       this.currentPage = this.page;
       this.page += this.options.pageIncrement;
 
+      console.log(resp, typeof resp);
+
       return { ...(this.#response = resp) };
 
       // error
