@@ -1,6 +1,6 @@
-import utils from './utils';
-import refs from './refs';
-import queryParams from './rest-data';
+import utils from '../utils/utils';
+import refs from '../utils/refs';
+import queryParams from '../pb-service/rest-data';
 import filterMarkup from './filter-markup';
 
 const { filterList, body } = refs;

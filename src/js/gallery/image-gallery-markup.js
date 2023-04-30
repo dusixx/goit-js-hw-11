@@ -1,4 +1,4 @@
-import utils from './utils';
+import utils from '../utils/utils';
 
 const { formatNumber } = utils;
 
@@ -26,7 +26,7 @@ export default function makeImageCard(params) {
   } = params;
 
   const { large, middle } = preview;
-  const iconsPath = new URL('../images/icons.svg', import.meta.url);
+  const iconsPath = new URL('../../images/icons.svg', import.meta.url);
   const linkTarget = 'target="_blank" rel="noopener noreferrer"';
 
   const makeTagsList = tags =>

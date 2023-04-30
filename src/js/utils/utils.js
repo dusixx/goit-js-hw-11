@@ -1,5 +1,3 @@
-// todo: добавить функции форматирования чисел по типу 5К 8.6M
-
 import { Notify } from 'notiflix';
 import throttle from 'lodash.throttle';
 import debounce from 'lodash.debounce';

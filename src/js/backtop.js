@@ -1,5 +1,5 @@
-import utils from './utils';
-import refs from './refs';
+import utils from './utils/utils';
+import refs from './utils/refs';
 
 const { scrollToTop, throttle } = utils;
 const { backtop } = refs;

@@ -2,8 +2,8 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import makeImageCard from './image-gallery-markup';
-import { getImageData } from './pixabay-service';
-import utils from './utils';
+import { getImageData } from '../pb-service/pixabay-service';
+import utils from '../utils/utils';
 
 const { formatNumber, getFileType, saveFileAs } = utils;
 

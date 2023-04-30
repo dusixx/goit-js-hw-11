@@ -1,12 +1,10 @@
 import './sass/index.scss';
-import PixabayService from './js/pixabay-service';
-import ImageGallery from './js/image-gallery';
-import utils from './js/utils';
-import refs from './js/refs';
-import hwData from './js/hw-data';
-import Filter from './js/filter';
-import _ from './js/backtop';
-import _ from './js/header';
+import PixabayService from './js/pb-service/pixabay-service';
+import ImageGallery from './js/gallery/image-gallery';
+import { utils, refs, hwData } from './js/utils';
+import Filter from './js/filter/filter';
+import './js/backtop';
+import './js/header';
 
 //
 // Init
